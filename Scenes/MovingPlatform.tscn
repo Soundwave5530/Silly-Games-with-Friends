@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=4 uid="uid://blm36ystmlvc4"]
+
+[ext_resource type="Script" uid="uid://kmdb8m6423bc" path="res://Scripts/MovingPlatform.cs" id="1_k502f"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o1nts"]
+albedo_color = Color(0.78, 0, 0, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_o1nts"]
+_surfaces = [{
+"aabb": AABB(-6.58014, -0.5, -3.39893, 13.1603, 1, 6.79785),
+"attribute_data": PackedByteArray("AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_o1nts"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray("gJDSwAAAAL8AiFlAgJDSwAAAAL8AiFnAgJDSwAAAAD8AiFnAgJDSQAAAAL8AiFnAgJDSwAAAAL8AiFnAgJDSwAAAAL8AiFlAgJDSwAAAAD8AiFnAgJDSwAAAAL8AiFnAgJDSQAAAAL8AiFnAgJDSwAAAAD8AiFnAgJDSwAAAAD8AiFlAgJDSwAAAAL8AiFlAgJDSwAAAAL8AiFlAgJDSwAAAAD8AiFlAgJDSQAAAAD8AiFlAgJDSQAAAAD8AiFlAgJDSwAAAAD8AiFlAgJDSwAAAAD8AiFnAgJDSwAAAAL8AiFlAgJDSQAAAAL8AiFlAgJDSQAAAAL8AiFnAgJDSQAAAAD8AiFlAgJDSQAAAAL8AiFlAgJDSwAAAAL8AiFlAgJDSQAAAAL8AiFnAgJDSQAAAAL8AiFlAgJDSQAAAAD8AiFlAgJDSQAAAAL8AiFnAgJDSQAAAAD8AiFnAgJDSwAAAAD8AiFnAgJDSwAAAAD8AiFnAgJDSQAAAAD8AiFnAgJDSQAAAAD8AiFlAgJDSQAAAAD8AiFlAgJDSQAAAAD8AiFnAgJDSQAAAAL8AiFnAAAD/f/9//n8AAP9//3/+fwAA/3//f/5//38AAP//AAD/fwAA//8AAP9/AAD//wAA/////wAA/z//////AAD/P/////8AAP8/AAD/f/9//n8AAP9//3/+fwAA/3//f/5//3//fwAA/z//f/9/AAD/P/9//38AAP8//3//////AAD/f/////8AAP9//////wAA/38AAP//AAD/fwAA//8AAP9/AAD//wAA/3//fwAA/z//f/9/AAD/P/9//38AAP8/////f/9//n////9//3/+f////3//f/5//////wAA/z//////AAD/P/////8AAP8//3//////AAD/f/////8AAP9//////wAA////f/9//n////9//3/+f////3//f/5/")
+}]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_k502f"]
+data = PackedVector3Array(-6.58014, -0.5, 3.39893, -6.58014, -0.5, -3.39893, -6.58014, 0.5, -3.39893, 6.58014, -0.5, -3.39893, -6.58014, -0.5, -3.39893, -6.58014, -0.5, 3.39893, -6.58014, 0.5, -3.39893, -6.58014, -0.5, -3.39893, 6.58014, -0.5, -3.39893, -6.58014, 0.5, -3.39893, -6.58014, 0.5, 3.39893, -6.58014, -0.5, 3.39893, -6.58014, -0.5, 3.39893, -6.58014, 0.5, 3.39893, 6.58014, 0.5, 3.39893, 6.58014, 0.5, 3.39893, -6.58014, 0.5, 3.39893, -6.58014, 0.5, -3.39893, -6.58014, -0.5, 3.39893, 6.58014, -0.5, 3.39893, 6.58014, -0.5, -3.39893, 6.58014, 0.5, 3.39893, 6.58014, -0.5, 3.39893, -6.58014, -0.5, 3.39893, 6.58014, -0.5, -3.39893, 6.58014, -0.5, 3.39893, 6.58014, 0.5, 3.39893, 6.58014, -0.5, -3.39893, 6.58014, 0.5, -3.39893, -6.58014, 0.5, -3.39893, -6.58014, 0.5, -3.39893, 6.58014, 0.5, -3.39893, 6.58014, 0.5, 3.39893, 6.58014, 0.5, 3.39893, 6.58014, 0.5, -3.39893, 6.58014, -0.5, -3.39893)
+
+[node name="MovingPlatform" type="AnimatableBody3D"]
+collision_mask = 0
+script = ExtResource("1_k502f")
+
+[node name="CSGBakedMeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_o1nts")
+
+[node name="CSGBakedCollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConcavePolygonShape3D_k502f")

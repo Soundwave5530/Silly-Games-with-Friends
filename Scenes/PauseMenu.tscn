@@ -1,0 +1,968 @@
+[gd_scene load_steps=33 format=3 uid="uid://cxnh5cvl2dg2u"]
+
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="2_siy43"]
+[ext_resource type="PackedScene" uid="uid://cup3kpxgarvjo" path="res://Scenes/CustomizationMenu.tscn" id="5_siy43"]
+[ext_resource type="Script" uid="uid://1xb1xrumwp7c" path="res://Scripts/NewPauseMenu.cs" id="9_c7c70"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="10_pmvjn"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="11_1363l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h171x"]
+bg_color = Color(5.39064e-06, 0.442811, 0.753033, 1)
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.639216)
+shadow_size = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6ygf"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhr51"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p6p71"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hw4na"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_epvri"]
+Button/styles/hover = SubResource("StyleBoxFlat_n6ygf")
+Button/styles/normal = SubResource("StyleBoxFlat_dhr51")
+Button/styles/pressed = SubResource("StyleBoxFlat_p6p71")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("2_siy43")
+Panel/styles/panel = SubResource("StyleBoxFlat_hw4na")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mexcr"]
+
+[sub_resource type="Theme" id="Theme_8kogi"]
+Button/styles/focus = SubResource("StyleBoxEmpty_mexcr")
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("10_pmvjn")
+
+[sub_resource type="LabelSettings" id="LabelSettings_hfbr4"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_48nus"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_u27e1"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="Animation" id="Animation_h171x"]
+resource_name = "Close"
+step = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Settings:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-1920, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Settings:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../BG2:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-273, -0.25, 0, 0.25, 0, -1330.07, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../BG2:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-465, -0.25, 0, 0.25, 0, -465, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ButtonContainer:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(79, -0.25, 0, 0.25, 0, -978.069, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ButtonContainer:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(372, -0.25, 0, 0.25, 0, 372, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Title:position:x")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(76, -0.25, 0, 0.25, 0, -981.069, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Title:position:y")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(44, -0.25, 0, 0.25, 0, 44, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="Animation" id="Animation_pmvjn"]
+resource_name = "Close Settings"
+step = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ButtonContainer:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1999, -0.25, 0, 0.25, 0, 79, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ButtonContainer:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(372, -0.25, 0, 0.25, 0, 372, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Title:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1996, -0.25, 0, 0.25, 0, 76, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Title:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(44, -0.25, 0, 0.25, 0, 44, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../BG2:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1647, -0.25, 0, 0.25, 0, -273, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../BG2:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-465, -0.25, 0, 0.25, 0, -465, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Settings:position:x")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -1920, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../Settings:position:y")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="Animation" id="Animation_1363l"]
+resource_name = "Open"
+step = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Settings:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-1920, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Settings:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../BG2:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-1330.07, -0.25, 0, 0.25, 0, -273, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../BG2:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-465, -0.25, 0, 0.25, 0, -465, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ButtonContainer:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-978.069, -0.25, 0, 0.25, 0, 79, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ButtonContainer:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(372, -0.25, 0, 0.25, 0, 372, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Title:position:x")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-981.069, -0.25, 0, 0.25, 0, 76, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Title:position:y")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(44, -0.25, 0, 0.25, 0, 44, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="Animation" id="Animation_c7c70"]
+resource_name = "Open Settings"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ButtonContainer:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(79, -0.25, 0, 0.25, 0, 1999, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ButtonContainer:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(372, -0.25, 0, 0.25, 0, 372, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Title:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(76, -0.25, 0, 0.25, 0, 1996, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Title:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(44, -0.25, 0, 0.25, 0, 44, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../BG2:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-273, -0.25, 0, 0.25, 0, 1647, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../BG2:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-465, -0.25, 0, 0.25, 0, -465, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Settings:position:x")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-1920, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../Settings:position:y")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pmvjn"]
+_data = {
+&"Close": SubResource("Animation_h171x"),
+&"Close Settings": SubResource("Animation_pmvjn"),
+&"Open": SubResource("Animation_1363l"),
+&"Open Settings": SubResource("Animation_c7c70")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c7c70"]
+bg_color = Color(5.39064e-06, 0.442811, 0.753033, 1)
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vewo"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wib81"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbdrc"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vuees"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_pmvjn"]
+Button/styles/hover = SubResource("StyleBoxFlat_0vewo")
+Button/styles/normal = SubResource("StyleBoxFlat_wib81")
+Button/styles/pressed = SubResource("StyleBoxFlat_tbdrc")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("2_siy43")
+Panel/styles/panel = SubResource("StyleBoxFlat_vuees")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3hb06"]
+
+[sub_resource type="Theme" id="Theme_1363l"]
+Button/styles/focus = SubResource("StyleBoxEmpty_3hb06")
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("10_pmvjn")
+
+[sub_resource type="LabelSettings" id="LabelSettings_h171x"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_epvri"]
+bg_color = Color(0, 0.247059, 0.435294, 1)
+border_width_left = 7
+border_width_top = 7
+border_width_right = 7
+border_width_bottom = 7
+border_color = Color(0.329412, 0.67451, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mexcr"]
+bg_color = Color(0, 0.247059, 0.435294, 1)
+draw_center = false
+border_width_left = 7
+border_width_top = 7
+border_width_right = 7
+border_width_bottom = 7
+border_color = Color(0.329412, 0.67451, 1, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[node name="PauseMenu" type="CanvasLayer"]
+layer = 2
+
+[node name="BG2" type="Panel" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2290.07
+offset_top = -1005.0
+offset_right = -1054.07
+offset_bottom = 618.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.264906
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h171x")
+
+[node name="NewPauseMenu" type="Control" parent="." node_paths=PackedStringArray("resumeButton", "settingsButton", "customizeButton", "leaveGameButton", "settingsGeneralButton", "settingsVideoButton", "settingsAudioButton", "settingsControlsButton", "settingsBackButton", "customizeBackButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("9_c7c70")
+resumeButton = NodePath("ButtonContainer/ResumeB")
+settingsButton = NodePath("ButtonContainer/SettingsB")
+customizeButton = NodePath("ButtonContainer/CustomizeB")
+leaveGameButton = NodePath("ButtonContainer/ExitB")
+settingsGeneralButton = NodePath("../Settings/ButtonContainer/GeneralB")
+settingsVideoButton = NodePath("../Settings/ButtonContainer/VideoB")
+settingsAudioButton = NodePath("../Settings/ButtonContainer/AudioB")
+settingsControlsButton = NodePath("../Settings/ButtonContainer/KeybindsB")
+settingsBackButton = NodePath("../Settings/ButtonContainer/BackB")
+customizeBackButton = NodePath("../Customization Menu/Panel2/Back")
+metadata/_edit_use_anchors_ = true
+
+[node name="Title" type="Label" parent="NewPauseMenu"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -981.069
+offset_top = 44.0
+offset_right = -319.069
+offset_bottom = 287.0
+theme = SubResource("Theme_epvri")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 85
+text = "Pause 
+               Menu"
+
+[node name="ButtonContainer" type="VBoxContainer" parent="NewPauseMenu"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -978.069
+offset_top = -708.0
+offset_right = -398.069
+offset_bottom = -168.0
+grow_vertical = 0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="ResumeB" type="Button" parent="NewPauseMenu/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_8kogi")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="NewPauseMenu/ButtonContainer/ResumeB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epvri")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Resume"
+label_settings = SubResource("LabelSettings_hfbr4")
+vertical_alignment = 1
+
+[node name="SettingsB" type="Button" parent="NewPauseMenu/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_8kogi")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="NewPauseMenu/ButtonContainer/SettingsB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epvri")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Settings"
+label_settings = SubResource("LabelSettings_hfbr4")
+vertical_alignment = 1
+
+[node name="CustomizeB" type="Button" parent="NewPauseMenu/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_8kogi")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="NewPauseMenu/ButtonContainer/CustomizeB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epvri")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Customize"
+label_settings = SubResource("LabelSettings_48nus")
+vertical_alignment = 1
+
+[node name="ExitB" type="Button" parent="NewPauseMenu/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_8kogi")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="NewPauseMenu/ButtonContainer/ExitB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_epvri")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Disconnect"
+label_settings = SubResource("LabelSettings_u27e1")
+vertical_alignment = 1
+
+[node name="MenuAnims" type="AnimationPlayer" parent="NewPauseMenu"]
+libraries = {
+&"": SubResource("AnimationLibrary_pmvjn")
+}
+speed_scale = 2.5
+
+[node name="Settings" type="Panel" parent="."]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1920.0
+offset_right = -1920.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c7c70")
+
+[node name="Title" type="Label" parent="Settings"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 36.0
+offset_top = 49.0
+offset_right = 509.0
+offset_bottom = 210.0
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 85
+text = "Change
+     Settings?"
+
+[node name="ButtonContainer" type="VBoxContainer" parent="Settings"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 51.0
+offset_top = -552.0
+offset_right = 502.0
+offset_bottom = -72.0
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="GeneralB" type="Button" parent="Settings/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1363l")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="Settings/ButtonContainer/GeneralB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "General"
+label_settings = SubResource("LabelSettings_h171x")
+vertical_alignment = 1
+
+[node name="VideoB" type="Button" parent="Settings/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1363l")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="Settings/ButtonContainer/VideoB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Video"
+label_settings = SubResource("LabelSettings_h171x")
+vertical_alignment = 1
+
+[node name="AudioB" type="Button" parent="Settings/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1363l")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="Settings/ButtonContainer/AudioB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Audio"
+label_settings = SubResource("LabelSettings_h171x")
+vertical_alignment = 1
+
+[node name="KeybindsB" type="Button" parent="Settings/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1363l")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="Settings/ButtonContainer/KeybindsB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Keybinds"
+label_settings = SubResource("LabelSettings_h171x")
+vertical_alignment = 1
+
+[node name="BackB" type="Button" parent="Settings/ButtonContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1363l")
+flat = true
+script = ExtResource("11_1363l")
+baseHeight = 80.0
+hoverHeight = 142.5
+baseFontSize = 64
+hoverFontSize = 100
+
+[node name="Label" type="Label" parent="Settings/ButtonContainer/BackB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pmvjn")
+theme_override_fonts/font = ExtResource("10_pmvjn")
+theme_override_font_sizes/font_size = 36
+text = "Back"
+label_settings = SubResource("LabelSettings_h171x")
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Settings"]
+layout_mode = 0
+offset_left = 526.0
+offset_top = 42.0
+offset_right = 1908.0
+offset_bottom = 1002.0
+size_flags_vertical = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Container" type="Panel" parent="Settings/MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_epvri")
+
+[node name="Panel" type="Panel" parent="Settings/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mexcr")
+
+[node name="Customization Menu" parent="." instance=ExtResource("5_siy43")]
+visible = false
+
+[node name="BGTex" parent="Customization Menu" index="1"]
+anchors_preset = -1
+
+[node name="PlayerPreview" parent="Customization Menu" index="3"]
+anchors_preset = -1
+
+[node name="Hat Pivot" parent="Customization Menu/PlayerPreview" index="1"]
+anchors_preset = -1
+
+[node name="Hat" parent="Customization Menu/PlayerPreview/Hat Pivot" index="0"]
+anchors_preset = -1
+
+[node name="Face Pivot" parent="Customization Menu/PlayerPreview" index="2"]
+anchors_preset = -1
+
+[node name="Face" parent="Customization Menu/PlayerPreview/Face Pivot" index="0"]
+anchors_preset = -1
+
+[node name="Panel" parent="Customization Menu" index="4"]
+anchors_preset = -1
+
+[node name="Panel2" parent="Customization Menu" index="5"]
+anchors_preset = -1
+
+[editable path="Customization Menu"]

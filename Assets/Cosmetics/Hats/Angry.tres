@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=8 format=3 uid="uid://dkk7y0vy47jxn"]
+
+[ext_resource type="Texture2D" uid="uid://1iwpvdbsls4j" path="res://Assets/Sprites/Cosmetics/Hats/Angry Back0000.png" id="1_mg5c0"]
+[ext_resource type="Texture2D" uid="uid://b3jw3awr5mdts" path="res://Assets/Sprites/Cosmetics/Hats/Angry Back0001.png" id="2_25vef"]
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="3_j7267"]
+[ext_resource type="Texture2D" uid="uid://bvdsf0xcfoal8" path="res://Assets/Sprites/Cosmetics/Hats/Angry Front0000.png" id="3_ku832"]
+[ext_resource type="Texture2D" uid="uid://d0bgofvk7t1f6" path="res://Assets/Sprites/Cosmetics/Hats/Angry Front0001.png" id="4_wdo8r"]
+[ext_resource type="Texture2D" uid="uid://b2twi5hykwt4i" path="res://Assets/Sprites/Cosmetics/Hats/Angry Side0000.png" id="5_7rrx3"]
+[ext_resource type="Texture2D" uid="uid://b873o3lf71voe" path="res://Assets/Sprites/Cosmetics/Hats/Angry Side0001.png" id="6_x7g4o"]
+
+[resource]
+script = ExtResource("3_j7267")
+CosmeticID = "angy"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([ExtResource("3_ku832"), ExtResource("4_wdo8r")])
+SideSprites = Array[Texture2D]([ExtResource("5_7rrx3"), ExtResource("6_x7g4o")])
+BackSprites = Array[Texture2D]([ExtResource("1_mg5c0"), ExtResource("2_25vef")])
+metadata/_custom_type_script = ExtResource("3_j7267")

@@ -1,0 +1,398 @@
+[gd_scene load_steps=24 format=3 uid="uid://cf1r216cxabqr"]
+
+[ext_resource type="Script" uid="uid://cab1vn622467u" path="res://Scripts/ServerEntryDisplay.cs" id="1_mwsnk"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="2_3xsyo"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="4_grkm8"]
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="5_2tcpl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gdus2"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_grkm8"]
+font = ExtResource("2_3xsyo")
+font_size = 48
+outline_size = 24
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2tcpl"]
+font = ExtResource("2_3xsyo")
+font_size = 21
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_oisn1"]
+font = ExtResource("2_3xsyo")
+font_size = 50
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+shadow_size = 0
+shadow_offset = Vector2(7.95, 9.205)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_js803"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vewo"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wib81"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbdrc"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vuees"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_k5r22"]
+Button/styles/hover = SubResource("StyleBoxFlat_0vewo")
+Button/styles/normal = SubResource("StyleBoxFlat_wib81")
+Button/styles/pressed = SubResource("StyleBoxFlat_tbdrc")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("5_2tcpl")
+Panel/styles/panel = SubResource("StyleBoxFlat_vuees")
+
+[sub_resource type="LabelSettings" id="LabelSettings_js803"]
+font_size = 36
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3xsyo"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mwsnk"]
+font_size = 36
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_gdus2"]
+font = ExtResource("2_3xsyo")
+font_size = 28
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mwsnk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mwsnk"]
+bg_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3xsyo"]
+bg_color = Color(0, 0.443137, 0.752941, 1)
+draw_center = false
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 8.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xd24d"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xd24d"]
+font_size = 24
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="ServerUI" type="Control" node_paths=PackedStringArray("ServerNameLabel", "StatusLabel", "PingLabel", "JoinButton", "EditButton", "newNameEdit", "newIPEdit", "DeleteServerButton")]
+clip_contents = true
+custom_minimum_size = Vector2(0, 170)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -192.0
+offset_bottom = -478.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_mwsnk")
+ServerNameLabel = NodePath("ServerName")
+StatusLabel = NodePath("Status")
+PingLabel = NodePath("Ping")
+JoinButton = NodePath("Buttons/JoinButton")
+EditButton = NodePath("Buttons/EditButton")
+newNameEdit = NodePath("Extra Options/EditName/Separator/LineEdit")
+newIPEdit = NodePath("Extra Options/Edit IP/Separator/LineEdit")
+DeleteServerButton = NodePath("Extra Options/DeleteButton")
+nonHoveredMinY = 195.0
+HoveredMinY = 355.0
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gdus2")
+
+[node name="ServerName" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_left = 30.0
+offset_top = 12.0
+offset_right = 401.0
+offset_bottom = 63.0
+text = "[NAME]"
+label_settings = SubResource("LabelSettings_grkm8")
+
+[node name="Ping" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 0
+offset_left = 30.0
+offset_top = 76.0
+offset_right = 224.0
+offset_bottom = 110.0
+text = "Ping:    --"
+label_settings = SubResource("LabelSettings_2tcpl")
+
+[node name="Status" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+offset_left = 29.0
+offset_top = 106.0
+offset_right = 234.0
+offset_bottom = 185.0
+text = "OFFLINE"
+label_settings = SubResource("LabelSettings_oisn1")
+vertical_alignment = 2
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -346.0
+offset_right = -7.0
+offset_bottom = 181.0
+grow_horizontal = 0
+alignment = 1
+
+[node name="EditButton" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_js803")
+flat = true
+script = ExtResource("4_grkm8")
+baseHeight = 40.0
+hoverHeight = 50.0
+hoverFontSize = 64
+
+[node name="Label" type="Label" parent="Buttons/EditButton"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_k5r22")
+theme_override_fonts/font = ExtResource("2_3xsyo")
+theme_override_font_sizes/font_size = 36
+text = "Edit"
+label_settings = SubResource("LabelSettings_js803")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="JoinButton" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3xsyo")
+flat = true
+script = ExtResource("4_grkm8")
+baseHeight = 40.0
+hoverHeight = 50.0
+hoverFontSize = 64
+
+[node name="Label" type="Label" parent="Buttons/JoinButton"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_k5r22")
+theme_override_fonts/font = ExtResource("2_3xsyo")
+theme_override_font_sizes/font_size = 36
+text = "Join"
+label_settings = SubResource("LabelSettings_mwsnk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Extra Options" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 198.0
+offset_bottom = 328.0
+grow_horizontal = 2
+
+[node name="EditName" type="MarginContainer" parent="Extra Options"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+
+[node name="Separator" type="HBoxContainer" parent="Extra Options/EditName"]
+custom_minimum_size = Vector2(0, 36.88)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="New Name" type="Label" parent="Extra Options/EditName/Separator"]
+texture_filter = 1
+layout_mode = 2
+text = "Edit Name:"
+label_settings = SubResource("LabelSettings_gdus2")
+
+[node name="LineEdit" type="LineEdit" parent="Extra Options/EditName/Separator"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("2_3xsyo")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_mwsnk")
+theme_override_styles/normal = SubResource("StyleBoxFlat_mwsnk")
+text = "Minecart's Server"
+placeholder_text = "My Server"
+max_length = 20
+flat = true
+
+[node name="Panel" type="Panel" parent="Extra Options/EditName/Separator/LineEdit"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xsyo")
+
+[node name="Edit IP" type="MarginContainer" parent="Extra Options"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+
+[node name="Separator" type="HBoxContainer" parent="Extra Options/Edit IP"]
+custom_minimum_size = Vector2(0, 36.88)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="New Name" type="Label" parent="Extra Options/Edit IP/Separator"]
+texture_filter = 1
+layout_mode = 2
+text = "Edit IP Address:"
+label_settings = SubResource("LabelSettings_gdus2")
+
+[node name="LineEdit" type="LineEdit" parent="Extra Options/Edit IP/Separator"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("2_3xsyo")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_mwsnk")
+theme_override_styles/normal = SubResource("StyleBoxFlat_mwsnk")
+text = "Minecart's Server"
+placeholder_text = "My Server"
+max_length = 20
+flat = true
+
+[node name="Panel" type="Panel" parent="Extra Options/Edit IP/Separator/LineEdit"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xsyo")
+
+[node name="DeleteButton" type="Button" parent="Extra Options"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_xd24d")
+flat = true
+script = ExtResource("4_grkm8")
+baseHeight = 45.0
+hoverHeight = 55.0
+baseFontSize = 28
+hoverFontSize = 50
+hoverColor = Color(1, 0.2, 0.2, 1)
+
+[node name="Label" type="Label" parent="Extra Options/DeleteButton"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_right = -16.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_k5r22")
+theme_override_fonts/font = ExtResource("2_3xsyo")
+theme_override_font_sizes/font_size = 24
+text = "Delete Server Entry"
+label_settings = SubResource("LabelSettings_xd24d")
+vertical_alignment = 1

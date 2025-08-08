@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=2 format=3 uid="uid://bqgamo3gqt5yr"]
+
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="7_s43cg"]
+
+[resource]
+script = ExtResource("7_s43cg")
+CosmeticID = "none"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([])
+SideSprites = Array[Texture2D]([])
+BackSprites = Array[Texture2D]([])
+metadata/_custom_type_script = ExtResource("7_s43cg")

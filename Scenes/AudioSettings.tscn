@@ -1,0 +1,239 @@
+[gd_scene load_steps=11 format=3 uid="uid://d3pvgx0un5joh"]
+
+[ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="1_s3gdq"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="2_he3wt"]
+[ext_resource type="Script" uid="uid://dljvews4dlfl1" path="res://Scripts/AudioSettings.cs" id="2_otsou"]
+[ext_resource type="Texture2D" uid="uid://rqpwyk4lqgf5" path="res://Assets/Sprites/UI/icon.png" id="3_otsou"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k84xa"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_he3wt"]
+font = ExtResource("2_he3wt")
+font_size = 21
+outline_size = 15
+outline_color = Color(0, 0.301961, 0.521569, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0xlck"]
+font = ExtResource("2_he3wt")
+font_size = 91
+outline_size = 35
+outline_color = Color(0, 0.301961, 0.521569, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_13uuk"]
+font = ExtResource("2_he3wt")
+font_size = 52
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_0xlck"]
+color = Color(0, 0.247059, 0.435294, 1)
+thickness = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_s3gdq"]
+font = ExtResource("2_he3wt")
+font_size = 52
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="AudioSettings" type="ScrollContainer" node_paths=PackedStringArray("MasterSlider", "MusicSlider", "SFXSlider", "AudioOutputButton", "MasterLabel", "MusicLabel", "SFXLabel")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_s3gdq")
+script = ExtResource("2_otsou")
+MasterSlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume/HSlider")
+MusicSlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume2/HSlider")
+SFXSlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume3/HSlider")
+AudioOutputButton = NodePath("MarginContainer2/MarginContainer/VBox/VBox2/Input/OptionButton")
+MasterLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume/Percent")
+MusicLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume2/Percent")
+SFXLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Volume3/Percent")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="BG" type="Panel" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_s3gdq")
+theme_override_styles/panel = SubResource("StyleBoxFlat_k84xa")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer2/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Audio Controls2" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_s3gdq")
+text = "Please Note that Audio is not included in the game as of the \"New Outfit, Who dis?\" update."
+label_settings = SubResource("LabelSettings_he3wt")
+
+[node name="Audio Controls" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_s3gdq")
+text = "Audio Controls"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Volume" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume"]
+layout_mode = 2
+text = "Master Volume: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="Percent" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "100% "
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("3_otsou")
+theme_override_icons/grabber_highlight = ExtResource("3_otsou")
+theme_override_icons/grabber_disabled = ExtResource("3_otsou")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+value = 100.0
+
+[node name="Volume2" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume2"]
+layout_mode = 2
+text = "Music Volume: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="Percent" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume2"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "100% "
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("3_otsou")
+theme_override_icons/grabber_highlight = ExtResource("3_otsou")
+theme_override_icons/grabber_disabled = ExtResource("3_otsou")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+value = 100.0
+
+[node name="Volume3" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume3"]
+layout_mode = 2
+text = "SFX Volume: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="Percent" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume3"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "100% "
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox/Volume3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("3_otsou")
+theme_override_icons/grabber_highlight = ExtResource("3_otsou")
+theme_override_icons/grabber_disabled = ExtResource("3_otsou")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+value = 100.0
+
+[node name="Audio Devices" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_s3gdq")
+text = "Audio Devices"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="VBox2" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Input" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox2/Input"]
+layout_mode = 2
+text = "Output Device: "
+label_settings = SubResource("LabelSettings_s3gdq")
+
+[node name="OptionButton" type="OptionButton" parent="MarginContainer2/MarginContainer/VBox/VBox2/Input"]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = ExtResource("1_s3gdq")
+theme_override_font_sizes/font_size = 20
+alignment = 1
+selected = 0
+allow_reselect = true
+item_count = 2
+popup/item_0/text = "Default Device"
+popup/item_0/id = 0
+popup/item_1/id = 1
+
+[node name="Audio Settings" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_s3gdq")
+text = "Audio Settings"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="VBox3" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15

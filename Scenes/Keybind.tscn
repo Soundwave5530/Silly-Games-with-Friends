@@ -1,0 +1,204 @@
+[gd_scene load_steps=15 format=3 uid="uid://dk2pnpqyjcds"]
+
+[ext_resource type="Script" uid="uid://c783balx4ysan" path="res://Scripts/Keybind.cs" id="1_gu0e3"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="1_ndkqo"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="2_gu0e3"]
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="3_2t2ig"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gdus2"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_grkm8"]
+font = ExtResource("1_ndkqo")
+font_size = 48
+outline_size = 24
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gu0e3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vewo"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wib81"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbdrc"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vuees"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_k5r22"]
+Button/styles/hover = SubResource("StyleBoxFlat_0vewo")
+Button/styles/normal = SubResource("StyleBoxFlat_wib81")
+Button/styles/pressed = SubResource("StyleBoxFlat_tbdrc")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("3_2t2ig")
+Panel/styles/panel = SubResource("StyleBoxFlat_vuees")
+
+[sub_resource type="LabelSettings" id="LabelSettings_mwsnk"]
+font_size = 48
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_gu0e3"]
+font_size = 36
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="Keybind" type="Control" node_paths=PackedStringArray("ActionLabel", "BindButton", "ClearButton")]
+clip_contents = true
+custom_minimum_size = Vector2(1135, 130)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -496.0
+offset_bottom = -950.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_gu0e3")
+ActionLabel = NodePath("ActionLabel")
+BindButton = NodePath("ChangeButton")
+ClearButton = NodePath("ClearButton")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gdus2")
+
+[node name="ActionLabel" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 37.0
+offset_right = 567.0
+grow_vertical = 2
+size_flags_vertical = 1
+text = "Action Name"
+label_settings = SubResource("LabelSettings_grkm8")
+vertical_alignment = 1
+
+[node name="ChangeButton" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -710.0
+offset_right = -192.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gu0e3")
+flat = true
+script = ExtResource("2_gu0e3")
+baseHeight = 40.0
+hoverHeight = 50.0
+baseFontSize = 48
+hoverFontSize = 60
+
+[node name="Label" type="Label" parent="ChangeButton"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_k5r22")
+theme_override_fonts/font = ExtResource("1_ndkqo")
+theme_override_font_sizes/font_size = 36
+text = "Key"
+label_settings = SubResource("LabelSettings_mwsnk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ClearButton" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -157.0
+offset_right = -23.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_gu0e3")
+flat = true
+script = ExtResource("2_gu0e3")
+baseHeight = 40.0
+hoverHeight = 50.0
+hoverFontSize = 48
+hoverColor = Color(1, 0.2, 0.2, 1)
+
+[node name="Label" type="Label" parent="ClearButton"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_k5r22")
+theme_override_fonts/font = ExtResource("1_ndkqo")
+theme_override_font_sizes/font_size = 36
+text = "Clear"
+label_settings = SubResource("LabelSettings_gu0e3")
+horizontal_alignment = 2
+vertical_alignment = 1

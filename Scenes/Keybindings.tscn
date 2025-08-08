@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=3 uid="uid://bgix7sik1a2fu"]
+
+[ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="1_p8522"]
+[ext_resource type="Script" uid="uid://bb15lhmj221d8" path="res://Scripts/KeybindSettings.cs" id="2_xfhib"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="3_7ilmj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k84xa"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_0xlck"]
+font = ExtResource("3_7ilmj")
+font_size = 91
+outline_size = 35
+outline_color = Color(0, 0.301961, 0.521569, 1)
+
+[node name="Keybind Settings" type="ScrollContainer" node_paths=PackedStringArray("BindListContainer")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_p8522")
+script = ExtResource("2_xfhib")
+BindListContainer = NodePath("MarginContainer2/MarginContainer/VBox/BindListContainer")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="BG" type="Panel" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_p8522")
+theme_override_styles/panel = SubResource("StyleBoxFlat_k84xa")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer2/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Display" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_p8522")
+text = "Keybindings"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="BindListContainer" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 3

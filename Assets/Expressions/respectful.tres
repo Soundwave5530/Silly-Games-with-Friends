@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://dwsvou7qux06t"]
+
+[ext_resource type="Texture2D" uid="uid://bxhshvgfqk38x" path="res://Assets/Sprites/Faces/Respectful Face Front0000.png" id="1_8yfe4"]
+[ext_resource type="Texture2D" uid="uid://dajd00fy7xrh2" path="res://Assets/Sprites/Faces/Respectful Face Front0001.png" id="2_8655o"]
+[ext_resource type="Texture2D" uid="uid://qmp7up7rq8vl" path="res://Assets/Sprites/Faces/Respectful Face Side0000.png" id="3_gjfb2"]
+[ext_resource type="Texture2D" uid="uid://b2esstsd076kr" path="res://Assets/Sprites/Faces/Respectful Face Side0001.png" id="4_rxujd"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="5_iiwcj"]
+
+[resource]
+script = ExtResource("5_iiwcj")
+ExpressionId = "respectful"
+FrontExpression = Array[Texture2D]([ExtResource("1_8yfe4"), ExtResource("2_8655o")])
+SideExpression = Array[Texture2D]([ExtResource("3_gjfb2"), ExtResource("4_rxujd")])
+metadata/_custom_type_script = ExtResource("5_iiwcj")

@@ -1,0 +1,373 @@
+[gd_scene load_steps=23 format=3 uid="uid://dlr4c74krf6ng"]
+
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="1_k84xa"]
+[ext_resource type="Texture2D" uid="uid://rqpwyk4lqgf5" path="res://Assets/Sprites/UI/icon.png" id="2_13uuk"]
+[ext_resource type="Script" uid="uid://bfhosacsp4u1b" path="res://Scripts/GeneralSettings.cs" id="2_gjdnx"]
+[ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="3_0xlck"]
+[ext_resource type="PackedScene" uid="uid://njfk1itinuxf" path="res://Scenes/better_check_button.tscn" id="4_h7jkf"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="6_litf7"]
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="7_1ybqj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k84xa"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_0xlck"]
+font = ExtResource("1_k84xa")
+font_size = 91
+outline_size = 35
+outline_color = Color(0, 0.301961, 0.521569, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_13uuk"]
+font = ExtResource("1_k84xa")
+font_size = 52
+outline_size = 20
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_13uuk"]
+bg_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k84xa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0xlck"]
+bg_color = Color(0, 0.443137, 0.752941, 1)
+draw_center = false
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 8.0
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_0xlck"]
+color = Color(0, 0.247059, 0.435294, 1)
+thickness = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3hb06"]
+
+[sub_resource type="Theme" id="Theme_22bv8"]
+Button/styles/focus = SubResource("StyleBoxEmpty_3hb06")
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("1_k84xa")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0vewo"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wib81"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbdrc"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vuees"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_4hmp7"]
+Button/styles/hover = SubResource("StyleBoxFlat_0vewo")
+Button/styles/normal = SubResource("StyleBoxFlat_wib81")
+Button/styles/pressed = SubResource("StyleBoxFlat_tbdrc")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("7_1ybqj")
+Panel/styles/panel = SubResource("StyleBoxFlat_vuees")
+
+[sub_resource type="LabelSettings" id="LabelSettings_litf7"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="General Settings" type="ScrollContainer" node_paths=PackedStringArray("NameField", "SensitivitySlider", "FOVSlider", "CameraSmoothingButton", "UseSystemMouse", "MouseScaleSlider", "ResetSettingsButton", "CameraSensitivityLabel", "FOVLabel", "MouseScaleLabel")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("3_0xlck")
+script = ExtResource("2_gjdnx")
+NameField = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Name/LineEdit")
+SensitivitySlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Sensitivity/HSlider")
+FOVSlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox/FOV Slider/HSlider")
+CameraSmoothingButton = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Camera Smoothing/BetterCheckButton")
+UseSystemMouse = NodePath("MarginContainer2/MarginContainer/VBox/VBox2/Use System Mouse/BetterCheckButton")
+MouseScaleSlider = NodePath("MarginContainer2/MarginContainer/VBox/VBox2/MouseScale/HSlider")
+ResetSettingsButton = NodePath("MarginContainer2/MarginContainer/VBox/ResetB")
+CameraSensitivityLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox/Sensitivity/Sense")
+FOVLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox/FOV Slider/FOV")
+MouseScaleLabel = NodePath("MarginContainer2/MarginContainer/VBox/VBox2/MouseScale/ScaleLabel")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="BG" type="Panel" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("3_0xlck")
+theme_override_styles/panel = SubResource("StyleBoxFlat_k84xa")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer2/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Display" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("3_0xlck")
+text = "General Settings"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Name" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Name"]
+layout_mode = 2
+text = "Display Name:  "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer2/MarginContainer/VBox/VBox/Name"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("1_k84xa")
+theme_override_font_sizes/font_size = 46
+theme_override_styles/normal = SubResource("StyleBoxFlat_13uuk")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_k84xa")
+placeholder_text = "Player Name"
+max_length = 25
+flat = true
+
+[node name="Panel" type="Panel" parent="MarginContainer2/MarginContainer/VBox/VBox/Name/LineEdit"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0xlck")
+
+[node name="Sensitivity" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Sensitivity"]
+layout_mode = 2
+text = "Camera Sensitivity:  "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="Sense" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Sensitivity"]
+custom_minimum_size = Vector2(97.5, 0)
+layout_mode = 2
+text = "1.0"
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox/Sensitivity"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("2_13uuk")
+theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
+theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+min_value = 0.25
+max_value = 4.0
+step = 0.1
+value = 1.05
+
+[node name="FOV Slider" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/FOV Slider"]
+layout_mode = 2
+text = "Field of View (FOV): "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="FOV" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/FOV Slider"]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+text = "90"
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox/FOV Slider"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("2_13uuk")
+theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
+theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+min_value = 70.0
+max_value = 110.0
+value = 90.0
+
+[node name="Camera Smoothing" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox/Camera Smoothing"]
+layout_mode = 2
+text = "Camera Smoothing: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="BetterCheckButton" parent="MarginContainer2/MarginContainer/VBox/VBox/Camera Smoothing" instance=ExtResource("4_h7jkf")]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+metadata/_custom_type_script = "uid://cen1e55bj18pi"
+
+[node name="Display2" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("3_0xlck")
+text = "Mouse Settings"
+label_settings = SubResource("LabelSettings_0xlck")
+
+[node name="VBox2" type="VBoxContainer" parent="MarginContainer2/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Use System Mouse" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox2/Use System Mouse"]
+layout_mode = 2
+text = "Use System Mouse: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="BetterCheckButton" parent="MarginContainer2/MarginContainer/VBox/VBox2/Use System Mouse" instance=ExtResource("4_h7jkf")]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+metadata/_custom_type_script = "uid://cen1e55bj18pi"
+
+[node name="MouseScale" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox2/MouseScale"]
+layout_mode = 2
+text = "Goober Mouse Size: "
+label_settings = SubResource("LabelSettings_13uuk")
+
+[node name="ScaleLabel" type="Label" parent="MarginContainer2/MarginContainer/VBox/VBox2/MouseScale"]
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+text = "3.0x"
+label_settings = SubResource("LabelSettings_13uuk")
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="MarginContainer2/MarginContainer/VBox/VBox2/MouseScale"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("2_13uuk")
+theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
+theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
+theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+min_value = 1.0
+max_value = 4.0
+step = 0.5
+value = 1.0
+
+[node name="ResetB" type="Button" parent="MarginContainer2/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_22bv8")
+flat = true
+script = ExtResource("6_litf7")
+baseHeight = 80.0
+hoverHeight = 150.0
+baseFontSize = 64
+hoverFontSize = 75
+hoverColor = Color(1, 0.2, 0.2, 1)
+
+[node name="Label" type="Label" parent="MarginContainer2/MarginContainer/VBox/ResetB"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_4hmp7")
+theme_override_fonts/font = ExtResource("1_k84xa")
+theme_override_font_sizes/font_size = 36
+text = "RESET SETTINGS TO DEFAULT"
+label_settings = SubResource("LabelSettings_litf7")
+vertical_alignment = 1

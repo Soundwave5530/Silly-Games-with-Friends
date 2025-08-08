@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://ba38gxqoc1y2x"]
+
+[ext_resource type="Texture2D" uid="uid://ccpo3yuai0a40" path="res://Assets/Sprites/Faces/Eye Face Front0000.png" id="1_d8e4v"]
+[ext_resource type="Texture2D" uid="uid://dx6dq0ko0526n" path="res://Assets/Sprites/Faces/Eye Face Front0001.png" id="2_e250v"]
+[ext_resource type="Texture2D" uid="uid://bih2ihsbmckvp" path="res://Assets/Sprites/Faces/Eye Face Side0000.png" id="3_taxph"]
+[ext_resource type="Texture2D" uid="uid://bbv54wm34d8mq" path="res://Assets/Sprites/Faces/Eye Face Side0001.png" id="4_gwrnt"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="5_oth3p"]
+
+[resource]
+script = ExtResource("5_oth3p")
+ExpressionId = "eye"
+FrontExpression = Array[Texture2D]([ExtResource("1_d8e4v"), ExtResource("2_e250v")])
+SideExpression = Array[Texture2D]([ExtResource("3_taxph"), ExtResource("4_gwrnt")])
+metadata/_custom_type_script = ExtResource("5_oth3p")

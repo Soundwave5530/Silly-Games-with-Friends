@@ -1,0 +1,89 @@
+[gd_scene load_steps=12 format=3 uid="uid://b0ff78ck5ltw4"]
+
+[ext_resource type="Script" uid="uid://boudcw5fse6cv" path="res://Scripts/GameManager.cs" id="1_bf53h"]
+[ext_resource type="PackedScene" uid="uid://tqlgykdhpan" path="res://Scenes/Maps/Lobby.tscn" id="2_7lihs"]
+[ext_resource type="PackedScene" uid="uid://2ddypgjx166b" path="res://Scenes/Chat.tscn" id="2_gl6un"]
+[ext_resource type="PackedScene" uid="uid://cxnh5cvl2dg2u" path="res://Scenes/PauseMenu.tscn" id="3_j5yw3"]
+[ext_resource type="PackedScene" uid="uid://blm36ystmlvc4" path="res://Scenes/MovingPlatform.tscn" id="8_2irst"]
+[ext_resource type="PackedScene" uid="uid://c3sl28rhguygn" path="res://Scenes/HUD.tscn" id="10_71axn"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2irst"]
+sky_top_color = Color(0.2, 0.533333, 1, 1)
+sky_horizon_color = Color(0.77, 0.77, 0.77, 1)
+sky_curve = 0.0923363
+
+[sub_resource type="Sky" id="Sky_2irst"]
+sky_material = SubResource("ProceduralSkyMaterial_2irst")
+
+[sub_resource type="Environment" id="Environment_gl6un"]
+background_mode = 2
+background_color = Color(1, 1, 1, 1)
+sky = SubResource("Sky_2irst")
+ambient_light_color = Color(1, 1, 1, 1)
+ssr_enabled = true
+ssao_enabled = true
+sdfgi_use_occlusion = true
+
+[sub_resource type="Curve3D" id="Curve3D_71axn"]
+closed = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0.932896, -55.1883, 0, 0, 0, 0, 0, 0, -39.07, 0.933, -55.188, 0, 0, 0, 0, 0, 0, -112.54, 0.933, -44.478, 0, 0, 0, 0, 0, 0, -80.4192, 4.31777, 36.41, 0, 0, 0, 0, 0, 0, -112.54, 0.933, 75.492, 0, 0, 0, 0, 0, 0, -66.65, 0.933, 116.822, 0, 0, 0, 0, 0, 0, 47.24, 14.173, 116.822, 0, 0, 0, 0, 0, 0, 47.755, 24.173, 74.212, 0, 0, 0, 0, 0, 0, 47.755, 24.173, 4.772, 0, 0, 0, 0, 0, 0, 47.755, 8.785, -55.068),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 10
+
+[sub_resource type="Curve3D" id="Curve3D_dahhg"]
+closed = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 48.7169, 0, 94.4816, 0, 0, 0, 0, 0, 0, 74.8396, 24.2306, 94.86),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_bf53h")
+LobbyScene = ExtResource("2_7lihs")
+
+[node name="ChatLayer" parent="." instance=ExtResource("2_gl6un")]
+visible = false
+
+[node name="PauseMenu" parent="." instance=ExtResource("3_j5yw3")]
+
+[node name="HUD" parent="." instance=ExtResource("10_71axn")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_gl6un")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.31507, 0.571032, -0.758059, 2.23517e-08, 0.798741, 0.601676, 0.949069, 0.189569, -0.25166, 0, 1.49979, 0)
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="HostCamera" type="Camera3D" parent="."]
+transform = Transform3D(0.368222, -0.630642, 0.683157, -7.28566e-08, 0.734784, 0.678301, -0.929738, -0.249766, 0.270564, 65.7274, 34.6127, 53.5483)
+fov = 76.2
+
+[node name="World" type="Node" parent="."]
+
+[node name="Lobby" parent="World" instance=ExtResource("2_7lihs")]
+
+[node name="WorldSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../World")
+spawn_limit = 1
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_71axn")
+
+[node name="Path3D2" type="Path3D" parent="."]
+curve = SubResource("Curve3D_dahhg")
+
+[node name="MovingPlatform" parent="." node_paths=PackedStringArray("Path3D") instance=ExtResource("8_2irst")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -55.0426)
+Path3D = NodePath("../Path3D")
+Speed = 10.0
+WaitBetweenLoops = 7.0
+
+[node name="MovingPlatform2" parent="." node_paths=PackedStringArray("Path3D") instance=ExtResource("8_2irst")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.7169, 0, 94.86)
+Path3D = NodePath("../Path3D2")
+Speed = 7.0

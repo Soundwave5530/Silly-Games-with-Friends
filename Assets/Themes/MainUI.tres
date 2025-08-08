@@ -1,0 +1,140 @@
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://b2mveqrw5ga5c"]
+
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="1_juphw"]
+[ext_resource type="Texture2D" uid="uid://84rnnu8ofspf" path="res://Assets/Sprites/UI/CheckBox/CheckBoxOn.png" id="1_p2q4j"]
+[ext_resource type="Texture2D" uid="uid://b3mumw2unsgam" path="res://Assets/Sprites/UI/CheckBox/SelectBoxOn.png" id="2_2tb6d"]
+[ext_resource type="Texture2D" uid="uid://c180wnbw0msga" path="res://Assets/Sprites/UI/CheckBox/CheckBoxOff.png" id="2_y6rct"]
+[ext_resource type="Texture2D" uid="uid://phqr56sy6equ" path="res://Assets/Sprites/UI/CheckBox/SelectBoxOff.png" id="3_ptqin"]
+[ext_resource type="Texture2D" uid="uid://bjolnda4muqhi" path="res://Assets/Sprites/UI/Dropdown/DropDown.png" id="6_ptqin"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rlwmm"]
+draw_center = false
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ndcqq"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x41i4"]
+bg_color = Color(9.62615e-08, 0.300379, 0.521841, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juphw"]
+bg_color = Color(1.44392e-06, 0.376538, 0.645461, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h13y2"]
+bg_color = Color(1.44392e-06, 0.376538, 0.645461, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p2q4j"]
+bg_color = Color(9.62615e-08, 0.300379, 0.521841, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ptqin"]
+bg_color = Color(9.62615e-08, 0.300379, 0.521841, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k84xa"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6rct"]
+bg_color = Color(1.44392e-06, 0.376538, 0.645461, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tb6d"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0.301961, 0.521569, 1)
+
+[resource]
+BetterCheckButton/base_type = &"CheckBox"
+BetterCheckButton/constants/icon_size = 100
+BetterCheckButton/icons/checked = ExtResource("1_p2q4j")
+BetterCheckButton/icons/unchecked = ExtResource("2_y6rct")
+BetterCheckButton/styles/focus = SubResource("StyleBoxFlat_rlwmm")
+CheckBox/icons/checked = ExtResource("1_p2q4j")
+CheckBox/icons/radio_checked = ExtResource("2_2tb6d")
+CheckBox/icons/radio_unchecked = ExtResource("3_ptqin")
+CheckBox/icons/unchecked = ExtResource("2_y6rct")
+CheckBox/styles/focus = SubResource("StyleBoxFlat_ndcqq")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("1_juphw")
+OptionButton/colors/font_color = Color(1, 1, 1, 1)
+OptionButton/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+OptionButton/constants/outline_size = 20
+OptionButton/font_sizes/font_size = 36
+OptionButton/fonts/font = ExtResource("1_juphw")
+OptionButton/icons/arrow = ExtResource("6_ptqin")
+OptionButton/styles/disabled = SubResource("StyleBoxFlat_x41i4")
+OptionButton/styles/focus = SubResource("StyleBoxFlat_juphw")
+OptionButton/styles/hover = SubResource("StyleBoxFlat_h13y2")
+OptionButton/styles/normal = SubResource("StyleBoxFlat_p2q4j")
+OptionButton/styles/pressed = SubResource("StyleBoxFlat_ptqin")
+Panel/styles/panel = SubResource("StyleBoxFlat_k84xa")
+PopupMenu/colors/font_color = Color(1, 1, 1, 1)
+PopupMenu/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+PopupMenu/constants/outline_size = 15
+PopupMenu/font_sizes/font_size = 24
+PopupMenu/fonts/font = ExtResource("1_juphw")
+PopupMenu/icons/checked = ExtResource("1_p2q4j")
+PopupMenu/icons/radio_checked = ExtResource("2_2tb6d")
+PopupMenu/icons/radio_unchecked = ExtResource("3_ptqin")
+PopupMenu/icons/unchecked = ExtResource("2_y6rct")
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_y6rct")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_2tb6d")

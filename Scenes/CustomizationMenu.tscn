@@ -1,0 +1,433 @@
+[gd_scene load_steps=25 format=3 uid="uid://cup3kpxgarvjo"]
+
+[ext_resource type="Script" uid="uid://qiyi1xsuvfgh" path="res://Scripts/CustomizationMenu.cs" id="1_eq078"]
+[ext_resource type="Texture2D" uid="uid://bcri0pbexnnry" path="res://Assets/Sprites/UI/Backgrounds/CustomizeBackground.png" id="2_w3q6i"]
+[ext_resource type="Texture2D" uid="uid://c0grm10cadrqm" path="res://Assets/Sprites/Goober/Idle Front 1.png" id="3_l6tlj"]
+[ext_resource type="Texture2D" uid="uid://dojf2yb3fe7re" path="res://Assets/Sprites/Faces/Mog Face Front0000.png" id="4_k2qp2"]
+[ext_resource type="Texture2D" uid="uid://g1kvatxl3kbp" path="res://Assets/Sprites/Cosmetics/Hats/Top Hat Front 1.png" id="5_eq078"]
+[ext_resource type="PackedScene" uid="uid://dibv7rv7oryku" path="res://Scenes/CustomizeSelection.tscn" id="6_dli16"]
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="7_0lof3"]
+[ext_resource type="Texture2D" uid="uid://rqpwyk4lqgf5" path="res://Assets/Sprites/UI/icon.png" id="8_k2qp2"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="8_w3q6i"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="9_l6tlj"]
+
+[sub_resource type="Animation" id="Animation_gqxqw"]
+resource_name = "moving"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-256, -256), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lptsj"]
+_data = {
+&"moving": SubResource("Animation_gqxqw")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eq078"]
+bg_color = Color(0.33, 0.676167, 1, 0.784314)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="LabelSettings" id="LabelSettings_lptsj"]
+font = ExtResource("8_w3q6i")
+font_size = 65
+outline_size = 30
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_425uk"]
+font = ExtResource("8_w3q6i")
+font_size = 40
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_po0xr"]
+color = Color(0, 0.247059, 0.435294, 1)
+thickness = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k2qp2"]
+
+[sub_resource type="Theme" id="Theme_po0xr"]
+Button/styles/focus = SubResource("StyleBoxEmpty_k2qp2")
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("8_w3q6i")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dli16"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0lof3"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a2cn7"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao0kj"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_kf0s6"]
+Button/styles/hover = SubResource("StyleBoxFlat_dli16")
+Button/styles/normal = SubResource("StyleBoxFlat_0lof3")
+Button/styles/pressed = SubResource("StyleBoxFlat_a2cn7")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("7_0lof3")
+Panel/styles/panel = SubResource("StyleBoxFlat_ao0kj")
+
+[sub_resource type="LabelSettings" id="LabelSettings_40nxw"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="Customization Menu" type="Control" node_paths=PackedStringArray("playerPreview", "playerPreviewFace", "playerPreviewHat", "characterSelector", "faceSelector", "hatSelector", "redSlider", "greenSlider", "blueSlider", "background", "scrollingBackground", "colorLabel")]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_eq078")
+playerPreview = NodePath("PlayerPreview")
+playerPreviewFace = NodePath("PlayerPreview/Face Pivot/Face")
+playerPreviewHat = NodePath("PlayerPreview/Hat Pivot/Hat")
+characterSelector = NodePath("Panel/Margin/Choice Separation/Character")
+faceSelector = NodePath("Panel/Margin/Choice Separation/Face")
+hatSelector = NodePath("Panel/Margin/Choice Separation/Hat")
+redSlider = NodePath("Panel/Margin/Choice Separation/Color Slider/RedSlider/HSlider")
+greenSlider = NodePath("Panel/Margin/Choice Separation/Color Slider/GreenSlider/HSlider")
+blueSlider = NodePath("Panel/Margin/Choice Separation/Color Slider/BlueSlider/HSlider")
+background = NodePath("BG")
+scrollingBackground = NodePath("BGTex")
+colorLabel = NodePath("Panel/Margin/Choice Separation/Color Slider/Label")
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.877616, 0.877616, 0.877616, 1)
+
+[node name="BGTex" type="TextureRect" parent="."]
+modulate = Color(0.67, 0.1943, 0.448007, 0.541176)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -256.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_w3q6i")
+stretch_mode = 1
+
+[node name="BGAnim" type="AnimationPlayer" parent="."]
+root_node = NodePath("../BGTex")
+libraries = {
+&"": SubResource("AnimationLibrary_lptsj")
+}
+autoplay = "moving"
+speed_scale = 0.15
+
+[node name="PlayerPreview" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -454.0
+offset_top = -32.0
+offset_right = -198.0
+offset_bottom = 224.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(2.83888, 2.83888)
+pivot_offset = Vector2(128, 128)
+texture = ExtResource("3_l6tlj")
+
+[node name="Pivot" type="Marker2D" parent="PlayerPreview"]
+position = Vector2(127, 65)
+
+[node name="Hat Pivot" type="Control" parent="PlayerPreview"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.352325
+offset_top = -61.2918
+offset_right = 0.647675
+offset_bottom = -60.2918
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Hat" type="TextureRect" parent="PlayerPreview/Hat Pivot"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.7026
+offset_top = -129.424
+offset_right = 32.2974
+offset_bottom = -65.4241
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.91379, 1.91379)
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("5_eq078")
+
+[node name="Face Pivot" type="Control" parent="PlayerPreview"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = 0.525574
+offset_right = 0.5
+offset_bottom = 1.52557
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Face" type="TextureRect" parent="PlayerPreview/Face Pivot"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.5
+offset_top = -95.0767
+offset_right = 31.5
+offset_bottom = -31.0767
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("4_k2qp2")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 75.0
+offset_top = -469.0
+offset_right = 1273.0
+offset_bottom = 357.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_eq078")
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 35
+theme_override_constants/margin_top = 35
+theme_override_constants/margin_right = 35
+theme_override_constants/margin_bottom = 35
+
+[node name="Choice Separation" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Hat" parent="Panel/Margin/Choice Separation" instance=ExtResource("6_dli16")]
+layout_mode = 2
+selectionType = 2
+
+[node name="Face" parent="Panel/Margin/Choice Separation" instance=ExtResource("6_dli16")]
+layout_mode = 2
+selectionType = 1
+
+[node name="Accessory" parent="Panel/Margin/Choice Separation" instance=ExtResource("6_dli16")]
+layout_mode = 2
+selectionType = 3
+
+[node name="Character" parent="Panel/Margin/Choice Separation" instance=ExtResource("6_dli16")]
+layout_mode = 2
+
+[node name="Color Slider" type="VBoxContainer" parent="Panel/Margin/Choice Separation"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/Margin/Choice Separation/Color Slider"]
+layout_mode = 2
+text = "Color"
+label_settings = SubResource("LabelSettings_lptsj")
+horizontal_alignment = 1
+
+[node name="RedSlider" type="HBoxContainer" parent="Panel/Margin/Choice Separation/Color Slider"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Panel/Margin/Choice Separation/Color Slider/RedSlider"]
+layout_mode = 2
+text = "R:"
+label_settings = SubResource("LabelSettings_425uk")
+
+[node name="HSlider" type="HSlider" parent="Panel/Margin/Choice Separation/Color Slider/RedSlider"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("8_k2qp2")
+theme_override_icons/grabber_highlight = ExtResource("8_k2qp2")
+theme_override_icons/grabber_disabled = ExtResource("8_k2qp2")
+theme_override_styles/slider = SubResource("StyleBoxLine_po0xr")
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="GreenSlider" type="HBoxContainer" parent="Panel/Margin/Choice Separation/Color Slider"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Panel/Margin/Choice Separation/Color Slider/GreenSlider"]
+layout_mode = 2
+text = "G:"
+label_settings = SubResource("LabelSettings_425uk")
+
+[node name="HSlider" type="HSlider" parent="Panel/Margin/Choice Separation/Color Slider/GreenSlider"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("8_k2qp2")
+theme_override_icons/grabber_highlight = ExtResource("8_k2qp2")
+theme_override_icons/grabber_disabled = ExtResource("8_k2qp2")
+theme_override_styles/slider = SubResource("StyleBoxLine_po0xr")
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="BlueSlider" type="HBoxContainer" parent="Panel/Margin/Choice Separation/Color Slider"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Panel/Margin/Choice Separation/Color Slider/BlueSlider"]
+layout_mode = 2
+text = "B:"
+label_settings = SubResource("LabelSettings_425uk")
+
+[node name="HSlider" type="HSlider" parent="Panel/Margin/Choice Separation/Color Slider/BlueSlider"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber = ExtResource("8_k2qp2")
+theme_override_icons/grabber_highlight = ExtResource("8_k2qp2")
+theme_override_icons/grabber_disabled = ExtResource("8_k2qp2")
+theme_override_styles/slider = SubResource("StyleBoxLine_po0xr")
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Panel2" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 19.0
+offset_top = -136.0
+offset_right = 423.0
+offset_bottom = -12.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_eq078")
+
+[node name="Back" type="Button" parent="Panel2"]
+custom_minimum_size = Vector2(170, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_po0xr")
+flat = true
+script = ExtResource("9_l6tlj")
+baseHeight = 80.0
+hoverHeight = 110.0
+baseFontSize = 64
+hoverFontSize = 80
+
+[node name="Label" type="Label" parent="Panel2/Back"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_kf0s6")
+theme_override_fonts/font = ExtResource("8_w3q6i")
+theme_override_font_sizes/font_size = 36
+text = "Back"
+label_settings = SubResource("LabelSettings_40nxw")
+horizontal_alignment = 1
+vertical_alignment = 1

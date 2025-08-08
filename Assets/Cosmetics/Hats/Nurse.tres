@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=8 format=3 uid="uid://v034jqe764jp"]
+
+[ext_resource type="Texture2D" uid="uid://ddybb1apdudbr" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Back0000.png" id="1_1u0fm"]
+[ext_resource type="Texture2D" uid="uid://cul5sqoo5h6jq" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Back0001.png" id="2_cppkt"]
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="3_hxii3"]
+[ext_resource type="Texture2D" uid="uid://bfvyb42pb2k7w" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Front0000.png" id="3_x160i"]
+[ext_resource type="Texture2D" uid="uid://ddbbcrd7eb01d" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Front0001.png" id="4_w42pa"]
+[ext_resource type="Texture2D" uid="uid://i5xjq3had7fl" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Side0000.png" id="5_a2ge2"]
+[ext_resource type="Texture2D" uid="uid://xu2c3mq0wgm1" path="res://Assets/Sprites/Cosmetics/Hats/Nurse Hat Side0001.png" id="6_wkjlt"]
+
+[resource]
+script = ExtResource("3_hxii3")
+CosmeticID = "nurse"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([ExtResource("3_x160i"), ExtResource("4_w42pa")])
+SideSprites = Array[Texture2D]([ExtResource("5_a2ge2"), ExtResource("6_wkjlt")])
+BackSprites = Array[Texture2D]([ExtResource("1_1u0fm"), ExtResource("2_cppkt")])
+metadata/_custom_type_script = ExtResource("3_hxii3")

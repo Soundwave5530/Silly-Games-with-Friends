@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://r16jxnowv0qi"]
+
+[ext_resource type="Texture2D" uid="uid://dy5lsp8ecyd55" path="res://Assets/Sprites/Speech Bubble/frame0000.png" id="1_anisj"]
+[ext_resource type="Script" uid="uid://b6bt6mrtm6ref" path="res://Scripts/SpeechBubble.cs" id="1_yg7mt"]
+[ext_resource type="Texture2D" uid="uid://clvs37ssimb4c" path="res://Assets/Sprites/Speech Bubble/frame0006.png" id="2_yg7mt"]
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="3_yhqh6"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_70hv0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_anisj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_yg7mt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_yg7mt"]
+properties/0/path = NodePath(".:SyncPosition")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="SpeechPivot" type="Node3D"]
+top_level = true
+script = ExtResource("1_yg7mt")
+
+[node name="Bubble" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(-0.521326, 0, -4.55758e-08, 0, 0.521326, 0, 4.55758e-08, 0, -0.521326, -1.11747, 0.798273, 0)
+visibility_range_end = 10.0
+visibility_range_end_margin = 2.0
+visibility_range_fade_mode = 1
+pixel_size = 0.025
+alpha_cut = 2
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_70hv0")
+autoplay = "default"
+frame_progress = 0.867665
+speed_scale = 0.75
+
+[node name="Label3D" type="Label3D" parent="Bubble"]
+transform = Transform3D(1.91818, 0, -8.19434e-08, 0, 1.91818, 0, 8.19434e-08, 0, 1.91818, 0.255846, 0, 0.00905589)
+visibility_range_end = 8.0
+visibility_range_end_margin = 3.0
+visibility_range_fade_mode = 1
+double_sided = false
+texture_filter = 0
+render_priority = 2
+outline_render_priority = 1
+text = "aaaaaaaaaaaaaaaaaaaa
+AAAAAAAAAAAAAAAAAAAA
+EEEEEEEEEEEEEEEEEEEE
+WWWWWWWWWWWWWWWWWWWW
+EEEEEEEEEEEEEEEEEEEE
+IIIIIIIIIIIIIIIIIIII"
+font = ExtResource("3_yhqh6")
+font_size = 25
+outline_size = 10
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_yg7mt")

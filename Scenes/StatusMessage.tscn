@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://bw623iq85l4bj"]
+
+[ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="1_is5b7"]
+[ext_resource type="Script" uid="uid://df81lu8xt7rjo" path="res://Scripts/StatusMessage.cs" id="1_mn8sv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mn8sv"]
+font_size = 50
+font_color = Color(1, 0.2, 0.2, 1)
+outline_size = 16
+outline_color = Color(0.313312, 0, 0.0130835, 1)
+
+[node name="StatusMessage" type="Control"]
+custom_minimum_size = Vector2(1000, 0)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_mn8sv")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_is5b7")
+text = "Error: Skill Issue"
+label_settings = SubResource("LabelSettings_mn8sv")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 1

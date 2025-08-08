@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=4 format=3 uid="uid://dcj0ia2imlaki"]
+
+[ext_resource type="Texture2D" uid="uid://comw4bkxnahfp" path="res://Assets/Sprites/Cosmetics/Hats/Shine Front0000.png" id="1_irb4e"]
+[ext_resource type="Texture2D" uid="uid://1bhiyjjlbuyv" path="res://Assets/Sprites/Cosmetics/Hats/Shine Front0001.png" id="2_0drm4"]
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="7_n88nf"]
+
+[resource]
+script = ExtResource("7_n88nf")
+CosmeticID = "shiny"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([ExtResource("1_irb4e"), ExtResource("2_0drm4")])
+SideSprites = Array[Texture2D]([])
+BackSprites = Array[Texture2D]([])
+metadata/_custom_type_script = ExtResource("7_n88nf")

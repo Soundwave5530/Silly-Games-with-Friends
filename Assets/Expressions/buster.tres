@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=3 format=3 uid="uid://chwkmegiaqadb"]
+
+[ext_resource type="Texture2D" uid="uid://cfcmeq3suf3i1" path="res://Assets/Sprites/Faces/Buster0000.png" id="1_w1ioc"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="2_sehcl"]
+
+[resource]
+script = ExtResource("2_sehcl")
+ExpressionId = "buster"
+FrontExpression = Array[Texture2D]([ExtResource("1_w1ioc")])
+SideExpression = Array[Texture2D]([ExtResource("1_w1ioc")])
+metadata/_custom_type_script = ExtResource("2_sehcl")

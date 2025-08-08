@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3 uid="uid://do0c1g65oiakv"]
+
+[sub_resource type="Gradient" id="Gradient_6e3aa"]
+offsets = PackedFloat32Array(0, 0.663212, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xubh0"]
+gradient = SubResource("Gradient_6e3aa")
+
+[sub_resource type="Curve" id="Curve_wf8m4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.785388, 0.853933), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_1hhqg"]
+curve = SubResource("Curve_wf8m4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_opg34"]
+particle_flag_align_y = true
+particle_flag_damping_as_friction = true
+emission_shape_offset = Vector3(0, 0.3, 0)
+emission_shape_scale = Vector3(0.5, 1, 0.5)
+emission_shape = 3
+emission_box_extents = Vector3(1, 0, 1)
+angle_min = -180.0
+angle_max = 180.0
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 4.0
+initial_velocity_max = 6.0
+scale_min = 0.05
+scale_max = 0.2
+scale_curve = SubResource("CurveTexture_1hhqg")
+color_ramp = SubResource("GradientTexture1D_xubh0")
+collision_mode = 1
+collision_friction = 0.37
+collision_bounce = 0.27
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c3q3t"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_g4xgm"]
+material = SubResource("StandardMaterial3D_c3q3t")
+
+[node name="HittingGroundParticles" type="GPUParticles3D"]
+emitting = false
+amount = 50
+lifetime = 3.01
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+use_fixed_seed = true
+seed = 82412342
+fixed_fps = 0
+visibility_aabb = AABB(-6.20303, -1.75386, -4.2638, 12.4218, 4.4077, 9.87063)
+process_material = SubResource("ParticleProcessMaterial_opg34")
+draw_pass_1 = SubResource("BoxMesh_g4xgm")

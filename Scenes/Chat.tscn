@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://2ddypgjx166b"]
+
+[ext_resource type="Script" uid="uid://cnef4ng6b6efo" path="res://Scripts/ChatManager.cs" id="1_yc4ao"]
+
+[node name="ChatLayer" type="CanvasLayer" node_paths=PackedStringArray("ChatInput", "ChatLog", "HideTimer", "Chatbox")]
+script = ExtResource("1_yc4ao")
+ChatInput = NodePath("ChatBox/MarginContainer/ChatBoxContainer/LineEdit")
+ChatLog = NodePath("ChatBox/MarginContainer/ChatBoxContainer/ChatLog")
+HideTimer = NodePath("HideTimer")
+Chatbox = NodePath("ChatBox")
+
+[node name="HideTimer" type="Timer" parent="."]
+wait_time = 6.0
+
+[node name="ChatBox" type="Panel" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -304.0
+offset_right = 584.0
+offset_bottom = -30.0
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="ChatBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 15
+
+[node name="ChatBoxContainer" type="VBoxContainer" parent="ChatBox/MarginContainer"]
+layout_mode = 2
+
+[node name="ChatLog" type="RichTextLabel" parent="ChatBox/MarginContainer/ChatBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_following = true
+vertical_alignment = 2
+
+[node name="LineEdit" type="LineEdit" parent="ChatBox/MarginContainer/ChatBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+placeholder_text = "Type a message here..."
+caret_blink = true

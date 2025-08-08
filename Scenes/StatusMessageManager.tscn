@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://nkyws0eyrnl"]
+
+[ext_resource type="Script" uid="uid://dtqod2pjj8ks3" path="res://Scripts/StatusMessageManager.cs" id="1_75ikd"]
+[ext_resource type="PackedScene" uid="uid://bw623iq85l4bj" path="res://Scenes/StatusMessage.tscn" id="2_xr3ld"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = 3
+script = ExtResource("1_75ikd")
+StatusMessageScene = ExtResource("2_xr3ld")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+z_index = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_bottom = 50
+
+[node name="MessageBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 2

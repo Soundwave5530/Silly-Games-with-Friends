@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://yhsyvcsdo8ti"]
+
+[ext_resource type="Texture2D" uid="uid://ofnvu1inevqf" path="res://Assets/Sprites/Faces/Happy Face Front0000.png" id="1_mq1ie"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="1_x0rfw"]
+[ext_resource type="Texture2D" uid="uid://kiuk3opi66ul" path="res://Assets/Sprites/Faces/Happy Face Front0001.png" id="2_yay1w"]
+[ext_resource type="Texture2D" uid="uid://b266p53hyr3oq" path="res://Assets/Sprites/Faces/Happy Face Side0000.png" id="3_bo0fk"]
+[ext_resource type="Texture2D" uid="uid://nhdce8hbqbo8" path="res://Assets/Sprites/Faces/Happy Face Side0001.png" id="4_6q6m5"]
+
+[resource]
+script = ExtResource("1_x0rfw")
+ExpressionId = "happy"
+FrontExpression = Array[Texture2D]([ExtResource("1_mq1ie"), ExtResource("2_yay1w")])
+SideExpression = Array[Texture2D]([ExtResource("3_bo0fk"), ExtResource("4_6q6m5")])
+metadata/_custom_type_script = ExtResource("1_x0rfw")

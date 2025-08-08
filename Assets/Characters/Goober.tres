@@ -1,0 +1,201 @@
+[gd_resource type="Resource" script_class="CharacterTypePreset" load_steps=99 format=3 uid="uid://cxwxj03pag362"]
+
+[ext_resource type="Script" uid="uid://byr8rdvtmjs52" path="res://Scripts/CharacterTypePreset.cs" id="1_duayk"]
+[ext_resource type="Texture2D" uid="uid://3qolo46u4vsx" path="res://Assets/Sprites/goober/CrouchIdle Back 1.png" id="1_ya8nd"]
+[ext_resource type="Texture2D" uid="uid://u6rn7eyaq2jg" path="res://Assets/Sprites/goober/CrouchIdle Back 2.png" id="2_3jo0o"]
+[ext_resource type="Texture2D" uid="uid://bb0ni2jaugmiy" path="res://Assets/Sprites/goober/CrouchWalk Back 1.png" id="3_lq0gg"]
+[ext_resource type="Texture2D" uid="uid://bgqevlj3slnn7" path="res://Assets/Sprites/goober/CrouchWalk Back 2.png" id="4_4lv70"]
+[ext_resource type="Texture2D" uid="uid://c6r30f3yqjh6s" path="res://Assets/Sprites/goober/CrouchWalk Back 3.png" id="5_0anmd"]
+[ext_resource type="Texture2D" uid="uid://8s0hksm1oca3" path="res://Assets/Sprites/goober/CrouchWalk Back 4.png" id="6_qaq6y"]
+[ext_resource type="Texture2D" uid="uid://bcoamxuhuds8p" path="res://Assets/Sprites/goober/SlideFaceFirst Back 1.png" id="7_jtfew"]
+[ext_resource type="Texture2D" uid="uid://bu7l0trv3w7gi" path="res://Assets/Sprites/goober/SlideFaceFirst Back 2.png" id="8_vtjj6"]
+[ext_resource type="Texture2D" uid="uid://ko2ei04xf4j4" path="res://Assets/Sprites/goober/Swim Back 1.png" id="9_6u8ni"]
+[ext_resource type="Texture2D" uid="uid://bywa380klf64t" path="res://Assets/Sprites/goober/Swim Back 2.png" id="10_jy68l"]
+[ext_resource type="Texture2D" uid="uid://df70vmlsa7kn6" path="res://Assets/Sprites/goober/Swim Back 3.png" id="11_rvsxu"]
+[ext_resource type="Texture2D" uid="uid://ct6xx1ar05k7d" path="res://Assets/Sprites/goober/Swim Back 4.png" id="12_7bvcj"]
+[ext_resource type="Texture2D" uid="uid://c5d0kwnywy2s5" path="res://Assets/Sprites/goober/SwimIdle Back 1.png" id="13_tsqaw"]
+[ext_resource type="Texture2D" uid="uid://cc5y5cygk6x74" path="res://Assets/Sprites/goober/SwimIdle Back 2.png" id="14_hi238"]
+[ext_resource type="Texture2D" uid="uid://brji428g2i06v" path="res://Assets/Sprites/goober/Walk Back 1.png" id="15_vd6u3"]
+[ext_resource type="Texture2D" uid="uid://csu15qywkmaxg" path="res://Assets/Sprites/goober/Walk Back 2.png" id="16_xes8u"]
+[ext_resource type="Texture2D" uid="uid://drjvpfg5qepqc" path="res://Assets/Sprites/goober/Walk Back 3.png" id="17_bhdi8"]
+[ext_resource type="Texture2D" uid="uid://b82tsfprj37ts" path="res://Assets/Sprites/goober/Walk Back 4.png" id="18_dbctb"]
+[ext_resource type="Texture2D" uid="uid://dkdmgue6qm26j" path="res://Assets/Sprites/goober/Wave Back 1.png" id="19_0iva2"]
+[ext_resource type="Texture2D" uid="uid://dngkx27bewtl8" path="res://Assets/Sprites/goober/Wave Back 2.png" id="20_cfwlp"]
+[ext_resource type="Texture2D" uid="uid://bcemhs1co7t3v" path="res://Assets/Sprites/goober/Wave Back 3.png" id="21_qg5rc"]
+[ext_resource type="Texture2D" uid="uid://cdptux2r6j8m2" path="res://Assets/Sprites/goober/Wave Back 4.png" id="22_60xkw"]
+[ext_resource type="Texture2D" uid="uid://i1g7n6tp865m" path="res://Assets/Sprites/goober/Wave Back 5.png" id="23_5w47p"]
+[ext_resource type="Texture2D" uid="uid://bb5mjqvvttg3e" path="res://Assets/Sprites/goober/Wave Back 6.png" id="24_wux1n"]
+[ext_resource type="Texture2D" uid="uid://c2dtumqttcym3" path="res://Assets/Sprites/goober/Wave Back 7.png" id="25_k1vc5"]
+[ext_resource type="Texture2D" uid="uid://dk7wok2dnnoon" path="res://Assets/Sprites/goober/Wave Back 8.png" id="26_0etp3"]
+[ext_resource type="Texture2D" uid="uid://bvwhm0dmu3v5p" path="res://Assets/Sprites/goober/Wave Back 9.png" id="27_rfots"]
+[ext_resource type="Texture2D" uid="uid://b2pl6kvkrkhf6" path="res://Assets/Sprites/goober/Wave Back 10.png" id="28_co3ps"]
+[ext_resource type="Texture2D" uid="uid://ccbjsmx7xwy57" path="res://Assets/Sprites/goober/Wave Back 11.png" id="29_tsy1g"]
+[ext_resource type="Texture2D" uid="uid://chuuhm5o26syc" path="res://Assets/Sprites/goober/CrouchIdle Front 1.png" id="30_lk03k"]
+[ext_resource type="Texture2D" uid="uid://clqc1yr7pokvc" path="res://Assets/Sprites/goober/CrouchIdle Front 2.png" id="31_cyynt"]
+[ext_resource type="Texture2D" uid="uid://dhnvh5smuxed7" path="res://Assets/Sprites/goober/CrouchWalk Front 1.png" id="32_5110n"]
+[ext_resource type="Texture2D" uid="uid://csmsd1qedla4d" path="res://Assets/Sprites/goober/CrouchWalk Front 2.png" id="33_tohqj"]
+[ext_resource type="Texture2D" uid="uid://c2d5m2efgp7ri" path="res://Assets/Sprites/goober/CrouchWalk Front 3.png" id="34_lphn1"]
+[ext_resource type="Texture2D" uid="uid://beknmdk86lxl4" path="res://Assets/Sprites/goober/CrouchWalk Front 4.png" id="35_ett6k"]
+[ext_resource type="Texture2D" uid="uid://bn00ohg2s4hix" path="res://Assets/Sprites/goober/Fall Front 1.png" id="36_qb26l"]
+[ext_resource type="Texture2D" uid="uid://7l80n8aibgjy" path="res://Assets/Sprites/goober/Fall Front 2.png" id="37_vnimb"]
+[ext_resource type="Texture2D" uid="uid://c0grm10cadrqm" path="res://Assets/Sprites/goober/Idle Front 1.png" id="38_wwi43"]
+[ext_resource type="Texture2D" uid="uid://dujs55s10n87t" path="res://Assets/Sprites/goober/Idle Front 2.png" id="39_dh6fs"]
+[ext_resource type="Texture2D" uid="uid://qg5gpgrlh74a" path="res://Assets/Sprites/goober/Jump Front 1.png" id="40_0arme"]
+[ext_resource type="Texture2D" uid="uid://bfkxvdlye30kv" path="res://Assets/Sprites/goober/SlideFaceFirst Front 1.png" id="41_gh1gc"]
+[ext_resource type="Texture2D" uid="uid://pk1iicxrs4jm" path="res://Assets/Sprites/goober/SlideFaceFirst Front 2.png" id="42_2wkfl"]
+[ext_resource type="Texture2D" uid="uid://cpx5p8rx3k3e" path="res://Assets/Sprites/goober/Swim Front 1.png" id="43_fs4f5"]
+[ext_resource type="Texture2D" uid="uid://b8mki03ao4yyx" path="res://Assets/Sprites/goober/Swim Front 2.png" id="44_mmmuc"]
+[ext_resource type="Texture2D" uid="uid://c7ilfn5ysrcm" path="res://Assets/Sprites/goober/Swim Front 3.png" id="45_cn61l"]
+[ext_resource type="Texture2D" uid="uid://c16n0gjtocys6" path="res://Assets/Sprites/goober/Swim Front 4.png" id="46_cifln"]
+[ext_resource type="Texture2D" uid="uid://x0cyt0tlwv7t" path="res://Assets/Sprites/goober/SwimIdle Front 1.png" id="47_erlgh"]
+[ext_resource type="Texture2D" uid="uid://bj0rixt3t7pl2" path="res://Assets/Sprites/goober/SwimIdle Front 2.png" id="48_q8llp"]
+[ext_resource type="Texture2D" uid="uid://n02o6igpflua" path="res://Assets/Sprites/goober/Walk Front 1.png" id="49_r7ibv"]
+[ext_resource type="Texture2D" uid="uid://c7qxi7tcsj82d" path="res://Assets/Sprites/goober/Walk Front 2.png" id="50_ajil4"]
+[ext_resource type="Texture2D" uid="uid://d0xc4wx15bwya" path="res://Assets/Sprites/goober/Walk Front 3.png" id="51_xuv8s"]
+[ext_resource type="Texture2D" uid="uid://cgeajoabqfsia" path="res://Assets/Sprites/goober/Walk Front 4.png" id="52_heb5i"]
+[ext_resource type="Texture2D" uid="uid://7gx4pqcv5w2n" path="res://Assets/Sprites/goober/Wave Front 1.png" id="53_uaqes"]
+[ext_resource type="Texture2D" uid="uid://be12e45jouvtp" path="res://Assets/Sprites/goober/Wave Front 2.png" id="54_t4yru"]
+[ext_resource type="Texture2D" uid="uid://bnuhxpidfprk8" path="res://Assets/Sprites/goober/Wave Front 3.png" id="55_cwl73"]
+[ext_resource type="Texture2D" uid="uid://mxnvs5chgelh" path="res://Assets/Sprites/goober/Wave Front 4.png" id="56_fx4d5"]
+[ext_resource type="Texture2D" uid="uid://bxwwfujpcjhjw" path="res://Assets/Sprites/goober/Wave Front 5.png" id="57_ml2mh"]
+[ext_resource type="Texture2D" uid="uid://cvf8xpbo8xbhf" path="res://Assets/Sprites/goober/Wave Front 6.png" id="58_3rgpa"]
+[ext_resource type="Texture2D" uid="uid://rhq41h0pm5lq" path="res://Assets/Sprites/goober/Wave Front 7.png" id="59_2ta81"]
+[ext_resource type="Texture2D" uid="uid://cie057fgr8yk3" path="res://Assets/Sprites/goober/Wave Front 8.png" id="60_a5kcl"]
+[ext_resource type="Texture2D" uid="uid://ddqn38327rvsq" path="res://Assets/Sprites/goober/Wave Front 9.png" id="61_o0nrb"]
+[ext_resource type="Texture2D" uid="uid://be4dtps2850tr" path="res://Assets/Sprites/goober/Wave Front 10.png" id="62_q7p02"]
+[ext_resource type="Texture2D" uid="uid://2b0mlvgm3555" path="res://Assets/Sprites/goober/Wave Front 11.png" id="63_kytyf"]
+[ext_resource type="Texture2D" uid="uid://bojictcl8jvt6" path="res://Assets/Sprites/goober/CrouchIdle Side 1.png" id="64_ue1ij"]
+[ext_resource type="Texture2D" uid="uid://dsuxj5fmkppx5" path="res://Assets/Sprites/goober/CrouchIdle Side 2.png" id="65_hsbbt"]
+[ext_resource type="Texture2D" uid="uid://b1hs1xwr8tb37" path="res://Assets/Sprites/goober/CrouchWalk Side 1.png" id="66_a6cqj"]
+[ext_resource type="Texture2D" uid="uid://csfmrfq6cu71q" path="res://Assets/Sprites/goober/CrouchWalk Side 2.png" id="67_aq4dl"]
+[ext_resource type="Texture2D" uid="uid://13yu2otj4nyk" path="res://Assets/Sprites/goober/CrouchWalk Side 3.png" id="68_huxkj"]
+[ext_resource type="Texture2D" uid="uid://c3vck1us4foet" path="res://Assets/Sprites/goober/CrouchWalk Side 4.png" id="69_6ml8h"]
+[ext_resource type="Texture2D" uid="uid://ce1waaliwrr0f" path="res://Assets/Sprites/goober/Fall Side 1.png" id="70_pxbj6"]
+[ext_resource type="Texture2D" uid="uid://ea65bekonl0q" path="res://Assets/Sprites/goober/Fall Side 2.png" id="71_5i2qn"]
+[ext_resource type="Texture2D" uid="uid://dwrcmeesavxuv" path="res://Assets/Sprites/goober/Idle Side 1.png" id="72_tibv6"]
+[ext_resource type="Texture2D" uid="uid://1fp5bqbta3v0" path="res://Assets/Sprites/goober/Idle Side 2.png" id="73_6ew84"]
+[ext_resource type="Texture2D" uid="uid://coxgg5lx6lxsu" path="res://Assets/Sprites/goober/Jump Side 1.png" id="74_4li1j"]
+[ext_resource type="Texture2D" uid="uid://po2eaxxwsrkg" path="res://Assets/Sprites/goober/SlideFaceFirst Side 1.png" id="75_i5sb0"]
+[ext_resource type="Texture2D" uid="uid://bnlmt3yorlgq2" path="res://Assets/Sprites/goober/SlideFaceFirst Side 2.png" id="76_0l82n"]
+[ext_resource type="Texture2D" uid="uid://bll3dhkvxyh5n" path="res://Assets/Sprites/goober/SwimIdle Side 1.png" id="77_fomj4"]
+[ext_resource type="Texture2D" uid="uid://ce2yaal63lwmm" path="res://Assets/Sprites/goober/SwimIdle Side 2.png" id="78_thnc7"]
+[ext_resource type="Texture2D" uid="uid://js67b8fyqffm" path="res://Assets/Sprites/goober/Swim Side 1.png" id="79_6xuao"]
+[ext_resource type="Texture2D" uid="uid://dmmssuute5763" path="res://Assets/Sprites/goober/Swim Side 2.png" id="80_prlrt"]
+[ext_resource type="Texture2D" uid="uid://d15a2v0h7njud" path="res://Assets/Sprites/goober/Swim Side 3.png" id="81_j2iq7"]
+[ext_resource type="Texture2D" uid="uid://cvobpq78jduim" path="res://Assets/Sprites/goober/Swim Side 4.png" id="82_738kn"]
+[ext_resource type="Texture2D" uid="uid://bg6ro6tcpbysi" path="res://Assets/Sprites/goober/Walk Side 1.png" id="83_kuil1"]
+[ext_resource type="Texture2D" uid="uid://c31tsgywotajs" path="res://Assets/Sprites/goober/Walk Side 2.png" id="84_p5s3x"]
+[ext_resource type="Texture2D" uid="uid://d35cghnb4ho5n" path="res://Assets/Sprites/goober/Walk Side 3.png" id="85_vuuy6"]
+[ext_resource type="Texture2D" uid="uid://doipctg8u45uq" path="res://Assets/Sprites/goober/Walk Side 4.png" id="86_dvrnr"]
+[ext_resource type="Texture2D" uid="uid://dbah2ym3qi128" path="res://Assets/Sprites/goober/Wave Side 1.png" id="87_4f1wm"]
+[ext_resource type="Texture2D" uid="uid://da0b3w5j4rx5j" path="res://Assets/Sprites/goober/Wave Side 2.png" id="88_swok1"]
+[ext_resource type="Texture2D" uid="uid://xkbqpv4umnh0" path="res://Assets/Sprites/goober/Wave Side 3.png" id="89_mo8qx"]
+[ext_resource type="Texture2D" uid="uid://c2kmp2ooqdljj" path="res://Assets/Sprites/goober/Wave Side 4.png" id="90_41c5x"]
+[ext_resource type="Texture2D" uid="uid://dx411l0ar2gr7" path="res://Assets/Sprites/goober/Wave Side 5.png" id="91_puc33"]
+[ext_resource type="Texture2D" uid="uid://cyfcdf0jm13on" path="res://Assets/Sprites/goober/Wave Side 6.png" id="92_vt7cb"]
+[ext_resource type="Texture2D" uid="uid://p5mqsdc5isnl" path="res://Assets/Sprites/goober/Wave Side 7.png" id="93_le3vh"]
+[ext_resource type="Texture2D" uid="uid://b0svcj4c7x3ng" path="res://Assets/Sprites/goober/Wave Side 8.png" id="94_s4t70"]
+[ext_resource type="Texture2D" uid="uid://dut6wa4g0bvut" path="res://Assets/Sprites/goober/Wave Side 9.png" id="95_mko40"]
+[ext_resource type="Texture2D" uid="uid://ds5sejj3ybghf" path="res://Assets/Sprites/goober/Wave Side 10.png" id="96_o7qgm"]
+[ext_resource type="Texture2D" uid="uid://bn0hn5t8jyq5" path="res://Assets/Sprites/goober/Wave Side 11.png" id="97_uxlpx"]
+
+[resource]
+script = ExtResource("1_duayk")
+Name = "goober"
+Animations = Dictionary[int, Dictionary]({
+0: Dictionary[int, Array]({
+0: Array[Texture2D]([ExtResource("38_wwi43"), ExtResource("39_dh6fs")]),
+1: Array[Texture2D]([ExtResource("49_r7ibv"), ExtResource("50_ajil4"), ExtResource("51_xuv8s"), ExtResource("52_heb5i")]),
+2: Array[Texture2D]([ExtResource("40_0arme")]),
+3: Array[Texture2D]([ExtResource("36_qb26l"), ExtResource("37_vnimb")]),
+4: Array[Texture2D]([ExtResource("30_lk03k"), ExtResource("31_cyynt")]),
+5: Array[Texture2D]([ExtResource("32_5110n"), ExtResource("33_tohqj"), ExtResource("34_lphn1"), ExtResource("35_ett6k")]),
+6: Array[Texture2D]([ExtResource("41_gh1gc"), ExtResource("42_2wkfl")]),
+8: Array[Texture2D]([ExtResource("53_uaqes"), ExtResource("54_t4yru"), ExtResource("55_cwl73"), ExtResource("56_fx4d5"), ExtResource("57_ml2mh"), ExtResource("58_3rgpa"), ExtResource("59_2ta81"), ExtResource("60_a5kcl"), ExtResource("61_o0nrb"), ExtResource("62_q7p02"), ExtResource("63_kytyf")]),
+9: Array[Texture2D]([ExtResource("47_erlgh"), ExtResource("48_q8llp")]),
+10: Array[Texture2D]([ExtResource("43_fs4f5"), ExtResource("44_mmmuc"), ExtResource("45_cn61l"), ExtResource("46_cifln")])
+}),
+1: Dictionary[int, Array]({
+1: Array[Texture2D]([ExtResource("15_vd6u3"), ExtResource("16_xes8u"), ExtResource("17_bhdi8"), ExtResource("18_dbctb")]),
+4: Array[Texture2D]([ExtResource("1_ya8nd"), ExtResource("2_3jo0o")]),
+5: Array[Texture2D]([ExtResource("3_lq0gg"), ExtResource("4_4lv70"), ExtResource("5_0anmd"), ExtResource("6_qaq6y")]),
+6: Array[Texture2D]([ExtResource("7_jtfew"), ExtResource("8_vtjj6")]),
+8: Array[Texture2D]([ExtResource("19_0iva2"), ExtResource("20_cfwlp"), ExtResource("21_qg5rc"), ExtResource("22_60xkw"), ExtResource("23_5w47p"), ExtResource("24_wux1n"), ExtResource("25_k1vc5"), ExtResource("26_0etp3"), ExtResource("27_rfots"), ExtResource("28_co3ps"), ExtResource("29_tsy1g")]),
+9: Array[Texture2D]([ExtResource("13_tsqaw"), ExtResource("14_hi238")]),
+10: Array[Texture2D]([ExtResource("9_6u8ni"), ExtResource("10_jy68l"), ExtResource("11_rvsxu"), ExtResource("12_7bvcj")])
+}),
+2: Dictionary[int, Array]({
+0: Array[Texture2D]([ExtResource("72_tibv6"), ExtResource("73_6ew84")]),
+1: Array[Texture2D]([ExtResource("83_kuil1"), ExtResource("84_p5s3x"), ExtResource("85_vuuy6"), ExtResource("86_dvrnr")]),
+2: Array[Texture2D]([ExtResource("74_4li1j")]),
+3: Array[Texture2D]([ExtResource("70_pxbj6"), ExtResource("71_5i2qn")]),
+4: Array[Texture2D]([ExtResource("64_ue1ij"), ExtResource("65_hsbbt")]),
+5: Array[Texture2D]([ExtResource("66_a6cqj"), ExtResource("67_aq4dl"), ExtResource("68_huxkj"), ExtResource("69_6ml8h")]),
+6: Array[Texture2D]([ExtResource("75_i5sb0"), ExtResource("76_0l82n")]),
+8: Array[Texture2D]([ExtResource("87_4f1wm"), ExtResource("88_swok1"), ExtResource("89_mo8qx"), ExtResource("90_41c5x"), ExtResource("91_puc33"), ExtResource("92_vt7cb"), ExtResource("93_le3vh"), ExtResource("94_s4t70"), ExtResource("95_mko40"), ExtResource("96_o7qgm"), ExtResource("97_uxlpx")]),
+9: Array[Texture2D]([ExtResource("77_fomj4"), ExtResource("78_thnc7")]),
+10: Array[Texture2D]([ExtResource("79_6xuao"), ExtResource("80_prlrt"), ExtResource("81_j2iq7"), ExtResource("82_738kn")])
+})
+})
+HatOffsets = Dictionary[int, Dictionary]({
+0: Dictionary[int, Array]({
+0: Array[Vector2]([Vector2(-0.00450865, 0.456958), Vector2(-3.70373e-05, 0.458651)]),
+1: Array[Vector2]([Vector2(-0.0231214, 0.49635), Vector2(0.0343061, 0.298938), Vector2(0.0256143, 0.49353), Vector2(-0.0267295, 0.298938)]),
+2: Array[Vector2]([Vector2(-0.000630458, 0.479153)]),
+3: Array[Vector2]([Vector2(-0.00474107, 0.450423), Vector2(0.00217889, 0.469228)]),
+4: Array[Vector2]([Vector2(-0.00800314, 0), Vector2(-0.0253882, 0.00282013)]),
+5: Array[Vector2]([Vector2(-0.00619867, 0.0451226), Vector2(-0.0241384, 0.0197411), Vector2(-0.00078724, 0.0620436), Vector2(0.0012464, 0.00846039)]),
+6: Array[Vector2]([Vector2(-0.0138732, -0.203052), Vector2(-0.0203013, -0.194592)]),
+8: Array[Vector2]([Vector2(0.0469685, 0.334041), Vector2(0.0120534, 0.238323), Vector2(-0.0115428, 0.149544), Vector2(0.0249723, 0.361149), Vector2(-0.036438, 0.482249), Vector2(-0.0819903, 0.450763), Vector2(-0.111753, 0.420965), Vector2(-0.13132, 0.250995), Vector2(-0.0756959, 0.16357), Vector2(0.0327136, 0.27532), Vector2(0.0360607, 0.381726)]),
+9: Array[Vector2]([Vector2(0.0012458, 0.479429), Vector2(0.000229042, 0.431486)]),
+10: Array[Vector2]([Vector2(0.0107246, 0.279197), Vector2(-0.00439502, 0.276376), Vector2(0.00711697, 0.273556), Vector2(-0.00157437, 0.273556)]),
+11: Array[Vector2]([Vector2(-0.00450865, 0.269989), Vector2(-0.00450865, 0.264544)]),
+12: Array[Vector2]([Vector2(-0.00450865, 0.320816), Vector2(-0.00450865, 0.219163), Vector2(-0.00450865, 0.324446), Vector2(-0.00450865, 0.215532)])
+}),
+2: Dictionary[int, Array]({
+0: Array[Vector2]([Vector2(-0.014, 0.468), Vector2(-0.0111794, 0.46518)]),
+1: Array[Vector2]([Vector2(-0.0252821, 0.499022), Vector2(-0.0422055, 0.276228), Vector2(-0.0281026, 0.496202), Vector2(-0.0506669, 0.284689)]),
+2: Array[Vector2]([Vector2(-0.00835858, 0.46236)]),
+3: Array[Vector2]([Vector2(-0.173568, 0.426526), Vector2(-0.116469, 0.421125)]),
+4: Array[Vector2]([Vector2(0.115643, 0.0253816), Vector2(0.152413, 0.0477947)]),
+5: Array[Vector2]([Vector2(0.138207, 0.0564034), Vector2(0.146669, 0.0141009), Vector2(0.135387, 0.0620437), Vector2(0.143849, 0.016921)]),
+6: Array[Vector2]([Vector2(0.314724, -0.173805), Vector2(0.318562, -0.173805)]),
+8: Array[Vector2]([Vector2(0.103671, 0.359511), Vector2(0.142045, 0.232897), Vector2(0.231078, 0.118988), Vector2(0.0977577, 0.303825), Vector2(-0.0958699, 0.474616), Vector2(-0.199477, 0.428574), Vector2(-0.203315, 0.39788), Vector2(-0.116146, 0.236734), Vector2(-0.0843571, 0.132259), Vector2(0.00773873, 0.278939), Vector2(0.0192507, 0.405553)]),
+9: Array[Vector2]([Vector2(-0.015285, 0.463105), Vector2(-0.0191222, 0.401716)]),
+10: Array[Vector2]([Vector2(0.276352, 0.282775), Vector2(0.295539, 0.286612), Vector2(0.291701, 0.286612), Vector2(0.295539, 0.294286)]),
+11: Array[Vector2]([Vector2(0.126206, 0.271804), Vector2(0.137099, 0.279065)]),
+12: Array[Vector2]([Vector2(0.128021, 0.335337), Vector2(0.187932, 0.219163), Vector2(0.133468, 0.331707), Vector2(0.182486, 0.220978)])
+})
+})
+FaceOffsets = Dictionary[int, Dictionary]({
+0: Dictionary[int, Array]({
+0: Array[Vector2]([Vector2(0.00357777, 0.333945), Vector2(0.00851111, 0.324671)]),
+1: Array[Vector2]([Vector2(-0.0292138, 0.35872), Vector2(0.0416395, 0.168328), Vector2(0.0249518, 0.356507), Vector2(-0.0345323, 0.164748)]),
+2: Array[Vector2]([Vector2(-0.00523101, 0.326581)]),
+3: Array[Vector2]([Vector2(0.00914673, 0.330681), Vector2(0.01579, 0.330912)]),
+4: Array[Vector2]([Vector2(-0.000216543, -0.134587), Vector2(-0.00479249, -0.122386)]),
+5: Array[Vector2]([Vector2(0.0196126, -0.0720572), Vector2(-0.0017418, -0.11171), Vector2(-0.00936833, -0.0751075), Vector2(0.00588491, -0.10866)]),
+6: Array[Vector2]([Vector2(0.00333293, -0.335873), Vector2(-0.000216543, -0.325226)]),
+8: Array[Vector2]([Vector2(0.0465933, 0.196073), Vector2(0.029334, 0.123238), Vector2(0.00234828, 0.06182), Vector2(0.0272015, 0.234209), Vector2(-0.0218749, 0.349958), Vector2(-0.0745681, 0.333042), Vector2(-0.112485, 0.28815), Vector2(-0.125999, 0.146118), Vector2(-0.0606245, 0.0573431), Vector2(0.0204431, 0.156189), Vector2(0.0262241, 0.250469)]),
+9: Array[Vector2]([Vector2(0.0100511, 0.315535), Vector2(0.0179043, 0.276275)]),
+10: Array[Vector2]([Vector2(0.0204278, 0.114945), Vector2(0.0181102, 0.112628), Vector2(0.0134752, 0.116104), Vector2(0.00883994, 0.110311)]),
+11: Array[Vector2]([Vector2(-5.33769e-05, 0.139715), Vector2(-0.00549974, 0.132455)]),
+12: Array[Vector2]([Vector2(-0.0109461, 0.194172), Vector2(0.00176232, 0.0997804), Vector2(0.00539322, 0.205064), Vector2(0.0108395, 0.0925195)])
+}),
+2: Dictionary[int, Array]({
+0: Array[Vector2]([Vector2(0.134185, 0.317923), Vector2(0.140679, 0.313593)]),
+1: Array[Vector2]([Vector2(0.114701, 0.341733), Vector2(0.108206, 0.142591), Vector2(0.114701, 0.343898), Vector2(0.108206, 0.153414)]),
+2: Array[Vector2]([Vector2(0.0822274, 0.292439)]),
+3: Array[Vector2]([Vector2(-0.0774993, 0.304985), Vector2(-0.00495756, 0.297144)]),
+4: Array[Vector2]([Vector2(0.244104, -0.12667), Vector2(0.241124, -0.113678)]),
+5: Array[Vector2]([Vector2(0.244104, -0.0741482), Vector2(0.245649, -0.12358), Vector2(0.248739, -0.0664244), Vector2(0.242559, -0.115856)]),
+6: Array[Vector2]([Vector2(0.45246, -0.31603), Vector2(0.456752, -0.32929)]),
+8: Array[Vector2]([Vector2(0.213219, 0.246065), Vector2(0.223224, 0.106007), Vector2(0.355797, 0.0184709), Vector2(0.210718, 0.196044), Vector2(0.0281174, 0.351109), Vector2(-0.0619321, 0.346106), Vector2(-0.0594308, 0.343605), Vector2(-0.00690194, 0.151026), Vector2(0.0556325, 0.0384792), Vector2(0.0981557, 0.166032), Vector2(0.133175, 0.278579)]),
+9: Array[Vector2]([Vector2(0.133724, 0.328264), Vector2(0.144636, 0.279165)]),
+10: Array[Vector2]([Vector2(0.437325, 0.115978), Vector2(0.454329, 0.110311), Vector2(0.440726, 0.111444), Vector2(0.454003, 0.123322)]),
+11: Array[Vector2]([Vector2(0.244212, 0.139293), Vector2(0.244212, 0.15563)]),
+12: Array[Vector2]([Vector2(0.244212, 0.20101), Vector2(0.293229, 0.0920967), Vector2(0.23695, 0.215532), Vector2(0.29323, 0.0812054)])
+})
+})
+TieOffsets = Dictionary[int, Dictionary]({})
+metadata/_custom_type_script = ExtResource("1_duayk")

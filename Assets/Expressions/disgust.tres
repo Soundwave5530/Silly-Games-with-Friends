@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://0rcd6qbbfhhp"]
+
+[ext_resource type="Texture2D" uid="uid://bqv45gnwbur50" path="res://Assets/Sprites/Faces/Disgust Face Front0000.png" id="1_j6gqu"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="1_lhnxa"]
+[ext_resource type="Texture2D" uid="uid://odnqbv27r2w7" path="res://Assets/Sprites/Faces/Disgust Face Front0001.png" id="2_pt48h"]
+[ext_resource type="Texture2D" uid="uid://pyo8qkrxv424" path="res://Assets/Sprites/Faces/Disgust Face Side0000.png" id="3_7s311"]
+[ext_resource type="Texture2D" uid="uid://by672lpc5tgcj" path="res://Assets/Sprites/Faces/Disgust Face Side0001.png" id="4_y3034"]
+
+[resource]
+script = ExtResource("1_lhnxa")
+ExpressionId = "disgust"
+FrontExpression = Array[Texture2D]([ExtResource("1_j6gqu"), ExtResource("2_pt48h")])
+SideExpression = Array[Texture2D]([ExtResource("3_7s311"), ExtResource("4_y3034")])
+metadata/_custom_type_script = ExtResource("1_lhnxa")

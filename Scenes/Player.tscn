@@ -1,0 +1,116 @@
+[gd_scene load_steps=10 format=3 uid="uid://ch7kptdykhb0y"]
+
+[ext_resource type="Script" uid="uid://4mxkkl51p5cd" path="res://Scripts/Player.cs" id="1_kyqiw"]
+[ext_resource type="Texture2D" uid="uid://c0grm10cadrqm" path="res://Assets/Sprites/Goober/Idle Front 1.png" id="4_52ee3"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="4_megsn"]
+[ext_resource type="Script" uid="uid://5oxccxymvc6s" path="res://Scripts/CharacterVisualManager.cs" id="6_52ee3"]
+[ext_resource type="Texture2D" uid="uid://g1kvatxl3kbp" path="res://Assets/Sprites/Cosmetics/Hats/Top Hat Front 1.png" id="6_bhhdu"]
+[ext_resource type="Script" uid="uid://d3v6uaoo1ufme" path="res://Scripts/AnimationManager.cs" id="6_nn08x"]
+[ext_resource type="Texture2D" uid="uid://cnxvwdy53deke" path="res://Assets/Sprites/Faces/Face Front0000.png" id="8_yoq75"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5v66d"]
+radius = 0.38704
+height = 1.36062
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_kyqiw"]
+properties/0/path = NodePath(".:SyncGlobalPosition")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:SyncRotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:SyncAnimType")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath(".:SyncExpressionId")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath(".:SyncCameraPitch")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath(".:SyncHatId")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 3
+velocity = Vector3(0, -134.585, 0)
+floor_stop_on_slope = false
+floor_block_on_wall = false
+script = ExtResource("1_kyqiw")
+
+[node name="AnimationManager" type="Node" parent="."]
+script = ExtResource("6_nn08x")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_5v66d")
+
+[node name="NameLabel" type="Label3D" parent="."]
+transform = Transform3D(0.639342, 0, 0, 0, 0.639342, 0, 0, 0, 0.639342, 0, 1.59735, 0)
+visibility_range_end = 10.0
+visibility_range_end_margin = 3.0
+billboard = 1
+double_sided = false
+alpha_cut = 2
+texture_filter = 1
+text = "Goober"
+font = ExtResource("4_megsn")
+font_size = 60
+outline_size = 32
+
+[node name="HeadPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.202219, 0)
+
+[node name="PlayerCamera" type="Camera3D" parent="HeadPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.00834499)
+cull_mask = 1048573
+
+[node name="InteractRay" type="RayCast3D" parent="HeadPivot/PlayerCamera"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+target_position = Vector3(0, -2, 0)
+collision_mask = 4
+
+[node name="FirstPerson" type="Marker3D" parent="HeadPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.00694413)
+
+[node name="SecondPerson" type="Marker3D" parent="HeadPivot"]
+transform = Transform3D(0.999959, -0.004004, -0.00811101, 0.00492211, 0.993174, 0.116538, 0.00758903, -0.116573, 0.993153, 0, 0.636, 1.837)
+
+[node name="ThirdPerson" type="Marker3D" parent="HeadPivot"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.294542, -2.43071)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_kyqiw")
+visibility_update_mode = 1
+
+[node name="Person" type="Sprite3D" parent="."]
+transform = Transform3D(-0.99986, 0, 8.74106e-08, 0, 0.999995, 0, -8.74106e-08, 0, -0.99986, 0, 0, 0)
+shaded = true
+double_sided = false
+alpha_cut = 2
+texture_filter = 4
+texture = ExtResource("4_52ee3")
+script = ExtResource("6_52ee3")
+
+[node name="HatPivot" type="Marker3D" parent="Person"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00450865, 0.446455, 0.00299999)
+
+[node name="Hat" type="Sprite3D" parent="Person/HatPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.320035, 0)
+shaded = true
+texture_filter = 0
+render_priority = 1
+texture = ExtResource("6_bhhdu")
+
+[node name="FacePivot" type="Marker3D" parent="Person"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.33769e-05, 0.302607, 0.00399995)
+
+[node name="Face" type="Sprite3D" parent="Person/FacePivot"]
+shaded = true
+texture_filter = 4
+render_priority = 1
+texture = ExtResource("8_yoq75")
+
+[node name="CarrySocket" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19029, 0)

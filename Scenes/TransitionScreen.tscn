@@ -1,0 +1,113 @@
+[gd_scene load_steps=11 format=3 uid="uid://bd5hbsgvphiyh"]
+
+[ext_resource type="Script" uid="uid://jidiu7ppkc58" path="res://Scripts/TransitionScreen.cs" id="1_r4p8l"]
+[ext_resource type="Texture2D" uid="uid://ctihujffc141u" path="res://Assets/Sprites/UI/Curtains/Curtains 1.png" id="2_qg5k6"]
+[ext_resource type="Texture2D" uid="uid://bnchmcyo2q2ar" path="res://Assets/Sprites/UI/Curtains/Curtains 2.png" id="3_i6yrl"]
+[ext_resource type="Texture2D" uid="uid://cfn5qnoyfmbnw" path="res://Assets/Sprites/UI/Curtains/Curtains 3.png" id="4_molg8"]
+[ext_resource type="Texture2D" uid="uid://dhboa4npkvqsy" path="res://Assets/Sprites/UI/Curtains/Curtains 4.png" id="5_8mgwd"]
+[ext_resource type="Texture2D" uid="uid://c4ti41fu4ope1" path="res://Assets/Sprites/UI/Curtains/Curtains 5.png" id="6_3kf2m"]
+[ext_resource type="Texture2D" uid="uid://bq2fpwm2t4ddx" path="res://Assets/Sprites/UI/Curtains/Curtains 6.png" id="7_kn1k2"]
+
+[sub_resource type="Animation" id="Animation_5mgqa"]
+resource_name = "in"
+length = 8.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3, 4, 5, 6, 7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("2_qg5k6"), ExtResource("3_i6yrl"), ExtResource("4_molg8"), ExtResource("5_8mgwd"), ExtResource("6_3kf2m"), ExtResource("7_kn1k2")]
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 2)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TextureRect:position:y")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-1080, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 2)
+}
+
+[sub_resource type="Animation" id="Animation_qg5k6"]
+resource_name = "out"
+length = 8.0
+step = 1.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("7_kn1k2"), ExtResource("6_3kf2m"), ExtResource("5_8mgwd"), ExtResource("4_molg8"), ExtResource("3_i6yrl"), ExtResource("2_qg5k6")]
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(6, 8)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TextureRect:position:y")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -1080, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(6, 8)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wigsm"]
+_data = {
+&"in": SubResource("Animation_5mgqa"),
+&"out": SubResource("Animation_qg5k6")
+}
+
+[node name="TransitionScreen" type="CanvasLayer"]
+layer = 99
+script = ExtResource("1_r4p8l")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_wigsm")
+}
+speed_scale = 17.0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1080.0
+offset_bottom = -1080.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_qg5k6")

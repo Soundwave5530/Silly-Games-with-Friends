@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=4 format=3 uid="uid://cltrtwfuj14jp"]
+
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="1_raf5a"]
+[ext_resource type="Texture2D" uid="uid://g1kvatxl3kbp" path="res://Assets/Sprites/Cosmetics/Hats/Top Hat Front 1.png" id="1_yuaqs"]
+[ext_resource type="Texture2D" uid="uid://bu2sgf5c5r2so" path="res://Assets/Sprites/Cosmetics/Hats/Top Hat Front 2.png" id="2_vk4bl"]
+
+[resource]
+script = ExtResource("1_raf5a")
+CosmeticID = "top_hat"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([ExtResource("1_yuaqs"), ExtResource("2_vk4bl")])
+SideSprites = Array[Texture2D]([])
+BackSprites = Array[Texture2D]([])
+metadata/_custom_type_script = ExtResource("1_raf5a")

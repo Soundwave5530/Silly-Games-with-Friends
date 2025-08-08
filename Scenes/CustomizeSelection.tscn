@@ -1,0 +1,161 @@
+[gd_scene load_steps=15 format=3 uid="uid://dibv7rv7oryku"]
+
+[ext_resource type="FontFile" uid="uid://c81anudi8iulr" path="res://Assets/Fonts/monogram.ttf" id="1_7hxmw"]
+[ext_resource type="Script" uid="uid://8vsnxb71n4w7" path="res://Scripts/CustomizeSelection.cs" id="1_xfc5u"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="3_1g6bg"]
+[ext_resource type="Script" uid="uid://dvtll4f5ucv10" path="res://Scripts/MenuButton.cs" id="3_6no4t"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6no4t"]
+
+[sub_resource type="Theme" id="Theme_1lwk2"]
+Button/styles/focus = SubResource("StyleBoxEmpty_6no4t")
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/font_sizes/font_size = 36
+Label/fonts/font = ExtResource("3_1g6bg")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1lwk2"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.436333, 0.77, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a4dk0"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0.248475, 0.43586, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2q5y"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0.566667, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u5sks"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+border_color = Color(0, 0.247059, 0.435294, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_a4dk0"]
+Button/styles/hover = SubResource("StyleBoxFlat_1lwk2")
+Button/styles/normal = SubResource("StyleBoxFlat_a4dk0")
+Button/styles/pressed = SubResource("StyleBoxFlat_v2q5y")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0.247059, 0.435294, 1)
+Label/constants/outline_size = 20
+Label/fonts/font = ExtResource("1_7hxmw")
+Panel/styles/panel = SubResource("StyleBoxFlat_u5sks")
+
+[sub_resource type="LabelSettings" id="LabelSettings_v2q5y"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_siy43"]
+font = ExtResource("3_1g6bg")
+font_size = 50
+outline_size = 30
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_6no4t"]
+font_size = 64
+outline_size = 25
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="Selection" type="VBoxContainer" node_paths=PackedStringArray("previousButton", "nextButton")]
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+script = ExtResource("1_xfc5u")
+previousButton = NodePath("Separator/Prev")
+nextButton = NodePath("Separator/Next")
+
+[node name="Separator" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Prev" type="Button" parent="Separator"]
+custom_minimum_size = Vector2(170, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1lwk2")
+flat = true
+script = ExtResource("3_6no4t")
+baseHeight = 80.0
+hoverHeight = 110.0
+baseFontSize = 64
+hoverFontSize = 80
+
+[node name="Label" type="Label" parent="Separator/Prev"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_a4dk0")
+theme_override_fonts/font = ExtResource("3_1g6bg")
+theme_override_font_sizes/font_size = 36
+text = "<--"
+label_settings = SubResource("LabelSettings_v2q5y")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SelectionLabel" type="Label" parent="Separator"]
+layout_mode = 2
+text = "Thing: None"
+label_settings = SubResource("LabelSettings_siy43")
+horizontal_alignment = 1
+
+[node name="Next" type="Button" parent="Separator"]
+custom_minimum_size = Vector2(170, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_1lwk2")
+flat = true
+script = ExtResource("3_6no4t")
+baseHeight = 80.0
+hoverHeight = 110.0
+baseFontSize = 64
+hoverFontSize = 80
+
+[node name="Label" type="Label" parent="Separator/Next"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_a4dk0")
+theme_override_fonts/font = ExtResource("3_1g6bg")
+theme_override_font_sizes/font_size = 36
+text = "-->"
+label_settings = SubResource("LabelSettings_6no4t")
+horizontal_alignment = 1
+vertical_alignment = 1

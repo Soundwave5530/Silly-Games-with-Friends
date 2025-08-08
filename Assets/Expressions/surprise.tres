@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://cvt5virha2ya1"]
+
+[ext_resource type="Texture2D" uid="uid://2htwd2024y3b" path="res://Assets/Sprites/Faces/Suprise Face Front0000.png" id="1_2chxq"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="1_is1au"]
+[ext_resource type="Texture2D" uid="uid://dxyxwbmdwrfdp" path="res://Assets/Sprites/Faces/Suprise Face Front0001.png" id="2_y6fng"]
+[ext_resource type="Texture2D" uid="uid://deyqmm28luepa" path="res://Assets/Sprites/Faces/Suprise Face Side0000.png" id="3_wlgqu"]
+[ext_resource type="Texture2D" uid="uid://bhfogkufj622u" path="res://Assets/Sprites/Faces/Suprise Face Side0001.png" id="4_rk8ri"]
+
+[resource]
+script = ExtResource("1_is1au")
+ExpressionId = "surprise"
+FrontExpression = Array[Texture2D]([ExtResource("1_2chxq"), ExtResource("2_y6fng")])
+SideExpression = Array[Texture2D]([ExtResource("3_wlgqu"), ExtResource("4_rk8ri")])
+metadata/_custom_type_script = ExtResource("1_is1au")

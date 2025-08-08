@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://njfk1itinuxf"]
+
+[ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="1_12rv6"]
+[ext_resource type="Script" uid="uid://cen1e55bj18pi" path="res://Scripts/BetterCheckButton.cs" id="2_k4qxs"]
+[ext_resource type="Texture2D" uid="uid://c180wnbw0msga" path="res://Assets/Sprites/UI/CheckBox/CheckBoxOff.png" id="3_k4qxs"]
+[ext_resource type="Texture2D" uid="uid://84rnnu8ofspf" path="res://Assets/Sprites/UI/CheckBox/CheckBoxOn.png" id="4_ybb8q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybb8q"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ybb8q"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6acmk"]
+
+[node name="BetterCheckButton" type="CheckBox" node_paths=PackedStringArray("_icon")]
+custom_minimum_size = Vector2(65, 65)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("1_12rv6")
+theme_type_variation = &"BetterCheckButton"
+theme_override_styles/focus = SubResource("StyleBoxFlat_ybb8q")
+theme_override_icons/checked = SubResource("CompressedTexture2D_ybb8q")
+theme_override_icons/unchecked = SubResource("CompressedTexture2D_6acmk")
+script = ExtResource("2_k4qxs")
+_icon = NodePath("TextureRect")
+iconChecked = ExtResource("3_k4qxs")
+iconUnchecked = ExtResource("4_ybb8q")
+metadata/_custom_type_script = ExtResource("2_k4qxs")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(540, 540)
+texture = ExtResource("3_k4qxs")
+stretch_mode = 5

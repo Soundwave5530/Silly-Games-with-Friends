@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://b87rbhw27s3yp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eaer4"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_vq7r2"]
+material = SubResource("StandardMaterial3D_eaer4")
+
+[sub_resource type="Curve" id="Curve_tps35"]
+_limits = [0.0, 360.0, 0.0, 1.0]
+_data = [Vector2(0, 10.5195), 0.0, 0.0, 0, 0, Vector2(0.984556, 360), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_w5ii4"]
+_limits = [-360.0, 360.0, 0.0, 1.0]
+_data = [Vector2(0, -360), 0.0, 0.0, 0, 0, Vector2(1, 360), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_53q0y"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.667954, 0.704545), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_xruy6"]
+offsets = PackedFloat32Array(0, 0.133047, 0.695279)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+amount = 50
+randomness = 0.32
+lifetime_randomness = 0.18
+mesh = SubResource("BoxMesh_vq7r2")
+emission_shape = 3
+emission_box_extents = Vector3(1, 0, 1)
+particle_flag_align_y = true
+direction = Vector3(0, 1, 0)
+spread = 28.29
+gravity = Vector3(0, 9.8, 0)
+initial_velocity_max = 5.0
+angular_velocity_min = 154.29
+angular_velocity_max = 154.29
+angular_velocity_curve = SubResource("Curve_tps35")
+angle_curve = SubResource("Curve_w5ii4")
+scale_amount_min = 0.0
+scale_amount_curve = SubResource("Curve_53q0y")
+color_ramp = SubResource("Gradient_xruy6")

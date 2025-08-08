@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=8 format=3 uid="uid://7vr8j71jjt4k"]
+
+[ext_resource type="Texture2D" uid="uid://bhyctpps3nskg" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Back0000.png" id="1_8ve7m"]
+[ext_resource type="Texture2D" uid="uid://dyan73ev506j5" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Back0001.png" id="2_y66pg"]
+[ext_resource type="Texture2D" uid="uid://bupchxlmytp0w" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Front0000.png" id="3_tuhuy"]
+[ext_resource type="Texture2D" uid="uid://cev54lo6lh4e4" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Front0001.png" id="4_vjklo"]
+[ext_resource type="Texture2D" uid="uid://cui1piakan1i8" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Side0000.png" id="5_d0m83"]
+[ext_resource type="Texture2D" uid="uid://bu13frddci8lw" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Side0001.png" id="6_jftqi"]
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="7_dttgs"]
+
+[resource]
+script = ExtResource("7_dttgs")
+CosmeticID = "i_use_arch_btw"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = Array[Texture2D]([ExtResource("3_tuhuy"), ExtResource("4_vjklo")])
+SideSprites = Array[Texture2D]([ExtResource("5_d0m83"), ExtResource("6_jftqi")])
+BackSprites = Array[Texture2D]([ExtResource("1_8ve7m"), ExtResource("2_y66pg")])
+metadata/_custom_type_script = ExtResource("7_dttgs")

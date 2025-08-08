@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MouseCursorPreset" load_steps=10 format=3 uid="uid://dmaulc8ns65bm"]
+
+[ext_resource type="Texture2D" uid="uid://dwrlik4451cmd" path="res://Assets/Sprites/Mouse/Busy0000.png" id="1_heaw0"]
+[ext_resource type="Script" uid="uid://ckonr2nfjumoc" path="res://Scripts/MouseCursorPreset.cs" id="1_im1fo"]
+[ext_resource type="Texture2D" uid="uid://panhvugy4mh1" path="res://Assets/Sprites/Mouse/Busy0001.png" id="2_2j15w"]
+[ext_resource type="Texture2D" uid="uid://b7nr51j3nr4c4" path="res://Assets/Sprites/Mouse/Precision Select0000.png" id="3_ue0mg"]
+[ext_resource type="Texture2D" uid="uid://b237u38dnadly" path="res://Assets/Sprites/Mouse/Precision Select0001.png" id="4_sxpl1"]
+[ext_resource type="Texture2D" uid="uid://ck7woyaiapoyo" path="res://Assets/Sprites/Mouse/Normal Select0000.png" id="5_5h5r7"]
+[ext_resource type="Texture2D" uid="uid://bauubl4etb0fm" path="res://Assets/Sprites/Mouse/Normal Select0001.png" id="6_p63b5"]
+[ext_resource type="Texture2D" uid="uid://ca0bychgnwi3h" path="res://Assets/Sprites/Mouse/Text Select0000.png" id="7_6j3gw"]
+[ext_resource type="Texture2D" uid="uid://db0y0cwyv0oso" path="res://Assets/Sprites/Mouse/Text Select0001.png" id="8_mtr6s"]
+
+[resource]
+script = ExtResource("1_im1fo")
+Pointer = Array[Texture2D]([ExtResource("5_5h5r7"), ExtResource("6_p63b5")])
+Clickable = Array[Texture2D]([ExtResource("3_ue0mg"), ExtResource("4_sxpl1")])
+IBeam = Array[Texture2D]([ExtResource("7_6j3gw"), ExtResource("8_mtr6s")])
+Busy = Array[Texture2D]([ExtResource("1_heaw0"), ExtResource("2_2j15w")])
+metadata/_custom_type_script = ExtResource("1_im1fo")

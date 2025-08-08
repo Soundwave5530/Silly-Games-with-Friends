@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FacialExpression" load_steps=6 format=3 uid="uid://cctt8ap13772h"]
+
+[ext_resource type="Texture2D" uid="uid://kvo78pjkq8ei" path="res://Assets/Sprites/Faces/Sad Face Front0000.png" id="1_si041"]
+[ext_resource type="Script" uid="uid://cs2u7lbjvkuhx" path="res://Scripts/FacialExpression.cs" id="1_tuut6"]
+[ext_resource type="Texture2D" uid="uid://c2l0qbeax7kgt" path="res://Assets/Sprites/Faces/Sad Face Front0001.png" id="2_yyosy"]
+[ext_resource type="Texture2D" uid="uid://d4r2barw8yjh" path="res://Assets/Sprites/Faces/Sad Face Side0000.png" id="3_nj434"]
+[ext_resource type="Texture2D" uid="uid://iofidqsmwc1w" path="res://Assets/Sprites/Faces/Sad Face Side0001.png" id="4_4u7q2"]
+
+[resource]
+script = ExtResource("1_tuut6")
+ExpressionId = "sad"
+FrontExpression = Array[Texture2D]([ExtResource("1_si041"), ExtResource("2_yyosy")])
+SideExpression = Array[Texture2D]([ExtResource("3_nj434"), ExtResource("4_4u7q2")])
+metadata/_custom_type_script = ExtResource("1_tuut6")

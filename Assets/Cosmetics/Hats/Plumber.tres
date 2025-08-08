@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Cosmetic" load_steps=8 format=3 uid="uid://cu7y4hymwntet"]
+
+[ext_resource type="Texture2D" uid="uid://b70qvp367exdx" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Back 1.png" id="1_2q6xe"]
+[ext_resource type="Texture2D" uid="uid://d38r8vibf0a3f" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Back 2.png" id="2_jn3wk"]
+[ext_resource type="Texture2D" uid="uid://dwnnd72r0vsa4" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Front 1.png" id="3_jo0p2"]
+[ext_resource type="Script" uid="uid://cbw0m3bx0pbb6" path="res://Scripts/Cosmetic.cs" id="3_o5gq0"]
+[ext_resource type="Texture2D" uid="uid://ck87ew4qint8k" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Front 2.png" id="4_h8tnb"]
+[ext_resource type="Texture2D" uid="uid://com2ap18xc7ja" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Side 1.png" id="5_eopnq"]
+[ext_resource type="Texture2D" uid="uid://bg7e65yp4gg60" path="res://Assets/Sprites/Cosmetics/Hats/Plumber Hat Side 2.png" id="6_s6a3h"]
+
+[resource]
+script = ExtResource("3_o5gq0")
+CosmeticID = "plumber"
+modulatesWithPlayerColor = false
+cosmeticType = 0
+FrontSprites = [ExtResource("3_jo0p2"), ExtResource("4_h8tnb")]
+SideSprites = Array[Texture2D]([ExtResource("5_eopnq"), ExtResource("6_s6a3h")])
+BackSprites = Array[Texture2D]([ExtResource("1_2q6xe"), ExtResource("2_jn3wk")])
+metadata/_custom_type_script = ExtResource("3_o5gq0")

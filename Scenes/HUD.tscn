@@ -1,0 +1,108 @@
+[gd_scene load_steps=8 format=3 uid="uid://c3sl28rhguygn"]
+
+[ext_resource type="Script" uid="uid://b0ovyemibsm0b" path="res://Scripts/PlayerHUD.cs" id="1_c3eba"]
+[ext_resource type="Texture2D" uid="uid://dlcwvkqgd7lmw" path="res://Assets/Sprites/UI/icon_noface.png" id="2_g8s2e"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="3_t385i"]
+[ext_resource type="Texture2D" uid="uid://bupchxlmytp0w" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Front0000.png" id="4_nfm57"]
+[ext_resource type="Texture2D" uid="uid://dojf2yb3fe7re" path="res://Assets/Sprites/Faces/Mog Face Front0000.png" id="5_c3eba"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_c3eba"]
+font = ExtResource("3_t385i")
+font_size = 36
+font_color = Color(1, 1, 1, 0.568627)
+outline_size = 10
+outline_color = Color(0, 0, 0, 0.45098)
+
+[sub_resource type="LabelSettings" id="LabelSettings_yoq75"]
+font = ExtResource("3_t385i")
+font_size = 56
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("playerFace", "playerHead", "playerHat", "playerName", "InteractionPrompt")]
+script = ExtResource("1_c3eba")
+playerFace = NodePath("Head/Face")
+playerHead = NodePath("Head")
+playerHat = NodePath("Head/Hat")
+playerName = NodePath("Head/Name")
+InteractionPrompt = NodePath("ColorRect/Interaction Prompt")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.513726)
+
+[node name="Interaction Prompt" type="Label" parent="ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -642.0
+offset_top = 42.0
+offset_right = 642.0
+offset_bottom = 121.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Press [E] to pick up"
+label_settings = SubResource("LabelSettings_c3eba")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Head" type="TextureRect" parent="."]
+offset_left = 51.0
+offset_top = 94.0
+offset_right = 171.0
+offset_bottom = 214.0
+scale = Vector2(0.786, 0.786)
+texture = ExtResource("2_g8s2e")
+
+[node name="Name" type="Label" parent="Head"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 152.0
+offset_right = 815.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Player Name"
+label_settings = SubResource("LabelSettings_yoq75")
+vertical_alignment = 1
+
+[node name="Hat" type="TextureRect" parent="Head"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -14.0
+offset_top = -111.959
+offset_right = 10.0
+offset_bottom = -87.9593
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_nfm57")
+
+[node name="Face" type="TextureRect" parent="Head"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 25.0
+offset_top = 26.7176
+offset_right = -25.0
+offset_bottom = -23.2824
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_c3eba")

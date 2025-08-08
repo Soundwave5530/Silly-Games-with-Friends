@@ -1,0 +1,151 @@
+[gd_scene load_steps=15 format=3 uid="uid://b6nlm2ao681tw"]
+
+[ext_resource type="Texture2D" uid="uid://bcri0pbexnnry" path="res://Assets/Sprites/UI/Backgrounds/CustomizeBackground.png" id="1_q5ar5"]
+[ext_resource type="Script" uid="uid://dpkusxtm2n574" path="res://Scripts/PreviewVisualManager.cs" id="2_ay6f1"]
+[ext_resource type="Texture2D" uid="uid://c0grm10cadrqm" path="res://Assets/Sprites/Goober/Idle Front 1.png" id="2_f8e8w"]
+[ext_resource type="PackedScene" uid="uid://b3b3ph82erhos" path="res://Scenes/PaintingTemplate.tscn" id="2_wmjth"]
+[ext_resource type="Texture2D" uid="uid://cnxvwdy53deke" path="res://Assets/Sprites/Faces/Face Front0000.png" id="4_abc8g"]
+[ext_resource type="Script" uid="uid://dvtx7oljwbp0x" path="res://Scripts/PreviewAnimationManager.cs" id="4_f8e8w"]
+[ext_resource type="PackedScene" uid="uid://c72nadef0juew" path="res://Assets/Models/Beach Ball.fbx" id="8_0fbk4"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ay6f1"]
+sky_top_color = Color(0, 0, 0, 1)
+sky_horizon_color = Color(0, 0, 0, 1)
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_f8e8w"]
+sky_material = SubResource("ProceduralSkyMaterial_ay6f1")
+
+[sub_resource type="Environment" id="Environment_abc8g"]
+background_mode = 1
+sky = SubResource("Sky_f8e8w")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.19
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0fbk4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_abc8g"]
+albedo_color = Color(0.37, 0.20905, 0.037, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q5ar5"]
+render_priority = -1
+transparency = 1
+blend_mode = 1
+albedo_texture = ExtResource("1_q5ar5")
+uv1_scale = Vector3(10, 10, 10)
+texture_filter = 2
+grow_amount = 2.769
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wmjth"]
+render_priority = -1
+transparency = 1
+blend_mode = 1
+uv1_scale = Vector3(10, 10, 10)
+texture_filter = 2
+grow_amount = 2.769
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_abc8g")
+
+[node name="Build" type="Node" parent="."]
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Build"]
+transform = Transform3D(-2.46388e-08, -0.826, 0.56367, -3.61056e-08, 0.56367, 0.826, -1, 5.32907e-15, -4.37114e-08, 2.5833, 2.66293, -0.0104303)
+light_color = Color(1, 0.733333, 0.796078, 1)
+light_energy = 1.593
+spot_range = 9.528
+spot_attenuation = -0.09
+spot_angle = 23.9756
+spot_angle_attenuation = 0.840896
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Build"]
+transform = Transform3D(-2.87514e-08, -0.753231, 0.657756, -3.29248e-08, 0.657756, 0.753231, -1, 5.32907e-15, -4.37114e-08, -0.769272, 2.77499, -1.01007)
+light_color = Color(1, 0.748533, 0.676724, 1)
+light_energy = 1.78
+spot_range = 9.528
+spot_attenuation = -0.09
+spot_angle = 43.5543
+spot_angle_attenuation = 0.840896
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Build"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.162643, 0)
+radius = 1.0
+height = 0.321259
+material = SubResource("StandardMaterial3D_0fbk4")
+
+[node name="CSGCylinder3D2" type="CSGCylinder3D" parent="Build"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.420701, 0)
+radius = 1.16846
+height = 0.321259
+material = SubResource("StandardMaterial3D_0fbk4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Build"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.848, 0.986816)
+size = Vector3(7.5, 1, 7.52637)
+material = SubResource("StandardMaterial3D_abc8g")
+
+[node name="Label3D2" type="Label3D" parent="Build"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.7371, 0.596026, 1.74487)
+texture_filter = 0
+text = "Couch?"
+font_size = 72
+
+[node name="Painting Template" parent="Build" instance=ExtResource("2_wmjth")]
+transform = Transform3D(-2.81131e-08, 0, -0.643152, 0, 0.643152, 0, 0.643152, 0, -2.81131e-08, -2.74819, 0.596947, -0.822415)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.750638, -0.158294, 0.641472, 0.00686826, 0.972693, 0.231992, -0.660678, -0.169736, 0.731228, 1.06062, 1.26222, 3.02701)
+fov = 60.5
+
+[node name="Preview" type="Node3D" parent="."]
+transform = Transform3D(-0.66364, 0, -0.748053, 0, 1, 0, 0.748053, 0, -0.66364, 0, 0.62532, 0)
+
+[node name="Person" type="Sprite3D" parent="Preview" node_paths=PackedStringArray("origin", "facePivot", "faceSprite", "hatPivot", "hatSprite")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+double_sided = false
+texture_filter = 0
+texture = ExtResource("2_f8e8w")
+script = ExtResource("2_ay6f1")
+origin = NodePath("..")
+facePivot = NodePath("FacePivot")
+faceSprite = NodePath("FacePivot/Face")
+hatPivot = NodePath("HatPivot")
+hatSprite = NodePath("HatPivot/Hat")
+
+[node name="FacePivot" type="Marker3D" parent="Preview/Person"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32443, 0.003)
+
+[node name="Face" type="Sprite3D" parent="Preview/Person/FacePivot"]
+texture_filter = 0
+render_priority = 1
+texture = ExtResource("4_abc8g")
+
+[node name="HatPivot" type="Marker3D" parent="Preview/Person"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.473876, 0.003)
+
+[node name="Hat" type="Sprite3D" parent="Preview/Person/HatPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, 0)
+texture_filter = 0
+render_priority = 1
+
+[node name="PrevAnimManager" type="Node" parent="Preview"]
+script = ExtResource("4_f8e8w")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(0.776233, -0.0803911, 0.625299, 0, 0.991837, 0.127515, -0.630445, -0.0989812, 0.769897, -16.0401, -4.93462, -25.0342)
+flip_faces = true
+size = Vector3(150, 150, 1)
+material = SubResource("StandardMaterial3D_q5ar5")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(0.776233, -0.0803911, 0.625299, 0, 0.991837, 0.127515, -0.630445, -0.0989812, 0.769897, -16.6506, -5.05912, -25.7858)
+flip_faces = true
+size = Vector3(150, 150, 1)
+material = SubResource("StandardMaterial3D_wmjth")
+
+[node name="Beach Ball" parent="." instance=ExtResource("8_0fbk4")]
+transform = Transform3D(2.42573, 0, 0, 0, 2.42573, 0, 0, 0, 2.42573, -1.6234, -0.297645, -1.33763)
