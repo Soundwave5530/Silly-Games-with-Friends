@@ -65,18 +65,57 @@ public static class SettingsManager
     public static string GetKeyNameFromInputMap(string actionName)
     {
         var events = InputMap.ActionGetEvents(actionName);
-        if (events.Count == 0)
+        if (events == null || events.Count == 0)
             return "Unbound";
 
         var inputEvent = events[0];
 
         if (inputEvent is InputEventKey keyEvent)
         {
-            return OS.GetKeycodeString((Key)keyEvent.Keycode);
+            string keyName = OS.GetKeycodeString(keyEvent.PhysicalKeycode);
+            
+            // Handle special cases where OS.GetKeycodeString might return empty or incorrect values
+            if (string.IsNullOrEmpty(keyName))
+            {
+                keyName = keyEvent.Keycode switch
+                {
+                    Key.Quoteleft => "`",
+                    Key.Slash => "/",
+                    Key.Backslash => "\\",
+                    Key.Period => ".",
+                    Key.Comma => ",",
+                    Key.Apostrophe => "'",
+                    Key.Space => "Space",
+                    Key.Minus => "-",
+                    Key.Equal => "=",
+                    _ => keyEvent.Keycode.ToString()
+                };
+            }
+            
+            // Add modifiers if present
+            string modifiers = "";
+            if (keyEvent.ShiftPressed) modifiers += "Shift + ";
+            if (keyEvent.CtrlPressed) modifiers += "Ctrl + ";
+            if (keyEvent.AltPressed) modifiers += "Alt + ";
+            if (keyEvent.MetaPressed) modifiers += "Meta + ";
+            
+            return modifiers + keyName;
         }
         else if (inputEvent is InputEventMouseButton mouseEvent)
         {
-            return mouseEvent.ButtonIndex.ToString();
+            return mouseEvent.ButtonIndex switch
+            {
+                MouseButton.Left => "Left Click",
+                MouseButton.Right => "Right Click",
+                MouseButton.Middle => "Middle Click",
+                MouseButton.WheelUp => "Scroll Up",
+                MouseButton.WheelDown => "Scroll Down",
+                MouseButton.WheelLeft => "Scroll Left",
+                MouseButton.WheelRight => "Scroll Right",
+                MouseButton.Xbutton1 => "Mouse Button 4",
+                MouseButton.Xbutton2 => "Mouse Button 5",
+                _ => $"Mouse Button {mouseEvent.ButtonIndex}"
+            };
         }
 
         return "Unknown";

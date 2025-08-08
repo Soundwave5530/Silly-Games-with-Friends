@@ -23,6 +23,8 @@ public partial class NetworkManager : Node3D
     public HashSet<int> InGamePlayers = new();
 
     public bool IsServer => Multiplayer.IsServer();
+    public bool IsDedicatedServer { get; private set; }
+    public bool IsPlayerHost => IsServer && !IsDedicatedServer;
 
     public const int port = 7777;
 
@@ -87,12 +89,34 @@ public partial class NetworkManager : Node3D
         return player;
     }
 
-    public void StartServer()
+    public void StartServer(bool isDedicated = false)
     {
         var peer = new ENetMultiplayerPeer();
         peer.CreateServer(port, maxClients: 10);
         Multiplayer.MultiplayerPeer = peer;
-        GD.Print($"[NetworkManager] Server started on port {port}");
+        IsDedicatedServer = isDedicated;
+        
+        GD.Print($"[NetworkManager] {(isDedicated ? "Dedicated" : "Player-hosted")} server started on port {port}");
+
+        // If this is a player-host, register them immediately
+        if (!isDedicated)
+        {
+            // Register server player (ID 1) as host
+            PlayerNames[1] = SettingsManager.CurrentSettings.Username;
+            InGamePlayers.Add(1);
+            
+            var s = SettingsManager.CurrentSettings;
+            PlayerColors[1] = new Color(s.ColorR, s.ColorG, s.ColorB);
+
+            // We'll spawn the player after the scene change
+            GetTree().CreateTimer(0.1).Timeout += () =>
+            {
+                if (GetTree().CurrentScene.SceneFilePath == "res://Scenes/Game.tscn")
+                {
+                    PlayerSpawner.Spawn(1);
+                }
+            };
+        }
     }
 
     public async void JoinServer(string ip = "127.0.0.1")
@@ -123,6 +147,14 @@ public partial class NetworkManager : Node3D
         if (!IsServer) return;
 
         GD.Print($"[NetworkManager] Peer connected: {id}");
+        
+        // If we're a player host, send our info to the new client
+        if (IsPlayerHost)
+        {
+            // Send host's info to new client
+            RpcId((int)id, nameof(AnnounceName), 1, PlayerNames[1]);
+            RpcId((int)id, nameof(AnnounceColor), 1, PlayerColors[1]);
+        }
     }
 
 
@@ -161,7 +193,6 @@ public partial class NetworkManager : Node3D
     {
         GD.Print("[Client] Disconnecting...");
 
-
         CanvasLayer transitionScreen = TransitionScreenScene.Instantiate() as CanvasLayer;
         AddChild(transitionScreen);
 
@@ -180,6 +211,42 @@ public partial class NetworkManager : Node3D
         PlayerColors.Clear();
 
         GoBackToMenu();
+    }
+
+    public void ShutdownServer()
+    {
+        GD.Print("[Server] Shutting down...");
+
+        // Notify all clients
+        if (PlayerNames.Count > 1) // If there are other players
+        {
+            Rpc(nameof(SendSystemMessage), "Server is shutting down...");
+        }
+
+        // Create transition screen
+        CanvasLayer transitionScreen = TransitionScreenScene.Instantiate() as CanvasLayer;
+        AddChild(transitionScreen);
+
+        GetTree().CreateTimer(0.5).Timeout += () =>
+        {
+            // Close the server
+            if (Multiplayer.MultiplayerPeer != null)
+            {
+                Multiplayer.MultiplayerPeer.Close();
+                GetNode<Node>("Players").QueueFreeChildren();
+
+                Multiplayer.MultiplayerPeer = null;
+            }
+
+            // Clear all game state
+            PlayerNames.Clear();
+            PlayerColors.Clear();
+            InGamePlayers.Clear();
+            IsDedicatedServer = false;
+
+            // Return to menu
+            GoBackToMenu();
+        };
     }
 
     public void GoBackToMenu()
@@ -352,26 +419,6 @@ public partial class NetworkManager : Node3D
         if (GetNodeOrNull($"Players/Player_{peerId}") == null)
         {
             GD.PrintErr($"[NetworkManager] Timeout: Player_{peerId} not found after {timeoutSeconds}s.");
-        }
-    }
-
-    //public PackedScene LandParticles = GD.Load<PackedScene>("res://Scenes/Particles/hitting_ground_particles.tscn");
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void PlayerLanded(Vector3 landPos)
-    {
-        if (!IsServer) return;
-
-        var playerCont = GetNode<Node>("Players");
-        foreach (var kvp in PlayerNames)
-        {
-            Player player = GetNode<Player>($"Players/Player_{kvp.Key}");
-
-            float dist = player.GlobalTransform.Origin.DistanceTo(landPos);
-            if (dist <= 30f)
-            {
-                //RpcId(kvp.Key, nameof(SpawnLandingParticlesAt), landPos - new Vector3(0, 0.6f, 0));
-            }
         }
     }
 

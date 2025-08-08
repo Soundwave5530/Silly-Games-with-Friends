@@ -30,6 +30,8 @@ public partial class NewPauseMenu : Control
     private PackedScene transitionScreenScene = GD.Load<PackedScene>("res://Scenes/TransitionScreen.tscn");
     private CustomizationMenu CustomizationMenu;
     private Panel settingsContainer;
+    private VBoxContainer settingsButtonContainer;
+    private Label settingsTitle;
 
     public override void _Ready()
     {
@@ -41,6 +43,9 @@ public partial class NewPauseMenu : Control
 
         animationPlayer.AnimationFinished += AnimFinished;
         settingsContainer = GetParent().GetNode<Panel>("Settings/MarginContainer/Container");
+
+        settingsButtonContainer = GetParent().GetNode<VBoxContainer>("Settings/ButtonContainer");
+        settingsTitle = GetParent().GetNode<Label>("Settings/Title");
         LoadSettingsPage(generalSettingsScene);
 
         resumeButton.Pressed += () => MenuButtonPressed(resumeButton);
@@ -173,7 +178,17 @@ public partial class NewPauseMenu : Control
     {
         CloseMenu();
         await ToSignal(GetTree().CreateTimer(0.1), "timeout");
-        NetworkManager.Instance.DisconnectFromServer();
+        
+        if (NetworkManager.Instance.IsPlayerHost)
+        {
+            // If we're the host player, shut down the server properly
+            NetworkManager.Instance.ShutdownServer();
+        }
+        else
+        {
+            // Normal client disconnect
+            NetworkManager.Instance.DisconnectFromServer();
+        }
     }
 
 
@@ -213,5 +228,23 @@ public partial class NewPauseMenu : Control
     private void OnSettingsControlsButtonPressed()
     {
         LoadSettingsPage(controlsSettingsScene);
+    }
+
+    public override void _Process(double delta)
+    {
+        if (!transitioning && IsOpen)
+        {
+            Vector2 mousePosition = GetViewport().GetMousePosition();
+            Vector2 offset = mousePosition * 0.015f;
+
+            // Only apply parallax to the settings container when it's visible
+            if (settingsContainer.Visible && !transitioning)
+            {
+                // Use the same parallax style and positioning as MenuUI
+                settingsContainer.GetParent<Control>().Position = new Vector2(526, 42) + new Vector2(-offset.X, -offset.Y);
+                settingsButtonContainer.Position = new Vector2(51, 468) - new Vector2(-offset.X, -offset.Y);
+                settingsTitle.Position = new Vector2(36, 49) - new Vector2(-offset.X, -offset.Y);
+            }
+        }
     }
 }

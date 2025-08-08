@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dlr4c74krf6ng"]
+[gd_scene load_steps=26 format=3 uid="uid://dlr4c74krf6ng"]
 
 [ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="1_k84xa"]
 [ext_resource type="Texture2D" uid="uid://rqpwyk4lqgf5" path="res://Assets/Sprites/UI/icon.png" id="2_13uuk"]
@@ -54,6 +54,42 @@ expand_margin_left = 8.0
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_0xlck"]
 color = Color(0, 0.247059, 0.435294, 1)
 thickness = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_litf7"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ybqj"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22bv8"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3hb06"]
 
@@ -243,10 +279,11 @@ theme_override_icons/grabber = ExtResource("2_13uuk")
 theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
 theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
-min_value = 0.25
-max_value = 4.0
-step = 0.1
-value = 1.05
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_litf7")
+min_value = 0.10000000000582077
+max_value = 3.0
+step = 0.05000000000291038
+value = 1.0000000000058207
 
 [node name="FOV Slider" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
 layout_mode = 2
@@ -272,6 +309,7 @@ theme_override_icons/grabber = ExtResource("2_13uuk")
 theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
 theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_1ybqj")
 min_value = 70.0
 max_value = 110.0
 value = 90.0
@@ -339,6 +377,7 @@ theme_override_icons/grabber = ExtResource("2_13uuk")
 theme_override_icons/grabber_highlight = ExtResource("2_13uuk")
 theme_override_icons/grabber_disabled = ExtResource("2_13uuk")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_22bv8")
 min_value = 1.0
 max_value = 4.0
 step = 0.5

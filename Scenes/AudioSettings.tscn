@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://d3pvgx0un5joh"]
+[gd_scene load_steps=13 format=3 uid="uid://d3pvgx0un5joh"]
 
 [ext_resource type="Theme" uid="uid://b2mveqrw5ga5c" path="res://Assets/Themes/MainUI.tres" id="1_s3gdq"]
 [ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="2_he3wt"]
@@ -17,12 +17,6 @@ corner_radius_top_right = 25
 corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
 
-[sub_resource type="LabelSettings" id="LabelSettings_he3wt"]
-font = ExtResource("2_he3wt")
-font_size = 21
-outline_size = 15
-outline_color = Color(0, 0.301961, 0.521569, 1)
-
 [sub_resource type="LabelSettings" id="LabelSettings_0xlck"]
 font = ExtResource("2_he3wt")
 font_size = 91
@@ -38,6 +32,42 @@ outline_color = Color(0, 0.247059, 0.435294, 1)
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_0xlck"]
 color = Color(0, 0.247059, 0.435294, 1)
 thickness = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_he3wt"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_otsou"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tpqsy"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 6
 
 [sub_resource type="LabelSettings" id="LabelSettings_s3gdq"]
 font = ExtResource("2_he3wt")
@@ -92,13 +122,6 @@ theme_override_constants/margin_bottom = 15
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Audio Controls2" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
-layout_mode = 2
-size_flags_vertical = 0
-theme = ExtResource("1_s3gdq")
-text = "Please Note that Audio is not included in the game as of the \"New Outfit, Who dis?\" update."
-label_settings = SubResource("LabelSettings_he3wt")
-
 [node name="Audio Controls" type="Label" parent="MarginContainer2/MarginContainer/VBox"]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
@@ -136,6 +159,7 @@ theme_override_icons/grabber = ExtResource("3_otsou")
 theme_override_icons/grabber_highlight = ExtResource("3_otsou")
 theme_override_icons/grabber_disabled = ExtResource("3_otsou")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_he3wt")
 value = 100.0
 
 [node name="Volume2" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
@@ -162,6 +186,7 @@ theme_override_icons/grabber = ExtResource("3_otsou")
 theme_override_icons/grabber_highlight = ExtResource("3_otsou")
 theme_override_icons/grabber_disabled = ExtResource("3_otsou")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_otsou")
 value = 100.0
 
 [node name="Volume3" type="HBoxContainer" parent="MarginContainer2/MarginContainer/VBox/VBox"]
@@ -188,6 +213,7 @@ theme_override_icons/grabber = ExtResource("3_otsou")
 theme_override_icons/grabber_highlight = ExtResource("3_otsou")
 theme_override_icons/grabber_disabled = ExtResource("3_otsou")
 theme_override_styles/slider = SubResource("StyleBoxLine_0xlck")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_tpqsy")
 value = 100.0
 
 [node name="Audio Devices" type="Label" parent="MarginContainer2/MarginContainer/VBox"]

@@ -21,7 +21,8 @@ public partial class MenuUI : Control
     [Export] private MenuButton exitButton;
     [Export] private MenuButton creditsButton;
     [ExportSubgroup("Play Menu")]
-    [Export] private MenuButton hostButton;
+    [Export] private MenuButton hostAsPlayerButton;
+    [Export] private MenuButton hostAsDedicatedServerButton;
     [Export] private MenuButton joinButton;
     [Export] private MenuButton backButton;
     [ExportSubgroup("Server List")]
@@ -50,6 +51,8 @@ public partial class MenuUI : Control
     private MarginContainer serverContainer;
     private Panel settingsContainer;
     private Control customizationMenu;
+    private VBoxContainer settingsButtonContainer;
+    private Label settingsTitle;
 
     private Texture2D playImage = GD.Load<Texture2D>("res://Assets/Sprites/Menus/Play.png");
     private Texture2D settingsImage = GD.Load<Texture2D>("res://Assets/Sprites/Menus/Settings.png");
@@ -91,12 +94,15 @@ public partial class MenuUI : Control
 
         menuPanel = GetNode<Panel>("/root/MainMenu/BG2");
         settingsContainer = GetParent().GetNode<Panel>("Settings/MarginContainer/Container");
+        settingsButtonContainer = GetParent().GetNode<VBoxContainer>("Settings/ButtonContainer");
+        settingsTitle = GetParent().GetNode<Label>("Settings/Title");
 
         playButton.MouseEntered += () => StartFade(playImage);
         settingsButton.MouseEntered += () => StartFade(settingsImage);
         customizeButton.MouseEntered += () => StartFade(customizeImage);
         exitButton.MouseEntered += () => StartFade(exitImage);
-        hostButton.MouseEntered += () => StartFade(hostImage);
+        hostAsPlayerButton.MouseEntered += () => StartFade(hostImage);
+        hostAsDedicatedServerButton.MouseEntered += () => StartFade(hostImage);
         joinButton.MouseEntered += () => StartFade(joinImage);
         backButton.MouseEntered += () => StartFade(exitImage);
         creditsButton.MouseEntered += () => StartFade(creditsImage);
@@ -105,7 +111,8 @@ public partial class MenuUI : Control
         settingsButton.Pressed += () => MenuButtonPressed(settingsButton);
         customizeButton.Pressed += () => MenuButtonPressed(customizeButton);
         exitButton.Pressed += () => MenuButtonPressed(exitButton);
-        hostButton.Pressed += () => MenuButtonPressed(hostButton);
+        hostAsPlayerButton.Pressed += () => MenuButtonPressed(hostAsPlayerButton);
+        hostAsDedicatedServerButton.Pressed += () => MenuButtonPressed(hostAsDedicatedServerButton);
         joinButton.Pressed += () => MenuButtonPressed(joinButton);
         backButton.Pressed += () => MenuButtonPressed(backButton);
 
@@ -124,6 +131,11 @@ public partial class MenuUI : Control
 
         animationPlayer.AnimationFinished += AnimFinished;
         LoadSettingsPage(generalSettingsScene);
+
+        hostAsPlayerButton.Visible = false;
+        hostAsDedicatedServerButton.Visible = false;
+        joinButton.Visible = false;
+        backButton.Visible = false;
     }
 
     public override void _Process(double delta)
@@ -145,6 +157,13 @@ public partial class MenuUI : Control
                 serverListButtonContainer.Position = new Vector2(51, 528) - new Vector2(-offset.X, -offset.Y);
                 serverListTitleLabel.Position = new Vector2(36, 49) - new Vector2(-offset.X, -offset.Y);
                 serverContainer.Position = new Vector2(526, 42) + new Vector2(-offset.X, -offset.Y);
+            }
+            else if (currentMenuType == MenuType.SettingsMenu)
+            {
+                // Apply parallax to settings container in the same style as other menus
+                settingsContainer.GetParent<Control>().Position = new Vector2(526, 42) + new Vector2(-offset.X, -offset.Y);
+                settingsButtonContainer.Position = new Vector2(51, 468) - new Vector2(-offset.X, -offset.Y);
+                settingsTitle.Position = new Vector2(36, 49) - new Vector2(-offset.X, -offset.Y);
             }
         }
 
@@ -178,7 +197,8 @@ public partial class MenuUI : Control
         else if (button == joinButton) OnJoinButtonPressed();
         else if (button == backfromServerButton) OnBackFromServerButtonPressed();
         else if (button == addServerButton) OnAddServerButtonPressed();
-        else if (button == hostButton) OnHostButtonPressed();
+        else if (button == hostAsPlayerButton) OnHostAsPlayerButtonPressed();
+        else if (button == hostAsDedicatedServerButton) OnHostAsDedicatedServerButtonPressed();
         else if (button == refreshServerButton) OnRefreshButtonPressed();
         else if (button == deleteAllServersButton) OnDeleteAllServersButtonPressed();
 
@@ -317,9 +337,14 @@ public partial class MenuUI : Control
         list.SaveServerList();
     }
 
-    private void OnHostButtonPressed()
+    private void OnHostAsDedicatedServerButtonPressed()
     {
-        NetworkManager.Instance.StartServer();
+        NetworkManager.Instance.StartServer(isDedicated: true);
+        GetTree().ChangeSceneToFile("res://Scenes/Game.tscn");
+    }
+    public void OnHostAsPlayerButtonPressed()
+    {
+        NetworkManager.Instance.StartServer(isDedicated: false);
         GetTree().ChangeSceneToFile("res://Scenes/Game.tscn");
     }
 
@@ -372,7 +397,8 @@ public partial class MenuUI : Control
 
     private void TogglePlayMenuButtonVisibility(bool visibility)
     {
-        hostButton.Visible = visibility;
+        hostAsPlayerButton.Visible = visibility;
+        hostAsDedicatedServerButton.Visible = visibility;
         joinButton.Visible = visibility;
     }
 

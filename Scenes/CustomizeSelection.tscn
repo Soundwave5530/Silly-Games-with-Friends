@@ -76,7 +76,7 @@ outline_color = Color(0, 0.247059, 0.435294, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_siy43"]
 font = ExtResource("3_1g6bg")
 font_size = 50
-outline_size = 30
+outline_size = 20
 outline_color = Color(0, 0.247059, 0.435294, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_6no4t"]
@@ -120,7 +120,7 @@ grow_vertical = 2
 theme = SubResource("Theme_a4dk0")
 theme_override_fonts/font = ExtResource("3_1g6bg")
 theme_override_font_sizes/font_size = 36
-text = "<--"
+text = "←"
 label_settings = SubResource("LabelSettings_v2q5y")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -155,7 +155,7 @@ grow_vertical = 2
 theme = SubResource("Theme_a4dk0")
 theme_override_fonts/font = ExtResource("3_1g6bg")
 theme_override_font_sizes/font_size = 36
-text = "-->"
+text = "→"
 label_settings = SubResource("LabelSettings_6no4t")
 horizontal_alignment = 1
 vertical_alignment = 1

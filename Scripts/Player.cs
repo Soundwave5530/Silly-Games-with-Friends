@@ -121,7 +121,13 @@ public partial class Player : CharacterBody3D
 
         if (IsMultiplayerAuthority())
         {
-            playerSprite.Hide();
+            // If we're the host player (server ID 1) and in first person, hide our model
+            bool isHostPlayer = NetworkManager.Instance.IsPlayerHost && Multiplayer.GetUniqueId() == 1;
+            if (isHostPlayer && perspectiveMode == 0)
+            {
+                playerSprite.Hide();
+            }
+            
             MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
             nameLabel.Visible = false;
             SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;

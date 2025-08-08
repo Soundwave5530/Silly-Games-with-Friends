@@ -99,40 +99,41 @@ public partial class KeybindSettings : Control
 
         if (@event is InputEventKey keyEvent)
         {
+            // Skip modifier keys when pressed alone
             if (keyEvent.Keycode is Key.Shift or Key.Ctrl or Key.Alt or Key.Meta)
                 return;
 
-            if (keyEvent.Keycode == Key.Escape && actionWaitingForRebind == "escape")
+            var newKeyEvent = new InputEventKey
             {
-                var newKeyEvent = new InputEventKey
-                {
-                    PhysicalKeycode = keyEvent.PhysicalKeycode,
-                    Keycode = keyEvent.Keycode,
-                    ShiftPressed = keyEvent.ShiftPressed,
-                    CtrlPressed = keyEvent.CtrlPressed,
-                    AltPressed = keyEvent.AltPressed,
-                    MetaPressed = keyEvent.MetaPressed
-                };
+                PhysicalKeycode = keyEvent.PhysicalKeycode,
+                Keycode = keyEvent.Keycode,
+                ShiftPressed = keyEvent.ShiftPressed,
+                CtrlPressed = keyEvent.CtrlPressed,
+                AltPressed = keyEvent.AltPressed,
+                MetaPressed = keyEvent.MetaPressed
+            };
 
-                if (IsKeyAlreadyBound(newKeyEvent, actionWaitingForRebind))
-                {
-                    StatusMessageManager.Instance?.ShowMessage("Key already bound to another action!", StatusMessageManager.MessageType.Error);
-                    actionWaitingForRebind = null;
-                    PopulateKeybinds();
-                    return;
-                }
+            // If escape is pressed during binding, treat it as a normal key
+            // This allows any key to be bound to any action
 
-                InputMap.ActionEraseEvents(actionWaitingForRebind);
-                InputMap.ActionAddEvent(actionWaitingForRebind, newKeyEvent);
-
-                StoreBinding(actionWaitingForRebind, newKeyEvent);
-
-                GD.Print($"Bound '{actionWaitingForRebind}' to {GetInputName(newKeyEvent)}");
+            if (IsKeyAlreadyBound(newKeyEvent, actionWaitingForRebind))
+            {
+                StatusMessageManager.Instance?.ShowMessage("Key already bound to another action!", StatusMessageManager.MessageType.Error);
                 actionWaitingForRebind = null;
                 PopulateKeybinds();
-                GetViewport().SetInputAsHandled();
                 return;
             }
+
+            InputMap.ActionEraseEvents(actionWaitingForRebind);
+            InputMap.ActionAddEvent(actionWaitingForRebind, newKeyEvent);
+
+            StoreBinding(actionWaitingForRebind, newKeyEvent);
+
+            GD.Print($"Bound '{actionWaitingForRebind}' to {GetInputName(newKeyEvent)}");
+            actionWaitingForRebind = null;
+            PopulateKeybinds();
+            GetViewport().SetInputAsHandled();
+            return;
         }
         else if (@event is InputEventMouseButton mouseEvent)
         {

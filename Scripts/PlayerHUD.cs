@@ -28,7 +28,7 @@ public partial class PlayerHUD : CanvasLayer
 
     public override void _Ready()
     {
-        if (Multiplayer.IsServer())
+        if (Multiplayer.IsServer() && !NetworkManager.Instance.IsPlayerHost)
         {
             Visible = false;
             return;

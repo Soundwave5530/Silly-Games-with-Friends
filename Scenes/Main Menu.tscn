@@ -795,7 +795,7 @@ outline_size = 25
 outline_color = Color(0, 0.247059, 0.435294, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_4lp62"]
-font_size = 64
+font_size = 36
 outline_size = 25
 outline_color = Color(0, 0.247059, 0.435294, 1)
 
@@ -965,7 +965,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_udm2q")
 metadata/_edit_use_anchors_ = true
 
-[node name="NewMenuUI" type="Control" parent="." node_paths=PackedStringArray("playButton", "settingsButton", "customizeButton", "exitButton", "creditsButton", "hostButton", "joinButton", "backButton", "addServerButton", "refreshServerButton", "deleteAllServersButton", "backfromServerButton", "settingsGeneralButton", "settingsVideoButton", "settingsAudioButton", "settingsControlsButton", "settingsBackButton", "customizationBackButton")]
+[node name="NewMenuUI" type="Control" parent="." node_paths=PackedStringArray("playButton", "settingsButton", "customizeButton", "exitButton", "creditsButton", "hostAsPlayerButton", "hostAsDedicatedServerButton", "joinButton", "backButton", "addServerButton", "refreshServerButton", "deleteAllServersButton", "backfromServerButton", "settingsGeneralButton", "settingsVideoButton", "settingsAudioButton", "settingsControlsButton", "settingsBackButton", "customizationBackButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -979,7 +979,8 @@ settingsButton = NodePath("ButtonContainer/SettingsB")
 customizeButton = NodePath("ButtonContainer/CustomizeB")
 exitButton = NodePath("ButtonContainer/ExitB")
 creditsButton = NodePath("ButtonContainer/CreditsB")
-hostButton = NodePath("ButtonContainer/HostB")
+hostAsPlayerButton = NodePath("ButtonContainer/HostB")
+hostAsDedicatedServerButton = NodePath("ButtonContainer/HostB2")
 joinButton = NodePath("ButtonContainer/JoinB")
 backButton = NodePath("ButtonContainer/BackB")
 addServerButton = NodePath("../ServerListBG/ButtonContainer/AddServerB")
@@ -1185,6 +1186,33 @@ text = "Host"
 label_settings = SubResource("LabelSettings_4lp62")
 vertical_alignment = 1
 
+[node name="HostB2" type="Button" parent="NewMenuUI/ButtonContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = SubResource("Theme_0vewo")
+flat = true
+script = ExtResource("8_0vewo")
+hoverHeight = 75.0
+hoverFontSize = 50
+hoverColor = Color(0.98666686, 0.19999999, 1, 1)
+
+[node name="Label" type="Label" parent="NewMenuUI/ButtonContainer/HostB2"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_mjet1")
+theme_override_fonts/font = ExtResource("4_udm2q")
+theme_override_font_sizes/font_size = 36
+text = "Host Dedicated"
+label_settings = SubResource("LabelSettings_4lp62")
+vertical_alignment = 1
+
 [node name="JoinB" type="Button" parent="NewMenuUI/ButtonContainer"]
 visible = false
 custom_minimum_size = Vector2(0, 100)
@@ -1255,7 +1283,7 @@ offset_bottom = -12.0
 grow_horizontal = 0
 grow_vertical = 0
 theme = ExtResource("4_eotax")
-text = "v 0.2.0"
+text = "dev build 3   v 0.2.1"
 horizontal_alignment = 2
 vertical_alignment = 2
 

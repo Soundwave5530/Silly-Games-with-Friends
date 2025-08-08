@@ -64,6 +64,7 @@ public partial class MovingPlatform : AnimatableBody3D
 
         foreach (int peerId in NetworkManager.Instance.InGamePlayers)
         {
+            if (peerId == 1) continue;
             RpcId(peerId, nameof(RpcSyncPosition), newPos);
         }
 

@@ -61,14 +61,17 @@ public partial class GameManager : Node3D
         
         // Original GameController logic
         EmitSignal(SignalName.GameSceneLoaded);
-        if (!Multiplayer.IsServer())
+        
+        // Only enable host camera for dedicated servers
+        var hostCamera = GetNode<Camera3D>("HostCamera");
+        if (NetworkManager.Instance.IsDedicatedServer)
         {
-            GetNode<Camera3D>("HostCamera").Current = false;
+            MultiplayerSpawner worldSpawner = GetNode<MultiplayerSpawner>("WorldSpawner");
+            hostCamera.Current = true;
         }
         else
         {
-            MultiplayerSpawner worldSpawner = GetNode<MultiplayerSpawner>("WorldSpawner");
-            GetNode<Camera3D>("HostCamera").Current = true;
+            hostCamera.Current = false;
         }
         
         // Setup timers

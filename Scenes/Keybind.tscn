@@ -94,7 +94,6 @@ outline_color = Color(0, 0.247059, 0.435294, 1)
 clip_contents = true
 custom_minimum_size = Vector2(1135, 130)
 layout_mode = 3
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -496.0
@@ -119,7 +118,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_gdus2")
 [node name="ActionLabel" type="Label" parent="."]
 texture_filter = 1
 layout_mode = 1
-anchors_preset = 9
+anchors_preset = -1
 anchor_bottom = 1.0
 offset_left = 37.0
 offset_right = 567.0
@@ -132,7 +131,7 @@ vertical_alignment = 1
 [node name="ChangeButton" type="Button" parent="."]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
-anchors_preset = 11
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -148,7 +147,7 @@ script = ExtResource("2_gu0e3")
 baseHeight = 40.0
 hoverHeight = 50.0
 baseFontSize = 48
-hoverFontSize = 60
+hoverFontSize = 54
 
 [node name="Label" type="Label" parent="ChangeButton"]
 texture_filter = 1
@@ -169,7 +168,7 @@ vertical_alignment = 1
 [node name="ClearButton" type="Button" parent="."]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 1
-anchors_preset = 11
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0

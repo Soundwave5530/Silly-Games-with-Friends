@@ -86,12 +86,16 @@ public partial class CustomizationMenu : Control
                 return;
             }
             playerColor = SettingsManager.GetCurrentColorFromCurrentSettings();
-
             redSlider.Value = playerColor.R;
             greenSlider.Value = playerColor.G;
             blueSlider.Value = playerColor.B;
 
             playerPreview.SelfModulate = playerColor;
+
+            if (currentHat != null && currentHat.modulatesWithPlayerColor)
+            {
+                playerPreviewHat.Modulate = playerColor;
+            }
         };
 
         AdvanceHatFrame();
@@ -239,7 +243,10 @@ public partial class CustomizationMenu : Control
                     if (PlayerHUD.Instance != null && PlayerHUD.Instance.active)
                         PlayerHUD.Instance.RefreshFromSettings();
 
-                    playerPreviewHat.Texture = currentHat.FrontSprites[0];
+                    if (currentHat.CosmeticID != "none")
+                        playerPreviewHat.Texture = currentHat.FrontSprites[0];
+                    else
+                        playerPreviewHat.Texture = null;
 
                     if (currentHat.modulatesWithPlayerColor)
                     {
@@ -278,6 +285,10 @@ public partial class CustomizationMenu : Control
 
         if (Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
             NetworkManager.Instance.RpcId(1, nameof(NetworkManager.Instance.RegisterColor), playerColor);
+        else if (Multiplayer.IsServer() && NetworkManager.Instance.IsPlayerHost)
+        {
+            NetworkManager.Instance.RegisterColor(playerColor);
+        }
 
     }
 }

@@ -97,11 +97,13 @@ public partial class ChatManager : CanvasLayer
         }
         if (Multiplayer.IsServer())
         {
-            Rpc(nameof(SendChatMessage), "[SERVER]", text);
-            SendChatMessage("[SERVER]", text);
+            string prefix = NetworkManager.Instance.IsDedicatedServer ? "[SERVER]" : NetworkManager.Instance.PlayerNames[1];
+            Rpc(nameof(SendChatMessage), prefix, text);
+            SendChatMessage(prefix, text);
             CloseChat();
             return;
         }
+        
         RpcId(1, nameof(SendChatToServer), text);
         CloseChat();
     }
