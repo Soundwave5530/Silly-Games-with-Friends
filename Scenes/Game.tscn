@@ -20,8 +20,6 @@ background_mode = 2
 background_color = Color(1, 1, 1, 1)
 sky = SubResource("Sky_2irst")
 ambient_light_color = Color(1, 1, 1, 1)
-ssr_enabled = true
-ssao_enabled = true
 sdfgi_use_occlusion = true
 
 [sub_resource type="Curve3D" id="Curve3D_71axn"]
@@ -55,7 +53,7 @@ visible = false
 environment = SubResource("Environment_gl6un")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.31507, 0.571032, -0.758059, 2.23517e-08, 0.798741, 0.601676, 0.949069, 0.189569, -0.25166, 0, 1.49979, 0)
+transform = Transform3D(-0.31506985, 0.5710314, -0.75805956, 2.2351689e-08, 0.7987406, 0.6016756, 0.94906855, 0.18956983, -0.2516591, 0, 1.49979, 0)
 shadow_enabled = true
 directional_shadow_mode = 0
 

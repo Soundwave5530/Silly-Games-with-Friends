@@ -10,6 +10,9 @@ public partial class GameManager : Node3D
     [Export] public PackedScene TagLevelScene;
     [Export] public PackedScene LobbyScene;
     
+    // Used to track if color changes are coming from the game system
+    public bool IsColorChangeFromGame { get; private set; }
+    
     [Signal] public delegate void GameSceneLoadedEventHandler();
 
     public enum GameState
@@ -371,6 +374,7 @@ public partial class GameManager : Node3D
         if (currentGameType != GameType.Tag) return;
         
         colorsOverridden = true;
+        IsColorChangeFromGame = true;
         
         foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
         {
@@ -384,12 +388,14 @@ public partial class GameManager : Node3D
         }
         
         Rpc(nameof(ApplyColorOverrides), currentTagger);
+        IsColorChangeFromGame = false;
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void ApplyColorOverrides(int taggerId)
     {
         currentTagger = taggerId;
+        IsColorChangeFromGame = true;
         
         foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
         {
@@ -401,11 +407,15 @@ public partial class GameManager : Node3D
                 player.SetPlayerColor(newColor);
             }
         }
+        
+        IsColorChangeFromGame = false;
     }
     
     private void RestoreOriginalColors()
     {
         if (!colorsOverridden) return;
+        
+        IsColorChangeFromGame = true;
         
         foreach (var kvp in originalPlayerColors)
         {
@@ -418,11 +428,14 @@ public partial class GameManager : Node3D
         
         Rpc(nameof(ApplyOriginalColors));
         colorsOverridden = false;
+        IsColorChangeFromGame = false;
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void ApplyOriginalColors()
     {
+        IsColorChangeFromGame = true;
+        
         foreach (var kvp in NetworkManager.Instance.PlayerColors)
         {
             Player player = NetworkManager.Instance.GetPlayerFromID(kvp.Key);
@@ -431,7 +444,9 @@ public partial class GameManager : Node3D
                 player.SetPlayerColor(kvp.Value);
             }
         }
+        
         colorsOverridden = false;
+        IsColorChangeFromGame = false;
     }
     
     #endregion

@@ -76,6 +76,15 @@ public partial class Player : CharacterBody3D
 
     public void SetPlayerColor(Color color)
     {
+        // Don't allow color changes during tag game unless it's from the GameManager
+        if (GameManager.Instance != null && 
+            GameManager.Instance.GetCurrentGameType() == GameManager.GameType.Tag && 
+            GameManager.Instance.GetCurrentState() == GameManager.GameState.Playing && 
+            !GameManager.Instance.IsColorChangeFromGame)
+        {
+            return;
+        }
+
         playerColor = color;
         playerSprite.Modulate = color;
         nameLabel.Modulate = color;
@@ -144,7 +153,7 @@ public partial class Player : CharacterBody3D
                     MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
                 else if (!NewPauseMenu.IsOpen)
                     MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-                
+
                 lastChatState = ChatManager.chatOpen;
             }
 
@@ -583,4 +592,9 @@ public partial class Player : CharacterBody3D
         }
     }
     */
+    
+    public void SetPlayerSpeed(float newSpeed)
+    {
+        Speed = newSpeed;
+    }
 }
