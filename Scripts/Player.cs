@@ -85,11 +85,27 @@ public partial class Player : CharacterBody3D
             return;
         }
 
+        // Store the color even if nodes aren't ready yet
         playerColor = color;
-        playerSprite.Modulate = color;
-        nameLabel.Modulate = color;
 
-        GetNode<CharacterVisualManager>("Person").UpdateCosmeticColor();
+        // Wait until _Ready has initialized our nodes
+        if (!ArePlayerNodesReady())
+            return;
+
+        // Apply color to visual elements
+        if (playerSprite != null)
+            playerSprite.Modulate = color;
+            
+        if (nameLabel != null)
+            nameLabel.Modulate = color;
+
+        var visualManager = GetNodeOrNull<CharacterVisualManager>("Person");
+        visualManager?.UpdateCosmeticColor();
+    }
+
+    private bool ArePlayerNodesReady()
+    {
+        return IsInsideTree() && playerSprite != null && nameLabel != null;
     }
 
     public void SetTeam(int teamId)

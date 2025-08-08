@@ -37,6 +37,18 @@ public partial class NetworkManager : Node3D
         //ResourceDebugger.ListAllFiles();
 
         Instance = this;
+        
+        // Clear any stale network state
+        PlayerNames.Clear();
+        PlayerColors.Clear();
+        InGamePlayers.Clear();
+
+        // Reset multiplayer state
+        if (Multiplayer.MultiplayerPeer != null)
+        {
+            Multiplayer.MultiplayerPeer.Close();
+            Multiplayer.MultiplayerPeer = null;
+        }
 
         AddChild(new Node { Name = "Players" });
         PlayerSpawner = new MultiplayerSpawner();
@@ -80,11 +92,33 @@ public partial class NetworkManager : Node3D
         player.GlobalTransform = new Transform3D(Basis.Identity, new Vector3(5 * GD.Randf(), 0, 5 * GD.Randf()));
         player.AddToGroup("players");
 
+        // Set initial player properties from cached data
         if (PlayerNames.TryGetValue(id, out var playerName))
         {
             player.SetDisplayName(playerName);
             GD.Print($"[NetworkManager] Set name on spawn: {playerName}");
         }
+        
+        // Apply color if we already have it
+        if (PlayerColors.TryGetValue(id, out var playerColor))
+        {
+            player.SetPlayerColor(playerColor);
+            GD.Print($"[NetworkManager] Set color on spawn: {playerColor}");
+        }
+
+        // Schedule the ready check for the next frame to ensure the node is in the scene tree
+        GetTree().CreateTimer(0).Timeout += () => 
+        {
+            if (player.IsInsideTree())
+            {
+                GD.Print($"[NetworkManager] Player_{id} is ready in scene tree");
+                // Re-apply color and name just to be safe
+                if (PlayerColors.TryGetValue(id, out var color))
+                    player.SetPlayerColor(color);
+                if (PlayerNames.TryGetValue(id, out var name))
+                    player.SetDisplayName(name);
+            }
+        };
 
         return player;
     }
@@ -104,15 +138,14 @@ public partial class NetworkManager : Node3D
             // Register server player (ID 1) as host
             PlayerNames[1] = SettingsManager.CurrentSettings.Username;
             InGamePlayers.Add(1);
-            
-            var s = SettingsManager.CurrentSettings;
-            PlayerColors[1] = new Color(s.ColorR, s.ColorG, s.ColorB);
 
-            // We'll spawn the player after the scene change
+            // We'll register the color and spawn the player after changing to the game scene
             GetTree().CreateTimer(0.1).Timeout += () =>
             {
                 if (GetTree().CurrentScene.SceneFilePath == "res://Scenes/Game.tscn")
                 {
+                    var s = SettingsManager.CurrentSettings;
+                    PlayerColors[1] = new Color(s.ColorR, s.ColorG, s.ColorB);
                     PlayerSpawner.Spawn(1);
                 }
             };
@@ -345,19 +378,30 @@ public partial class NetworkManager : Node3D
         if (!IsServer) return;
 
         int peerId = Multiplayer.GetRemoteSenderId();
-        PlayerColors[peerId] = color;
+        
+        // Validate peer ID
+        if (peerId <= 0)
+        {
+            GD.PrintErr($"[NetworkManager] Invalid peer ID: {peerId}, ignoring color registration");
+            return;
+        }
 
+        PlayerColors[peerId] = color;
         GD.Print($"[Server] Registered color for {peerId}: {color}");
 
-        await WaitForPlayerNode(peerId, 2.0f);
-
-        Rpc(nameof(AnnounceColor), peerId, color);
-        AnnounceColor(peerId, color);
-
-        foreach (var kvp in PlayerColors)
+        // Only wait for and announce to players if we're in game
+        if (GetTree().CurrentScene?.SceneFilePath == "res://Scenes/Game.tscn")
         {
-            if (kvp.Key == peerId) continue;
-            RpcId(peerId, nameof(AnnounceColor), kvp.Key, kvp.Value);
+            await WaitForPlayerNode(peerId, 3.5f);
+
+            Rpc(nameof(AnnounceColor), peerId, color);
+            AnnounceColor(peerId, color);
+
+            foreach (var kvp in PlayerColors)
+            {
+                if (kvp.Key == peerId) continue;
+                RpcId(peerId, nameof(AnnounceColor), kvp.Key, kvp.Value);
+            }
         }
     }
 
@@ -366,6 +410,20 @@ public partial class NetworkManager : Node3D
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void AnnounceColor(int peerId, Color color)
     {
+        // Validate peer ID
+        if (peerId <= 0)
+        {
+            GD.PrintErr($"[NetworkManager] Invalid peer ID in AnnounceColor: {peerId}, ignoring");
+            return;
+        }
+
+        // Only process color announcements if we're in the game scene
+        if (GetTree().CurrentScene?.SceneFilePath != "res://Scenes/Game.tscn")
+        {
+            GD.Print($"[NetworkManager] Skipping color announcement for Player_{peerId} - not in game scene");
+            return;
+        }
+
         PlayerColors[peerId] = color;
 
         var player = GetNodeOrNull<Player>($"Players/Player_{peerId}");
@@ -374,9 +432,10 @@ public partial class NetworkManager : Node3D
             player.SetPlayerColor(color);
             GD.Print($"[NetworkManager] Applied color for Player_{peerId}: {color}");
         }
-        else
+        else if (IsServer || Multiplayer.GetUniqueId() > 1)
         {
-            GD.PrintErr($"[NetworkManager] Player_{peerId} not found to assign color '{color}'");
+            // Only log the error if we're the server or a connected client
+            GD.Print($"[NetworkManager] Player_{peerId} not found to assign color '{color}' - will be applied when spawned");
         }
     }
 
@@ -407,18 +466,34 @@ public partial class NetworkManager : Node3D
         chat.DisplaySystemMessage($"[color=yellow]{msg}[/color]");
     }
 
-    private async Task WaitForPlayerNode(int peerId, float timeoutSeconds = 2.0f)
+    private async Task WaitForPlayerNode(int peerId, float timeoutSeconds = 3.5f)
     {
         var timer = 0f;
-        while (GetNodeOrNull($"Players/Player_{peerId}") == null && timer < timeoutSeconds)
+        Player player = null;
+        
+        while (timer < timeoutSeconds)
         {
+            player = GetNodeOrNull<Player>($"Players/Player_{peerId}");
+            if (player != null && player.IsInsideTree())
+            {
+                GD.Print($"[NetworkManager] Found Player_{peerId} after {timer:F1}s");
+                return;
+            }
+            
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
             timer += (float)GetProcessDeltaTime();
         }
 
-        if (GetNodeOrNull($"Players/Player_{peerId}") == null)
+        // If we reached here, we timed out
+        if (player == null)
         {
-            GD.PrintErr($"[NetworkManager] Timeout: Player_{peerId} not found after {timeoutSeconds}s.");
+            GD.PrintErr($"[NetworkManager] Timeout: Player_{peerId} not found after {timeoutSeconds}s");
+            // Try spawning the player if they're not found
+            if (IsServer && GetTree().CurrentScene.SceneFilePath == "res://Scenes/Game.tscn")
+            {
+                GD.Print($"[NetworkManager] Attempting to respawn Player_{peerId}");
+                PlayerSpawner.Spawn(peerId);
+            }
         }
     }
 

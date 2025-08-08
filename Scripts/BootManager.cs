@@ -30,12 +30,16 @@ public partial class BootManager : Node
         Instance = this;
 
         CosmeticDatabase.LoadAll();
+        GD.Print("[BootManager] Loading Settings");
         SettingsManager.Load();
+        GD.Print("[BootManager] Applying Settings");
         ApplySettingsOnBoot();
+        GD.Print("[BootManager] Applying Keybinds from Settings");
         ApplySavedKeybinds();
 
         int idx = GD.RandRange(0, titles.Count - 1);
         DisplayServer.WindowSetTitle(titles[idx]);
+        GD.Print("[BootManager] Applying Window Title: " + titles[idx]);
 
         PlayerData.CurrentCharacter = CosmeticDatabase.Characters.First();
 
@@ -70,6 +74,8 @@ public partial class BootManager : Node
         DisplayServer.WindowSetVsyncMode(us.VSync ? DisplayServer.VSyncMode.Enabled : DisplayServer.VSyncMode.Disabled);
 
         Input.UseAccumulatedInput = !SettingsManager.CurrentSettings.VSync;
+
+        GD.Print("[BootManager] Applied Settings");
     }
 
     void ApplySavedKeybinds()
@@ -77,7 +83,7 @@ public partial class BootManager : Node
         foreach (var kv in SettingsManager.CurrentSettings.SavedKeybinds)
         {
             var action = kv.Key;
-            var rec    = kv.Value;
+            var rec = kv.Value;
 
             InputMap.ActionEraseEvents(action);
 
@@ -91,15 +97,17 @@ public partial class BootManager : Node
                 var ke = new InputEventKey
                 {
                     PhysicalKeycode = (Key)rec.KeyCode,
-                    Keycode         = (Key)rec.KeyCode,
-                    ShiftPressed    = rec.Shift,
-                    CtrlPressed     = rec.Ctrl,
-                    AltPressed      = rec.Alt,
-                    MetaPressed     = rec.Meta
+                    Keycode = (Key)rec.KeyCode,
+                    ShiftPressed = rec.Shift,
+                    CtrlPressed = rec.Ctrl,
+                    AltPressed = rec.Alt,
+                    MetaPressed = rec.Meta
                 };
                 InputMap.ActionAddEvent(action, ke);
             }
         }
+        
+        GD.Print("[BootManager] Keybinds from settings successful.");
     }
 
 

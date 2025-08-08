@@ -53,7 +53,6 @@ public static class SettingsManager
                             ?? new UserSettings();
 
             GD.Print("[SettingsManager] \tSettings loaded.");
-            GD.Print(json);
         }
         catch (Exception e)
         {

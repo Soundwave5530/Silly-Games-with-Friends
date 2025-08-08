@@ -283,12 +283,17 @@ public partial class CustomizationMenu : Control
 
         SettingsManager.Save();
 
-        if (Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
-            NetworkManager.Instance.RpcId(1, nameof(NetworkManager.Instance.RegisterColor), playerColor);
-        else if (Multiplayer.IsServer() && NetworkManager.Instance.IsPlayerHost)
+        // Only try to update network color if NetworkManager exists and we're in a network game
+        if (NetworkManager.Instance != null && Multiplayer.MultiplayerPeer != null)
         {
-            NetworkManager.Instance.RegisterColor(playerColor);
+            if (Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
+            {
+                NetworkManager.Instance.RpcId(1, nameof(NetworkManager.Instance.RegisterColor), playerColor);
+            }
+            else if (Multiplayer.IsServer() && NetworkManager.Instance.IsPlayerHost)
+            {
+                NetworkManager.Instance.RegisterColor(playerColor);
+            }
         }
-
     }
 }
