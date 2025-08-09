@@ -11,7 +11,6 @@ config_version=5
 [application]
 
 config/name="Silly Games with Friends"
-config/version="0.0.1.0"
 run/main_scene="uid://c1dj4aylug0tw"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 boot_splash/show_image=false
@@ -30,7 +29,6 @@ StatusMessageManager="*res://Scenes/StatusMessageManager.tscn"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/size/mode=2
-window/size/initial_position_type=4
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
 
@@ -115,3 +113,4 @@ escape={
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+occlusion_culling/use_occlusion_culling=true

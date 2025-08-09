@@ -28,7 +28,7 @@ public partial class NetworkManager : Node3D
 
     public const int port = 7777;
 
-    public const string GAMEVERSION = "v0.2.0";
+    public const string GAMEVERSION = "v0.2.1 dev3";
 
     public TransitionScreen transitionScreen = null;
 

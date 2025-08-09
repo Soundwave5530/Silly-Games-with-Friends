@@ -1663,6 +1663,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_3hb06")
 visible = false
 
 [node name="BGTex" parent="Customization Menu" index="1"]
+modulate = Color(0.48, 0.48, 0.48, 0.5411765)
 anchors_preset = -1
 
 [node name="PlayerPreview" parent="Customization Menu" index="3"]
