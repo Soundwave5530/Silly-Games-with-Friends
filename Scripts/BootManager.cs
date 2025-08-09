@@ -28,18 +28,22 @@ public partial class BootManager : Node
     public override void _Ready()
     {
         Instance = this;
+        int idx = GD.RandRange(0, titles.Count - 1);
+        GetTree().Root.Title = titles[idx];
+        GD.Print("[BootManager] Applying Window Title: " + titles[idx]);
+
 
         CosmeticDatabase.LoadAll();
+        GD.Print("[BootManager] Cosmetic Database loaded");
+
         GD.Print("[BootManager] Loading Settings");
         SettingsManager.Load();
+
         GD.Print("[BootManager] Applying Settings");
         ApplySettingsOnBoot();
+
         GD.Print("[BootManager] Applying Keybinds from Settings");
         ApplySavedKeybinds();
-
-        int idx = GD.RandRange(0, titles.Count - 1);
-        DisplayServer.WindowSetTitle(titles[idx]);
-        GD.Print("[BootManager] Applying Window Title: " + titles[idx]);
 
         PlayerData.CurrentCharacter = CosmeticDatabase.Characters.First();
 
