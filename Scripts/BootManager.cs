@@ -22,6 +22,18 @@ public partial class BootManager : Node
         "Silly Games with Friends: The Silliest Around!",
         "Silly Games with Friends: Bug Simulator",
         "Silly Games with Friends: Made in Godot!",
+        "Silly Games with Friends: The Game",
+        "Silly Games with Friends: The Game: The Sequel",
+        "Silly Games with Friends: The Game: The Sequel: The Prequel",
+        "Silly Games with Friends: The Game: The Sequel: The Prequel: The Remake",
+        "Silly Games with People you HATE! Just kidding, it's still Silly Games with Friends",
+        "Silly Games with Friends: The Game: The Sequel: The Prequel: The Remake: The Reboot",
+        "What are these titles?",
+        "Silly Games with Friends: A Game by Andrew",
+        "Silly Games with Friends: The Game that makes you want to cry",
+        "Silly Games with Friends: Not Made in Unity!",
+        "Silly Games with Friends: Made in USA",
+        "Silly Games with Friends: Now in C#! Wait, it was always in C#!",
         "Silly Games with Friends"
     };
 
