@@ -26,8 +26,8 @@ public partial class NetworkManager : Node3D
     public bool IsDedicatedServer { get; private set; }
     public bool IsPlayerHost => IsServer && !IsDedicatedServer;
 
-    public const int port = 7777;
-
+    public const int PORT = 7777;
+    public const int MAXPLAYERS = 15;
     public const string GAMEVERSION = "v0.2.1 dev3";
 
     public TransitionScreen transitionScreen = null;
@@ -126,11 +126,11 @@ public partial class NetworkManager : Node3D
     public void StartServer(bool isDedicated = false)
     {
         var peer = new ENetMultiplayerPeer();
-        peer.CreateServer(port, maxClients: 10);
+        peer.CreateServer(PORT, maxClients: MAXPLAYERS);
         Multiplayer.MultiplayerPeer = peer;
         IsDedicatedServer = isDedicated;
         
-        GD.Print($"[NetworkManager] {(isDedicated ? "Dedicated" : "Player-hosted")} server started on port {port}");
+        GD.Print($"[NetworkManager] {(isDedicated ? "Dedicated" : "Player-hosted")} server started on port {PORT}");
 
         // If this is a player-host, register them immediately
         if (!isDedicated)
@@ -162,7 +162,7 @@ public partial class NetworkManager : Node3D
         Multiplayer.ConnectionFailed += OnClientConnectionFailed;
 
         var peer = new ENetMultiplayerPeer();
-        var result = peer.CreateClient(ip, port);
+        var result = peer.CreateClient(ip, PORT);
         Multiplayer.MultiplayerPeer = peer;
 
         await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -382,7 +382,7 @@ public partial class NetworkManager : Node3D
         // Validate peer ID
         if (peerId <= 0)
         {
-            GD.PrintErr($"[NetworkManager] Invalid peer ID: {peerId}, ignoring color registration");
+            GD.Print($"[NetworkManager] Invalid peer ID: {peerId}, ignoring color registration");
             return;
         }
 
@@ -511,7 +511,7 @@ public partial class NetworkManager : Node3D
     public async Task<(float? ping, bool versionMatch)> PingServerAsync(string ip, float timeoutSec = 1f)
     {
         var peer = new ENetMultiplayerPeer();
-        peer.CreateClient(ip, port);
+        peer.CreateClient(ip, PORT);
         Multiplayer.MultiplayerPeer = peer;
 
         var stopwatch = new Stopwatch();
@@ -574,6 +574,7 @@ public partial class NetworkManager : Node3D
 
     public Player GetLocalPlayer()
     {
+        if (Multiplayer.MultiplayerPeer == null) return null;
         return GetNodeOrNull<Player>($"Players/Player_{Multiplayer.GetUniqueId()}");
     }
 

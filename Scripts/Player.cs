@@ -31,8 +31,8 @@ public partial class Player : CharacterBody3D
 
     private float pitch = 0f;
     private float yaw = 0f;
-    private bool crouching = false;
-    private int perspectiveMode = 0;
+    public bool crouching = false;
+    public int perspectiveMode = 0;
 
     public string displayName = "";
 

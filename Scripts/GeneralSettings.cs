@@ -29,7 +29,7 @@ public partial class GeneralSettings : Control
                 return;
             }
             SettingsManager.CurrentSettings.Username = newName;
-            if (Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
+            if (Multiplayer.MultiplayerPeer != null && Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
                 NetworkManager.Instance.RpcId(1, nameof(NetworkManager.Instance.RegisterName), newName, true);
             SettingsManager.Save();
 

@@ -1024,7 +1024,7 @@ alignment = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="PlayB" type="Button" parent="NewMenuUI/ButtonContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1051,7 +1051,7 @@ label_settings = SubResource("LabelSettings_nl2gc")
 vertical_alignment = 1
 
 [node name="SettingsB" type="Button" parent="NewMenuUI/ButtonContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1078,7 +1078,7 @@ label_settings = SubResource("LabelSettings_wib81")
 vertical_alignment = 1
 
 [node name="CustomizeB" type="Button" parent="NewMenuUI/ButtonContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1105,7 +1105,7 @@ label_settings = SubResource("LabelSettings_tbdrc")
 vertical_alignment = 1
 
 [node name="CreditsB" type="Button" parent="NewMenuUI/ButtonContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1132,7 +1132,7 @@ label_settings = SubResource("LabelSettings_ns28u")
 vertical_alignment = 1
 
 [node name="ExitB" type="Button" parent="NewMenuUI/ButtonContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1160,7 +1160,7 @@ vertical_alignment = 1
 
 [node name="HostB" type="Button" parent="NewMenuUI/ButtonContainer"]
 visible = false
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1188,7 +1188,7 @@ vertical_alignment = 1
 
 [node name="HostB2" type="Button" parent="NewMenuUI/ButtonContainer"]
 visible = false
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1215,7 +1215,7 @@ vertical_alignment = 1
 
 [node name="JoinB" type="Button" parent="NewMenuUI/ButtonContainer"]
 visible = false
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
@@ -1243,7 +1243,7 @@ vertical_alignment = 1
 
 [node name="BackB" type="Button" parent="NewMenuUI/ButtonContainer"]
 visible = false
-custom_minimum_size = Vector2(0, 85)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = SubResource("Theme_0vewo")
