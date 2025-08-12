@@ -419,6 +419,7 @@ public partial class GameManager : Node3D
         {
             case GameType.Tag:
                 GetTree().ChangeSceneToPacked(TagLevelScene);
+                NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(5 * GD.Randf(), 0, 5 * GD.Randf());
                 break;
             // Add other levels here
         }

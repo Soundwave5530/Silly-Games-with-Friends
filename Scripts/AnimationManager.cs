@@ -129,7 +129,7 @@ public partial class AnimationManager : Node
 
         if (player != null)
         {
-            if (Multiplayer.MultiplayerPeer != null && player.IsMultiplayerAuthority())
+            if (player.Multiplayer.MultiplayerPeer != null && Multiplayer.HasMultiplayerPeer() && player.IsMultiplayerAuthority())
             {
                 player.SyncAnimType = (int)currentAnim;
                 player.SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;

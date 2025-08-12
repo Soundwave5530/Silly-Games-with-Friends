@@ -79,7 +79,7 @@ public partial class VotingTab : Button
             GD.PrintErr($"[VotingTab] No sticker container found for game {data?.GameName}!");
             return;
         }
-        
+
         if (playerStickers.ContainsKey(playerId))
         {
             GD.Print($"[VotingTab] Removing existing sticker for player {playerId}");
@@ -102,11 +102,11 @@ public partial class VotingTab : Button
         }
 
         sticker.Name = $"PlayerSticker_{playerId}";
-        
+
         // Get player appearance from network data if available
         string expressionId = "smile";
         string hatId = "none";
-        
+
         if (NetworkManager.Instance != null)
         {
             var player = NetworkManager.Instance.GetPlayerFromID(playerId);
@@ -125,7 +125,7 @@ public partial class VotingTab : Button
         {
             GD.Print("[VotingTab] NetworkManager not ready, using default cosmetics");
         }
-        
+
         GD.Print($"[VotingTab] Updating sticker with expression: {expressionId}, hat: {hatId}");
         sticker.UpdateSticker(playerId, playerColor, expressionId, hatId);
 
@@ -136,9 +136,10 @@ public partial class VotingTab : Button
         float x = (float)random.NextDouble() * (containerWidth - 48);  // 48 is sticker width
         float y = (float)random.NextDouble() * (containerHeight - 48); // 48 is sticker height
         sticker.Position = new Vector2(x, y);
-        
+
         // Start with zero scale
-        sticker.SetScale(0);
+        sticker.SetScale(3);
+        sticker.Modulate = new Color(sticker.Modulate.R, sticker.Modulate.G, sticker.Modulate.B, 0f);
         playerStickersContainer.AddChild(sticker);
         playerStickers[playerId] = sticker;
 
@@ -146,7 +147,11 @@ public partial class VotingTab : Button
         var tween = CreateTween();
         tween.SetTrans(Tween.TransitionType.Elastic);
         tween.SetEase(Tween.EaseType.Out);
-        tween.TweenProperty(sticker, "scale", Vector2.One, 0.5f);
+        tween.TweenProperty(sticker, "scale", Vector2.One, 0.4f);
+        tween.Parallel().TweenProperty(sticker, "modulate:a", 1f, 0.2f)
+            .SetEase(Tween.EaseType.Out)
+            .SetTrans(Tween.TransitionType.Sine);
+        
     }
 
     public void RemovePlayerSticker(int playerId)

@@ -9,7 +9,7 @@ public partial class VotingUI : CanvasLayer
     [Export] public Label TimeLabel;
     [Export] public Label StatusLabel;
     [Export] public HBoxContainer VotingTabContainer;
-    
+
     private Timer countdownTimer;
     private float timeLeft;
     private bool hasVoted = false;
@@ -20,13 +20,10 @@ public partial class VotingUI : CanvasLayer
     public override void _Ready()
     {
         Hide();
-        
-
 
         // Setup countdown timer
         countdownTimer = new Timer { WaitTime = 60f };
         AddChild(countdownTimer);
-        countdownTimer.Timeout += UpdateCountdown;
 
         // Connect to GameManager if it exists
         if (GameManager.Instance != null)
@@ -41,9 +38,9 @@ public partial class VotingUI : CanvasLayer
         timeLeft = duration;
         hasVoted = false;
         playerVotes.Clear();
-        
+
         Show();
-        
+
         // Make sure pause menu is closed and mouse is visible
         if (NewPauseMenu.IsOpen)
         {
@@ -59,28 +56,28 @@ public partial class VotingUI : CanvasLayer
         votingTabs.Clear();
 
         StatusLabel.Text = "Vote for your favorite game!";
-        
+
         // Initialize tabs with random game data
         var gameOptions = GameDataProvider.Instance.GetRandomGameOptions(3);
         float spacing = 10; // Spacing between tabs
         float currentY = 0;
-        
+
         for (int i = 0; i < gameOptions.Count; i++)
         {
             var tab = VotingTabScene.Instantiate<VotingTab>();
             tab.Initialize(gameOptions[i]);
             tab.Position = new Vector2(0, currentY);
-            
+
             // Connect pressed signal
             tab.Pressed += () => SubmitVote(tab.data.GameType);
-            
+
             VotingTabContainer.AddChild(tab);
             tab.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
             votingTabs.Add(tab);
-            
+
             currentY += 145 + spacing; // 145 is the height of a tab
         }
-        
+
         EnableTabs();
         countdownTimer.Start();
         UpdateTimeDisplay();
@@ -111,7 +108,7 @@ public partial class VotingUI : CanvasLayer
 
         // Update votes dictionary
         playerVotes[playerId] = gameType;
-        
+
         // Add new sticker after a short delay to ensure old one is cleaned up
         GetTree().CreateTimer(0.1).Timeout += () =>
         {
@@ -155,7 +152,7 @@ public partial class VotingUI : CanvasLayer
                 StatusLabel.Text = "Cannot vote: Server connection issue";
                 return;
             }
-            
+
             if (Multiplayer.MultiplayerPeer == null)
             {
                 GD.PrintErr("[VotingUI] Cannot vote: No active multiplayer peer");
@@ -172,14 +169,14 @@ public partial class VotingUI : CanvasLayer
             }
 
             GD.Print($"[VotingUI] Submitting vote for {gameType} from peer {myId}");
-            
+
             // Register vote through GameManager
             GameManager.Instance.RegisterVote(gameType);
-            
+
             // Visual feedback only for the voter
             StatusLabel.Text = $"You voted for {gameType}!";
             ResetTabColors();
-            
+
             var selectedTab = GetTabForGameType(gameType);
             if (selectedTab != null)
             {
@@ -226,9 +223,9 @@ public partial class VotingUI : CanvasLayer
         }
     }
 
-    private void UpdateCountdown()
+    private void UpdateCountdown(double delta)
     {
-        timeLeft -= 1f;
+        timeLeft -= (float)delta;
         UpdateTimeDisplay();
 
         if (timeLeft <= 0)
@@ -264,6 +261,15 @@ public partial class VotingUI : CanvasLayer
         if (GameManager.Instance != null)
         {
             GameManager.Instance.GameStateChanged -= OnGameStateChanged;
+        }
+    }
+    
+    public override void _Process(double delta)
+    {
+        
+        if (GameManager.Instance != null && (GameManager.Instance.GetCurrentState() == GameManager.GameState.Voting))
+        {
+            UpdateCountdown(delta);
         }
     }
 }

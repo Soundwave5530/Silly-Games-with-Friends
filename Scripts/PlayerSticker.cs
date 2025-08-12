@@ -21,8 +21,7 @@ public partial class PlayerSticker : TextureRect
         Hat ??= GetNode<TextureRect>("Hat");
         Head ??= GetNode<TextureRect>("Head");
 
-        // Apply random rotation at start
-        var random = new Random();
+        Random random = new Random();
         RotationDegrees = random.Next(-20, 20);
     }
 
@@ -37,7 +36,6 @@ public partial class PlayerSticker : TextureRect
             return;
         }
         
-        // Set base color
         Head.SelfModulate = color;
         
         // Get cosmetics from database
@@ -58,7 +56,6 @@ public partial class PlayerSticker : TextureRect
             GD.PrintErr($"[PlayerSticker] Failed to get expression: {expressionId}");
         }
 
-        // Handle hat if present
         hat = null;
         Hat.Visible = false;
         if (hatId != "none" && CosmeticDatabase.Hats.TryGetValue(hatId, out hat) && hat.FrontSprites.Count > 0)
