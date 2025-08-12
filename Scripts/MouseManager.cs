@@ -125,13 +125,13 @@ public partial class MouseManager : CanvasLayer
         CustomMouse.Size = 32 * Vector2.One * scale;
     }
 
-    public void UpdateMouseType(Input.MouseModeEnum type)
+    public void UpdateMouseType(Input.MouseModeEnum type, bool force = false)
     {
-        bool useSystem = SettingsManager.CurrentSettings.UseSystemMouse;
+        bool useSystem = force ? true : SettingsManager.CurrentSettings.UseSystemMouse;
         switch (type)
         {
             case Input.MouseModeEnum.Visible:
-                if (useSystem)
+                if (useSystem || force)
                 {
                     Input.MouseMode = Input.MouseModeEnum.Visible;
                     CustomMouse.Visible = false;
@@ -153,11 +153,14 @@ public partial class MouseManager : CanvasLayer
                 SyncFromSystemCursor();
                 break;
             case Input.MouseModeEnum.Captured:
-                Input.MouseMode = Input.MouseModeEnum.Captured;
-                CustomMouse.Visible = false;
+                if (!force) // Don't capture if force flag is set
+                {
+                    Input.MouseMode = Input.MouseModeEnum.Captured;
+                    CustomMouse.Visible = false;
 
-                SetCursor(CurrentCursorType);
-                SyncFromSystemCursor();
+                    SetCursor(CurrentCursorType);
+                    SyncFromSystemCursor();
+                }
                 break;
         }
     }

@@ -1,0 +1,67 @@
+[gd_scene load_steps=5 format=3 uid="uid://bbxh2wjanoc60"]
+
+[ext_resource type="Script" uid="uid://jbcklj82rndo" path="res://Scripts/VotingUI.cs" id="1_4w1yn"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="4_7hjhp"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4w1yn"]
+font = ExtResource("4_7hjhp")
+font_size = 75
+outline_size = 36
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_xn74b"]
+font = ExtResource("4_7hjhp")
+font_size = 40
+outline_size = 36
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="VotingUI" type="CanvasLayer" node_paths=PackedStringArray("TimeLabel", "StatusLabel", "VotingTabContainer")]
+script = ExtResource("1_4w1yn")
+TimeLabel = NodePath("Time")
+StatusLabel = NodePath("Title")
+VotingTabContainer = NodePath("VotingTabContainer")
+
+[node name="Title" type="Label" parent="."]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 271.0
+offset_top = 92.0
+offset_right = -271.0
+offset_bottom = -857.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Vote for a Game"
+label_settings = SubResource("LabelSettings_4w1yn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Time" type="Label" parent="."]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 271.0
+offset_top = 193.0
+offset_right = -271.0
+offset_bottom = -781.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Time Remaining"
+label_settings = SubResource("LabelSettings_xn74b")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VotingTabContainer" type="HBoxContainer" parent="."]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = 410.0
+offset_right = -28.0
+offset_bottom = -236.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+alignment = 1

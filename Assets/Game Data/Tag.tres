@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GameData" load_steps=2 format=3 uid="uid://d17teatxfu0im"]
+
+[ext_resource type="Script" uid="uid://be2cmn7lwlpbq" path="res://Scripts/GameData.cs" id="1_86knm"]
+
+[resource]
+script = ExtResource("1_86knm")
+GameName = "Tag"
+GameType = 1
+metadata/_custom_type_script = "uid://be2cmn7lwlpbq"

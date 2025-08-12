@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameData" load_steps=2 format=3 uid="uid://cpamjudi4seys"]
+
+[ext_resource type="Script" uid="uid://be2cmn7lwlpbq" path="res://Scripts/GameData.cs" id="1_ahvh6"]
+
+[resource]
+script = ExtResource("1_ahvh6")
+GameName = "Murder Mystery"
+MinimumPlayers = 4
+GameType = 3
+metadata/_custom_type_script = "uid://be2cmn7lwlpbq"

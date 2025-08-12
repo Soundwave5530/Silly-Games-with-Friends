@@ -87,9 +87,8 @@ visibility_update_mode = 1
 [node name="Person" type="Sprite3D" parent="."]
 transform = Transform3D(-0.99986, 0, 8.74106e-08, 0, 0.999995, 0, -8.74106e-08, 0, -0.99986, 0, 0, 0)
 shaded = true
-double_sided = false
 alpha_cut = 2
-texture_filter = 4
+texture_filter = 0
 texture = ExtResource("4_52ee3")
 script = ExtResource("6_52ee3")
 
@@ -99,6 +98,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00450865, 0.446455, 0.0029
 [node name="Hat" type="Sprite3D" parent="Person/HatPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.320035, 0)
 shaded = true
+alpha_cut = 2
 texture_filter = 0
 render_priority = 1
 texture = ExtResource("6_bhhdu")
@@ -108,7 +108,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.33769e-05, 0.302607, 0.003
 
 [node name="Face" type="Sprite3D" parent="Person/FacePivot"]
 shaded = true
-texture_filter = 4
+texture_filter = 0
 render_priority = 1
 texture = ExtResource("8_yoq75")
 

@@ -51,7 +51,7 @@ public partial class GeneralSettings : Control
         {
             SettingsManager.CurrentSettings.FOV = (int)newValue;
             FOVLabel.Text = newValue.ToString() + " ";
-            if (Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
+            if (Multiplayer.MultiplayerPeer != null && Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected && !Multiplayer.IsServer())
                 GetViewport().GetCamera3D().Fov = (float)newValue;
             SettingsManager.Save();
         };

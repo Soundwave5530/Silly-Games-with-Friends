@@ -1,0 +1,162 @@
+[gd_scene load_steps=10 format=3 uid="uid://bl2ito6x5rrmb"]
+
+[ext_resource type="Script" uid="uid://dkuiihyhhr3pw" path="res://Scripts/VotingTab.cs" id="1_lkibk"]
+[ext_resource type="Resource" uid="uid://d17teatxfu0im" path="res://Assets/Game Data/Tag.tres" id="2_0i3ur"]
+[ext_resource type="StyleBox" uid="uid://geveqpff8abb" path="res://Assets/Themes/StyleBoxes/Panel.tres" id="2_ebdw0"]
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="3_w22vf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0i3ur"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w22vf"]
+bg_color = Color(0.329412, 0.67451, 1, 1)
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0i3ur"]
+font = ExtResource("3_w22vf")
+font_size = 34
+outline_size = 15
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_cvjf8"]
+font = ExtResource("3_w22vf")
+font_size = 15
+outline_size = 13
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kf7u8"]
+font = ExtResource("3_w22vf")
+font_size = 26
+outline_size = 13
+outline_color = Color(0, 0.247059, 0.435294, 1)
+
+[node name="VotingTab" type="Button" node_paths=PackedStringArray("gameNameLabel", "voteForLabel", "currentVotesLabel", "minimumPlayersLabel", "gameIcon", "playerStickersContainer")]
+custom_minimum_size = Vector2(560, 0)
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1360.0
+offset_bottom = -686.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_0i3ur")
+flat = true
+script = ExtResource("1_lkibk")
+data = ExtResource("2_0i3ur")
+gameNameLabel = NodePath("Game Name")
+voteForLabel = NodePath("Vote for")
+currentVotesLabel = NodePath("Current Votes")
+minimumPlayersLabel = NodePath("Minimum Players")
+gameIcon = NodePath("BG2/GameIcon")
+playerStickersContainer = NodePath("StickerContainer")
+
+[node name="BG" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("2_ebdw0")
+
+[node name="BG2" type="Panel" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 87.0
+offset_top = 147.0
+offset_right = -87.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_w22vf")
+
+[node name="GameIcon" type="TextureRect" parent="BG2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 2
+stretch_mode = 1
+
+[node name="Game Name" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_top = 1.0
+offset_bottom = 69.0
+grow_horizontal = 2
+text = "[ Game Name ]"
+label_settings = SubResource("LabelSettings_0i3ur")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Vote for" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 14.0
+offset_bottom = 62.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Vote for: [ Game Name ]"
+label_settings = SubResource("LabelSettings_0i3ur")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Minimum Players" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_top = 59.0
+offset_bottom = 81.0
+grow_horizontal = 2
+text = "Minimum Players:  5"
+label_settings = SubResource("LabelSettings_cvjf8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Current Votes" type="Label" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_top = 91.0
+offset_bottom = 134.0
+grow_horizontal = 2
+text = "Current Votes: 0"
+label_settings = SubResource("LabelSettings_kf7u8")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StickerContainer" type="Control" parent="."]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 87.0
+offset_top = 147.0
+offset_right = -87.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2

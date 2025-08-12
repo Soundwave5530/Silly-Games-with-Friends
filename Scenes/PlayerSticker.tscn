@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://bdjoy1gndyi16"]
+
+[ext_resource type="Texture2D" uid="uid://dlcwvkqgd7lmw" path="res://Assets/Sprites/UI/icon_noface.png" id="1_y5qgi"]
+[ext_resource type="Texture2D" uid="uid://bupchxlmytp0w" path="res://Assets/Sprites/Cosmetics/Hats/Arch Glasses Front0000.png" id="2_51u0j"]
+[ext_resource type="Script" uid="uid://cx70j8kjvavgs" path="res://Scripts/PlayerSticker.cs" id="2_mnucl"]
+[ext_resource type="Texture2D" uid="uid://dojf2yb3fe7re" path="res://Assets/Sprites/Faces/Mog Face Front0000.png" id="3_mnucl"]
+
+[node name="Head" type="TextureRect" node_paths=PackedStringArray("Face", "Hat", "Head")]
+anchors_preset = -1
+offset_right = 120.0
+offset_bottom = 120.0
+scale = Vector2(0.786, 0.786)
+texture = ExtResource("1_y5qgi")
+script = ExtResource("2_mnucl")
+Face = NodePath("Face")
+Hat = NodePath("Hat")
+Head = NodePath(".")
+
+[node name="Hat" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -14.0
+offset_top = -111.959
+offset_right = 10.0
+offset_bottom = -87.9593
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_51u0j")
+
+[node name="Face" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 25.0
+offset_top = 26.7176
+offset_right = -25.0
+offset_bottom = -23.2824
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_mnucl")

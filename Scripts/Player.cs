@@ -117,210 +117,351 @@ public partial class Player : CharacterBody3D
         SetPlayerColor(TeamManager.Instance.GetTeamColor(teamId));
     }
 
+    private bool IsMultiplayerValid()
+    {
+        try
+        {
+            if (!IsInsideTree())
+                return false;
+                
+            if (Multiplayer == null)
+                return false;
+
+            var peer = Multiplayer.MultiplayerPeer;
+            if (peer == null || peer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Connected)
+                return false;
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Player] Error checking multiplayer state: {e.Message}");
+            return false;
+        }
+    }
+
     public override void _Ready()
     {
-        playerColor = new Color(SettingsManager.CurrentSettings.ColorR,
-                                        SettingsManager.CurrentSettings.ColorG,
-                                        SettingsManager.CurrentSettings.ColorB);
+        try
+        {
+            // Initialize basic settings
+            playerColor = new Color(SettingsManager.CurrentSettings.ColorR,
+                                  SettingsManager.CurrentSettings.ColorG,
+                                  SettingsManager.CurrentSettings.ColorB);
 
-        targetCameraPosition = perspective1.Position;
-        targetCameraRotation = perspective1.Rotation;
-        nameLabel = GetNode<Label3D>("NameLabel");
-        collision = GetNode<CollisionShape3D>("Collision");
-        headPivot = GetNode<Node3D>("HeadPivot");
-        playerSprite = GetNode<Sprite3D>("Person");
+            // Initialize camera positions
+            targetCameraPosition = perspective1.Position;
+            targetCameraRotation = perspective1.Rotation;
+            
+            // Get node references
+            nameLabel = GetNode<Label3D>("NameLabel");
+            collision = GetNode<CollisionShape3D>("Collision");
+            headPivot = GetNode<Node3D>("HeadPivot");
+            playerSprite = GetNode<Sprite3D>("Person");
+            interactRay = GetNode<RayCast3D>("HeadPivot/PlayerCamera/InteractRay");
+            
+            if (!IsInsideTree())
+            {
+                GD.PrintErr("[Player] Node not in scene tree during _Ready");
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Player] Error in _Ready initialization: {e.Message}");
+            return;
+        }
 
+        // Set initial display name if available
         if (!string.IsNullOrEmpty(displayName))
         {
             nameLabel.Text = displayName;
         }
 
-        if (IsMultiplayerAuthority())
+        // Wait one frame to ensure proper multiplayer initialization
+        GetTree().CreateTimer(0).Timeout += () =>
         {
-            // If we're the host player (server ID 1) and in first person, hide our model
-            bool isHostPlayer = NetworkManager.Instance.IsPlayerHost && Multiplayer.GetUniqueId() == 1;
-            if (isHostPlayer && perspectiveMode == 0)
+            if (!IsInsideTree()) return;
+
+            if (Multiplayer.MultiplayerPeer != null && IsMultiplayerAuthority())
             {
-                playerSprite.Hide();
+                // Handle host player specific setup
+                bool isHostPlayer = NetworkManager.Instance?.IsPlayerHost == true && Multiplayer.GetUniqueId() == 1;
+                if (isHostPlayer && perspectiveMode == 0)
+                {
+                    playerSprite.Hide();
+                }
+                
+                // Configure local player settings
+                MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+                nameLabel.Visible = false;
+                SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;
+                GetNode<Camera3D>("HeadPivot/PlayerCamera").MakeCurrent();
+                GetNode<Camera3D>("HeadPivot/PlayerCamera").Fov = SettingsManager.CurrentSettings.FOV;
+
+                GD.Print("[Player] Camera activated for authority player");
+                SetPlayerColor(playerColor);
             }
-            
-            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-            nameLabel.Visible = false;
-            SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;
-            playerCamera.MakeCurrent();
-            playerCamera.Fov = SettingsManager.CurrentSettings.FOV;
+            else
+            {
+                GD.Print("[Player] Initialized as non-authority player");
+            }
+        };
 
-            GD.Print("[Player] Camera activated.");
-            SetPlayerColor(playerColor);
-        }
-
-        animationManager.AnimationFinished += OnAnimationFinished;
-
-        //carrySocket = GetNode<Marker3D>("CarrySocket");
-        interactRay = GetNode<RayCast3D>("HeadPivot/PlayerCamera/InteractRay");
+        // Connect signals
+        GetNode<AnimationManager>("AnimationManager").AnimationFinished += OnAnimationFinished;
     }
 
     public override void _Process(double delta)
     {
-        if (Multiplayer.MultiplayerPeer == null) return;
-        if (GetViewport().GetCamera3D() != playerCamera && IsMultiplayerAuthority())
+        if (!IsInsideTree()) return;
+        
+        try
         {
-            playerCamera.Current = true;
-        }
-        if (IsMultiplayerAuthority())
-        {
-            if (ChatManager.chatOpen != lastChatState)
+            // Check multiplayer state and handle single player
+            bool isMultiplayerActive = IsMultiplayerValid();
+            if (!isMultiplayerActive)
             {
-                if (ChatManager.chatOpen)
-                    MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
-                else if (!NewPauseMenu.IsOpen)
-                    MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-
-                lastChatState = ChatManager.chatOpen;
+                if (GetViewport().GetCamera3D() != playerCamera)
+                {
+                    playerCamera.Current = true;
+                }
+                return;
             }
 
-            // Handle Changing perspective
-            if (Input.IsActionJustPressed("change_perspective") && !ChatManager.chatOpen && !NewPauseMenu.IsOpen)
+            bool hasAuthority = false;
+            try
             {
-                float currentPitch = pitch; // Store current pitch
-                perspectiveMode = (perspectiveMode + 1) % 3;
-
-                switch (perspectiveMode)
+                hasAuthority = IsMultiplayerAuthority();
+                if (!hasAuthority)
                 {
-                    case 0:
-                        targetCameraPosition = perspective1.Position;
-                        targetCameraRotation = perspective1.Rotation;
-                        break;
-                    case 1:
-                        targetCameraPosition = perspective2.Position;
-                        targetCameraRotation = perspective2.Rotation;
-                        break;
-                    case 2:
-                        targetCameraPosition = perspective3.Position;
-                        targetCameraRotation = perspective3.Rotation;
-                        break;
+                    // Non-authority processing
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"[Player] Error checking multiplayer authority: {e.Message}");
+                return;
+            }
+
+            // Set camera if needed
+            if (GetViewport().GetCamera3D() != playerCamera && hasAuthority)
+            {
+                playerCamera.Current = true;
+            }
+
+            // Process authority-specific logic
+            if (hasAuthority)
+            {
+                // Handle chat state changes
+                if (ChatManager.chatOpen != lastChatState)
+                {
+                    if (ChatManager.chatOpen)
+                        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+                    else if (!NewPauseMenu.IsOpen)
+                        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+
+                    lastChatState = ChatManager.chatOpen;
                 }
 
-                if (perspectiveMode == 0) playerSprite.Hide();
-                else playerSprite.Show();
-            }
+                // Handle Changing perspective
+                if (Input.IsActionJustPressed("change_perspective") && !ChatManager.chatOpen && !NewPauseMenu.IsOpen)
+                {
+                    float currentPitch = pitch; // Store current pitch
+                    perspectiveMode = (perspectiveMode + 1) % 3;
 
-            if (playerCamera.Position.DistanceTo(targetCameraPosition) > 0.01)
-            {
+                    switch (perspectiveMode)
+                    {
+                        case 0:
+                            targetCameraPosition = perspective1.Position;
+                            targetCameraRotation = perspective1.Rotation;
+                            break;
+                        case 1:
+                            targetCameraPosition = perspective2.Position;
+                            targetCameraRotation = perspective2.Rotation;
+                            break;
+                        case 2:
+                            targetCameraPosition = perspective3.Position;
+                            targetCameraRotation = perspective3.Rotation;
+                            break;
+                    }
 
-                float smoothingSpeed = SettingsManager.CurrentSettings.CameraSmoothing ? 10f : 50f;
-                playerCamera.Position = playerCamera.Position.Lerp(targetCameraPosition, smoothingSpeed * (float)delta);
-                playerCamera.Rotation = playerCamera.Rotation.Lerp(targetCameraRotation, smoothingSpeed * (float)delta);
-                pitch = playerCamera.Rotation.X;
-                if (canRotateCamera) canRotateCamera = false;
+                    if (perspectiveMode == 0) playerSprite.Hide();
+                    else playerSprite.Show();
+                }
+
+                if (playerCamera.Position.DistanceTo(targetCameraPosition) > 0.01)
+                {
+                    float smoothingSpeed = SettingsManager.CurrentSettings.CameraSmoothing ? 10f : 50f;
+                    playerCamera.Position = playerCamera.Position.Lerp(targetCameraPosition, smoothingSpeed * (float)delta);
+                    playerCamera.Rotation = playerCamera.Rotation.Lerp(targetCameraRotation, smoothingSpeed * (float)delta);
+                    pitch = playerCamera.Rotation.X;
+                    if (canRotateCamera) canRotateCamera = false;
+                }
+                else
+                {
+                    playerCamera.Position = targetCameraPosition;
+                    if (!canRotateCamera) canRotateCamera = true;
+                }
             }
-            else
-            {
-                playerCamera.Position = targetCameraPosition;
-                if (!canRotateCamera) canRotateCamera = true;
-            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Player] Error in _Process: {e.Message}");
         }
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (Multiplayer.MultiplayerPeer == null) return;
+        if (!IsInsideTree()) return;
 
-        if (!IsMultiplayerAuthority())
+        try
         {
-            GlobalPosition = SyncGlobalPosition;
-            Rotation = new Vector3(0, SyncRotation, 0);
-            headPivot.Rotation = new Vector3(SyncCameraPitch, headPivot.Rotation.Y, headPivot.Rotation.Z);
-            return;
-        }
-
-        SyncCharacterId = PlayerData.CurrentCharacter.Name;
-
-        float waterSurfaceY = -2.78f;
-        float transitionRange = 0.5f;
-
-        float playerFeetY = GlobalPosition.Y;
-        bool touchingFloor = IsOnFloor();
-
-        bool deepEnough = playerFeetY < (waterSurfaceY - transitionRange);
-        bool shallowEnough = playerFeetY > (waterSurfaceY + transitionRange);
-
-        bool aboveWaterCompletely = GlobalPosition.Y > (waterSurfaceY + 0.5f);
-
-        // Enter swimming if deep
-        if (!isSwimming && deepEnough)
-        {
-            isSwimming = true;
-            crouching = false;
-            Speed = crouching ? 2.5f : 5f;
-            headPivot.Position = crouching ? Vector3.Zero : Vector3.Up * 0.2f;
-        }
-
-        // Exit swimming if fully above water OR if touching floor above water line
-        if (isSwimming && (aboveWaterCompletely || (touchingFloor && shallowEnough)))
-        {
-            isSwimming = false;
-        }
-
-        /*
-        if (interactRay.IsColliding() && !isSwimming && !crouching)
-        {
-            var target = interactRay.GetCollider();
-            if (target is Node3D node && node.IsInGroup("carryable"))
+            bool isMultiplayerActive = IsMultiplayerValid();
+            if (!isMultiplayerActive)
             {
-                PlayerHUD.Instance?.ShowInteractionPrompt($"Press [E] to pick up");
+                // Handle single-player mode
+                HandleMovement(delta);
+                return;
+            }
+
+            bool hasAuthority;
+            try
+            {
+                hasAuthority = IsMultiplayerAuthority();
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"[Player] Error checking multiplayer authority: {e.Message}");
+                HandleMovement(delta); // Fallback to single player behavior on error
+                return;
+            }
+
+            if (!hasAuthority)
+            {
+                // Handle non-authority state synchronization
+                try
+                {
+                    GlobalPosition = SyncGlobalPosition;
+                    Rotation = new Vector3(0, SyncRotation, 0);
+                    if (headPivot != null)
+                    {
+                        headPivot.Rotation = new Vector3(SyncCameraPitch, headPivot.Rotation.Y, headPivot.Rotation.Z);
+                    }
+                }
+                catch (Exception e)
+                {
+                    GD.PrintErr($"[Player] Error in non-authority sync: {e.Message}");
+                }
+                return;
+            }
+
+            SyncCharacterId = PlayerData.CurrentCharacter.Name;
+
+            float waterSurfaceY = -2.78f;
+            float transitionRange = 0.5f;
+
+            float playerFeetY = GlobalPosition.Y;
+            bool touchingFloor = IsOnFloor();
+
+            bool deepEnough = playerFeetY < (waterSurfaceY - transitionRange);
+            bool shallowEnough = playerFeetY > (waterSurfaceY + transitionRange);
+
+            bool aboveWaterCompletely = GlobalPosition.Y > (waterSurfaceY + 0.5f);
+
+            // Enter swimming if deep
+            if (!isSwimming && deepEnough)
+            {
+                isSwimming = true;
+                crouching = false;
+                Speed = crouching ? 2.5f : 5f;
+                headPivot.Position = crouching ? Vector3.Zero : Vector3.Up * 0.2f;
+            }
+
+            // Exit swimming if fully above water OR if touching floor above water line
+            if (isSwimming && (aboveWaterCompletely || (touchingFloor && shallowEnough)))
+            {
+                isSwimming = false;
+            }
+
+            /*
+            if (interactRay.IsColliding() && !isSwimming && !crouching)
+            {
+                var target = interactRay.GetCollider();
+                if (target is Node3D node && node.IsInGroup("carryable"))
+                {
+                    PlayerHUD.Instance?.ShowInteractionPrompt($"Press [E] to pick up");
+                }
+                else
+                {
+                    if (PlayerHUD.Instance.InteractionPrompt.Visible)
+                        PlayerHUD.Instance?.HideInteractionPrompt();
+                }
             }
             else
             {
                 if (PlayerHUD.Instance.InteractionPrompt.Visible)
                     PlayerHUD.Instance?.HideInteractionPrompt();
             }
+            */
+
+
+            HandleInputAndMenuLogic();
+
+            if (isEmoting)
+            {
+                if (!IsOnFloor()) velocity.Y -= Gravity * (float)delta;
+                else velocity.Y = 0;
+
+                Velocity = velocity;
+                MoveAndSlide();
+                SyncGlobalPosition = GlobalPosition;
+                return;
+            }
+
+            if (isSwimming)
+            {
+                HandleSwimming(delta);
+            }
+            else
+            {
+                HandleMovement(delta);
+            }
         }
-        else
+        catch (Exception e)
         {
-            if (PlayerHUD.Instance.InteractionPrompt.Visible)
-                PlayerHUD.Instance?.HideInteractionPrompt();
-        }
-        */
-
-
-        HandleInputAndMenuLogic();
-
-        if (isEmoting)
-        {
-            if (!IsOnFloor()) velocity.Y -= Gravity * (float)delta;
-            else velocity.Y = 0;
-
-            Velocity = velocity;
-            MoveAndSlide();
-            SyncGlobalPosition = GlobalPosition;
-            return;
-        }
-
-        if (isSwimming)
-        {
-            HandleSwimming(delta);
-        }
-        else
-        {
-            HandleMovement(delta);
+            GD.PrintErr($"[Player] Error in _PhysicsProcess: {e.Message}");
         }
     }
 
     private void HandleInputAndMenuLogic()
     {
-        if (Input.IsActionJustPressed("escape") && !ChatManager.chatOpen && !NewPauseMenu.customizationOpen)
+        if (!IsInsideTree()) return;
+
+        try
         {
-            if (!NewPauseMenu.IsOpen)
+            if (Input.IsActionJustPressed("escape") && !ChatManager.chatOpen && !NewPauseMenu.customizationOpen)
             {
-                NewPauseMenu.Instance.OpenMenu();
-                MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+                if (!NewPauseMenu.IsOpen)
+                {
+                    NewPauseMenu.Instance.OpenMenu();
+                    MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+                }
+                else
+                {
+                    NewPauseMenu.Instance.CloseMenu();
+                    // Only capture mouse if we're still in a valid multiplayer session
+                    if (Multiplayer.MultiplayerPeer != null && IsMultiplayerAuthority())
+                    {
+                        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+                    }
+                }
             }
-            else
-            {
-                NewPauseMenu.Instance.CloseMenu();
-                MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Player] Error in HandleInputAndMenuLogic: {e.Message}");
         }
 
         /*
@@ -361,29 +502,68 @@ public partial class Player : CharacterBody3D
 
     public override void _Input(InputEvent @event)
     {
-        // SIMPLIFY LATER
-        if (!IsMultiplayerAuthority() || NewPauseMenu.IsOpen || ChatManager.chatOpen || !canRotateCamera) return;
-
-        if (@event is InputEventMouseMotion motion)
+        try
         {
-            yaw -= motion.Relative.X * MouseSensitivity * SettingsManager.CurrentSettings.MouseSensitivity;
-            pitch -= motion.Relative.Y * MouseSensitivity * SettingsManager.CurrentSettings.MouseSensitivity;
-            if (perspectiveMode == 0)
+            // First check multiplayer state
+            if (!IsMultiplayerValid() || !IsMultiplayerAuthority())
             {
-                pitch = Mathf.Clamp(pitch, (-Mathf.Pi / 2) + 0.01f, (Mathf.Pi / 2) - 0.01f);
+                // In single player or non-authority mode, still handle mouse events for voting
+                if (@event is InputEventMouseMotion && GameManager.Instance?.GetCurrentState() == GameManager.GameState.Voting)
+                {
+                    GetViewport().SetInputAsHandled();
+                }
+                return;
             }
-            else
+
+            // Skip input if any of these conditions are true
+            if (NewPauseMenu.IsOpen || 
+                ChatManager.chatOpen || 
+                !canRotateCamera || 
+                GameManager.Instance == null ||
+                GameManager.Instance.GetCurrentState() == GameManager.GameState.Voting)
             {
-                pitch = Mathf.Clamp(pitch, (-Mathf.Pi / 2) / 2 + 0.01f, (Mathf.Pi / 2) / 2 - 0.01f);
+                if (@event is InputEventMouseMotion && GameManager.Instance?.GetCurrentState() == GameManager.GameState.Voting)
+                {
+                    // Consume the mouse motion event during voting to prevent camera movement
+                    GetViewport().SetInputAsHandled();
+                }
+                return;
             }
 
+            if (@event is InputEventMouseMotion motion)
+            {
+                try
+                {
+                    yaw -= motion.Relative.X * MouseSensitivity * SettingsManager.CurrentSettings.MouseSensitivity;
+                    pitch -= motion.Relative.Y * MouseSensitivity * SettingsManager.CurrentSettings.MouseSensitivity;
+                    if (perspectiveMode == 0)
+                    {
+                        pitch = Mathf.Clamp(pitch, (-Mathf.Pi / 2) + 0.01f, (Mathf.Pi / 2) - 0.01f);
+                    }
+                    else
+                    {
+                        pitch = Mathf.Clamp(pitch, (-Mathf.Pi / 2) / 2 + 0.01f, (Mathf.Pi / 2) / 2 - 0.01f);
+                    }
 
-            SyncRotation = yaw;
-            SyncCameraPitch = pitch;
+                    SyncRotation = yaw;
+                    SyncCameraPitch = pitch;
 
-            Rotation = new Vector3(0, yaw, 0);
+                    Rotation = new Vector3(0, yaw, 0);
 
-            headPivot.Rotation = new Vector3(pitch, headPivot.Rotation.Y, headPivot.Rotation.Z);
+                    if (headPivot != null)
+                    {
+                        headPivot.Rotation = new Vector3(pitch, headPivot.Rotation.Y, headPivot.Rotation.Z);
+                    }
+                }
+                catch (Exception e)
+                {
+                    GD.PrintErr($"[Player] Error processing mouse motion: {e.Message}");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Player] Error in _Input: {e.Message}");
         }
     }
 
@@ -397,7 +577,7 @@ public partial class Player : CharacterBody3D
             headPivot.Position = crouching ? Vector3.Zero : Vector3.Up * 0.2f;
         }
 
-        if (!ChatManager.chatOpen && !NewPauseMenu.IsOpen)
+        if (!ChatManager.chatOpen && !NewPauseMenu.IsOpen && (GameManager.Instance.GetCurrentState() != GameManager.GameState.Voting))
         {
             Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 

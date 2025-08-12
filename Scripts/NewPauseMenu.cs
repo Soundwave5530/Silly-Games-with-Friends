@@ -77,7 +77,15 @@ public partial class NewPauseMenu : Control
         animationPlayer.Play("Close");
         CustomizationMenu.Visible = false;
         IsOpen = false;
-        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+        if (GameManager.Instance?.GetCurrentState() == GameManager.GameState.Voting)
+        {
+            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+        }
+        else
+        {
+            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+        }
+        
 
         ReleaseFocus();
         resumeButton.ReleaseFocus();

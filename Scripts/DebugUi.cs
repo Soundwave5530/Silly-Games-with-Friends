@@ -23,7 +23,7 @@ public partial class DebugUi : CanvasLayer
         AddChild(infoLabel);
         infoLabel.Position = new Vector2(10, 10);
         infoLabel.LabelSettings = new();
-        infoLabel.LabelSettings.FontSize = 16;
+        infoLabel.LabelSettings.FontSize = 10;
         infoLabel.LabelSettings.FontColor = new Color(1, 1, 1, 1);
         infoLabel.LabelSettings.OutlineSize = 5;
         infoLabel.LabelSettings.OutlineColor = new Color(0, 0, 0, 1);
@@ -62,6 +62,13 @@ public partial class DebugUi : CanvasLayer
             infoLabel.Text += $"Frame Time: {(float)Performance.GetMonitor(Performance.Monitor.TimeFps):F2}ms\n";
             infoLabel.Text += $"Physics Time: {(float)Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess):F2}ms\n";
             infoLabel.Text += $"Process Time: {(float)Performance.GetMonitor(Performance.Monitor.TimeProcess):F2}ms\n";
+            int objectCount = (int)Performance.GetMonitor(Performance.Monitor.ObjectCount);
+            infoLabel.Text += $"Current Objects Loaded: {objectCount}\n";
+            int nodeCount = (int)Performance.GetMonitor(Performance.Monitor.ObjectNodeCount);
+            infoLabel.Text += $"Current Nodes Loaded: {nodeCount}\n";
+            int resourceCount = (int)Performance.GetMonitor(Performance.Monitor.ObjectResourceCount);
+            infoLabel.Text += $"Current Resources Loaded: {resourceCount}\n";
+
 
             infoLabel.Text += "\n --- System Information --- \n";
             infoLabel.Text += $"OS: {OS.GetName()} {OS.GetVersion()}\n";
@@ -73,10 +80,10 @@ public partial class DebugUi : CanvasLayer
             infoLabel.Text += $"CPU: {OS.GetProcessorCount()} cores, {OS.GetProcessorName()}\n";
             infoLabel.Text += $"Window Size: {DisplayServer.WindowGetSize().X}x{DisplayServer.WindowGetSize().Y}\n";
 
+
             infoLabel.Text += "\n --- Network Information --- \n";
             string networkStatus = Multiplayer.MultiplayerPeer != null ? Multiplayer.MultiplayerPeer.GetConnectionStatus().ToString() : "Not Connected to Server";
             infoLabel.Text += $"Network Status: {networkStatus}\n";
-
             if (Multiplayer.MultiplayerPeer != null && Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected)
             {
                 var peer = Multiplayer.MultiplayerPeer;
@@ -91,6 +98,7 @@ public partial class DebugUi : CanvasLayer
                 infoLabel.Text += $"Connected Players: {string.Join(", ", NetworkManager.Instance.PlayerNames.Values)}\n";
             }
 
+
             infoLabel.Text += "\n --- Game State --- \n";
             infoLabel.Text += $"Current Scene: {GetTree().CurrentScene?.Name ?? "None"}\n";
             if (GameManager.Instance != null)
@@ -99,6 +107,7 @@ public partial class DebugUi : CanvasLayer
                 infoLabel.Text += $"Game State: {GameManager.Instance.GetCurrentState()}\n";
             }
             
+
             var localPlayer = NetworkManager.Instance?.GetLocalPlayer();
             if (localPlayer != null)
             {
@@ -113,7 +122,6 @@ public partial class DebugUi : CanvasLayer
                 infoLabel.Text += $"Current Animation: {((AnimationManager.PlayerAnimTypes)localPlayer.SyncAnimType).ToString()}\n";
                 infoLabel.Text += $"Current Hat: {localPlayer.SyncHatId.Capitalize()}\n";
                 infoLabel.Text += $"Current Expression: {localPlayer.SyncExpressionId.Capitalize()}\n";
-                
             }
         }
     }
@@ -132,7 +140,7 @@ public partial class DebugUi : CanvasLayer
         for (int i = 0; i < fpsHistory.Length; i++)
         {
             float fps = fpsHistory[i];
-            if (fps > 0)  // Only count initialized values
+            if (fps > 0)
             {
                 sum += fps;
                 minFps = Mathf.Min(minFps, fps);

@@ -11,8 +11,6 @@ public partial class NetworkManager : Node3D
 
     public PackedScene PlayerScene;
     public PackedScene TransitionScreenScene => (PackedScene)GD.Load("res://Scenes/TransitionScreen.tscn");
-    public PackedScene ChatScene => (PackedScene)GD.Load("res://Scenes/Chat.tscn");
-    public PackedScene PauseMenuScene => (PackedScene)GD.Load("res://Scenes/PauseMenu.tscn");
     public PackedScene GameScene => (PackedScene)GD.Load("res://Scenes/Game.tscn");
 
     public MultiplayerSpawner PlayerSpawner;
@@ -28,7 +26,7 @@ public partial class NetworkManager : Node3D
 
     public const int PORT = 7777;
     public const int MAXPLAYERS = 15;
-    public const string GAMEVERSION = "v0.2.1 dev3";
+    public const string GAMEVERSION = "v0.2.1 dev4";
 
     public TransitionScreen transitionScreen = null;
 
@@ -154,6 +152,13 @@ public partial class NetworkManager : Node3D
 
     public async void JoinServer(string ip = "127.0.0.1")
     {
+        // Clear any existing multiplayer state
+        if (Multiplayer.MultiplayerPeer != null)
+        {
+            Multiplayer.MultiplayerPeer.Close();
+            Multiplayer.MultiplayerPeer = null;
+        }
+
         transitionScreen = TransitionScreenScene.Instantiate() as TransitionScreen;
         transitionScreen.MustTriggerOut = true;
         AddChild(transitionScreen);
@@ -163,7 +168,17 @@ public partial class NetworkManager : Node3D
 
         var peer = new ENetMultiplayerPeer();
         var result = peer.CreateClient(ip, PORT);
+        
+        // Ensure the peer was created successfully
+        if (result != Error.Ok)
+        {
+            GD.PrintErr($"[Client] Failed to create client peer: {result}");
+            OnClientConnectionFailed();
+            return;
+        }
+
         Multiplayer.MultiplayerPeer = peer;
+        GD.Print($"[Client] Attempting to connect to {ip}:{PORT}");
 
         await ToSignal(GetTree().CreateTimer(1), "timeout");
         connectionTimer.Start();
@@ -171,7 +186,6 @@ public partial class NetworkManager : Node3D
         {
             if (IsInstanceValid(transitionScreen)) transitionScreen.PlayAnim("out");
         };
-
     }
     // 104.184.113.183
 
@@ -181,69 +195,154 @@ public partial class NetworkManager : Node3D
 
         GD.Print($"[NetworkManager] Peer connected: {id}");
         
+        // Safety check - ensure we have a valid multiplayer peer
+        if (Multiplayer.MultiplayerPeer == null)
+        {
+            GD.PrintErr($"[NetworkManager] Peer {id} connected but multiplayer peer is null!");
+            return;
+        }
+        
         // If we're a player host, send our info to the new client
         if (IsPlayerHost)
         {
-            // Send host's info to new client
-            RpcId((int)id, nameof(AnnounceName), 1, PlayerNames[1]);
-            RpcId((int)id, nameof(AnnounceColor), 1, PlayerColors[1]);
+            // Ensure we have valid host info before sending
+            if (PlayerNames.ContainsKey(1) && PlayerColors.ContainsKey(1))
+            {
+                try 
+                {
+                    RpcId((int)id, nameof(AnnounceName), 1, PlayerNames[1]);
+                    RpcId((int)id, nameof(AnnounceColor), 1, PlayerColors[1]);
+                    GD.Print($"[NetworkManager] Sent host info to peer {id}");
+                }
+                catch (Exception e)
+                {
+                    GD.PrintErr($"[NetworkManager] Failed to send host info to peer {id}: {e.Message}");
+                }
+            }
+            else
+            {
+                GD.PrintErr($"[NetworkManager] Missing host info for peer {id}");
+            }
         }
     }
 
 
     private void OnPeerDisconnected(long id)
     {
-        if (id == 1)
+        // Check if we still have an active multiplayer instance
+        if (Multiplayer.MultiplayerPeer == null)
         {
-            PlayerNames.Clear();
-            PlayerColors.Clear();
-            GoBackToMenu();
+            GD.PrintErr("[NetworkManager] OnPeerDisconnected called with null MultiplayerPeer");
             return;
         }
-        GD.Print($"[Client {Multiplayer.GetUniqueId()}] Peer disconnected: {id}");
 
-        Player player = GetNodeOrNull<Player>($"Players/Player_{id}");
-        if (player != null)
+        // If the server (ID 1) disconnected
+        if (id == 1)
         {
-            player.QueueFree();
-            GD.Print($"[Client {Multiplayer.GetUniqueId()}] Removed Player_{id} from scene");
-        }
-        if (PlayerNames.TryGetValue((int)id, out var name))
-        {
-            SendSystemMessage($"{name} left the game.");
-        }
-        else
-        {
-            GD.Print($"[NetworkManager] Tried to disconnect unknown player ID: {id}");
+            GD.Print("[Client] Server disconnected, returning to menu");
+            DisconnectFromServer();
+            return;
         }
 
-        PlayerNames.Remove((int)id);
-        PlayerColors.Remove((int)id);
-        InGamePlayers.Remove((int)id);
+        // For all other peer disconnections
+        GD.Print($"[{(IsServer ? "Server" : "Client")}] Peer disconnected: {id}");
+
+        try
+        {
+            // Handle player cleanup
+            Player player = GetNodeOrNull<Player>($"Players/Player_{id}");
+            if (player != null)
+            {
+                player.QueueFree();
+                GD.Print($"[NetworkManager] Removed Player_{id} from scene");
+            }
+
+            // Announce departure if we know who left
+            if (PlayerNames.TryGetValue((int)id, out var name))
+            {
+                if (IsServer)
+                {
+                    Rpc(nameof(SendSystemMessage), $"{name} left the game.");
+                }
+                SendSystemMessage($"{name} left the game.");
+            }
+
+            // Clean up player data
+            PlayerNames.Remove((int)id);
+            PlayerColors.Remove((int)id);
+            InGamePlayers.Remove((int)id);
+
+            GD.Print($"[NetworkManager] Cleaned up data for peer {id}");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[NetworkManager] Error handling peer disconnect: {e.Message}");
+        }
     }
 
     public async void DisconnectFromServer()
     {
-        GD.Print("[Client] Disconnecting...");
-
-        CanvasLayer transitionScreen = TransitionScreenScene.Instantiate() as CanvasLayer;
-        AddChild(transitionScreen);
-
-        await ToSignal(GetTree().CreateTimer(0.5), "timeout");
-
-        if (Multiplayer.MultiplayerPeer != null)
+        try
         {
-            Multiplayer.MultiplayerPeer.Close();
-            Multiplayer.MultiplayerPeer = null;
+            GD.Print("[Client] Starting disconnection sequence...");
+
+            // Create transition screen
+            CanvasLayer transitionScreen = TransitionScreenScene.Instantiate() as CanvasLayer;
+            AddChild(transitionScreen);
+
+            // Wait briefly for any pending operations
+            await ToSignal(GetTree().CreateTimer(0.5), "timeout");
+
+            // Remove event handlers first
+            Multiplayer.ConnectedToServer -= OnClientConnectedToServer;
+            Multiplayer.ConnectionFailed -= OnClientConnectionFailed;
+
+            // Clean up multiplayer peer
+            if (Multiplayer.MultiplayerPeer != null)
+            {
+                var peer = Multiplayer.MultiplayerPeer;
+                try
+                {
+                    // Clear multiplayer reference before closing to prevent callbacks
+                    Multiplayer.MultiplayerPeer = null;
+                    peer.Close();
+                }
+                catch (Exception e)
+                {
+                    GD.PrintErr($"[Client] Error closing peer: {e.Message}");
+                }
+            }
+
+            // Clean up game state
+            PlayerNames.Clear();
+            PlayerColors.Clear();
+            InGamePlayers.Clear();
+
+            // Reset game state
+            GetTree().Paused = false;
+
+            // Remove any remaining player nodes
+            var playersNode = GetNodeOrNull("Players");
+            if (playersNode != null)
+            {
+                foreach (Node child in playersNode.GetChildren())
+                {
+                    child.QueueFree();
+                }
+            }
+
+            // Return to menu
+            await ToSignal(GetTree().CreateTimer(0.1), "timeout");
+            GoBackToMenu();
+
+            GD.Print("[Client] Disconnection sequence completed successfully");
         }
-
-        Multiplayer.ConnectedToServer -= OnClientConnectedToServer;
-        Multiplayer.ConnectionFailed -= OnClientConnectionFailed;
-
-        PlayerNames.Clear();
-        PlayerColors.Clear();
-
-        GoBackToMenu();
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Client] Error during disconnection: {e.Message}");
+            // Force return to menu in case of error
+            GoBackToMenu();
+        }
     }
 
     public void ShutdownServer()
@@ -292,20 +391,48 @@ public partial class NetworkManager : Node3D
 
     private async void OnClientConnectedToServer()
     {
-        await ToSignal(GetTree().CreateTimer(0.2), "timeout");
+        try
+        {
+            // Wait a moment to ensure stable connection
+            await ToSignal(GetTree().CreateTimer(0.2), "timeout");
 
-        GetTree().ChangeSceneToPacked(GameScene);
+            // Validate multiplayer state
+            if (Multiplayer.MultiplayerPeer == null)
+            {
+                GD.PrintErr("[Client] Connected but multiplayer peer is null!");
+                OnClientConnectionFailed();
+                return;
+            }
 
-        await WaitForSceneReady();
+            // Change scene
+            GetTree().ChangeSceneToPacked(GameScene);
 
-        transitionScreen.PlayAnim("out");
+            // Wait for scene to be fully ready
+            await WaitForSceneReady();
 
-        RpcId(1, nameof(RegisterName), SettingsManager.CurrentSettings.Username, false);
-        var s = SettingsManager.CurrentSettings;
-        RpcId(1, nameof(RegisterColor), new Color(s.ColorR, s.ColorG, s.ColorB));
+            // Double check multiplayer state is still valid
+            if (Multiplayer.MultiplayerPeer == null || !Multiplayer.IsServer() && Multiplayer.GetUniqueId() == 0)
+            {
+                GD.PrintErr("[Client] Lost connection during scene change!");
+                OnClientConnectionFailed();
+                return;
+            }
 
-        connectionTimer.Stop();
-        GD.Print("[Client] Connected to server, registering name.");
+            // Proceed with connection sequence
+            transitionScreen.PlayAnim("out");
+
+            RpcId(1, nameof(RegisterName), SettingsManager.CurrentSettings.Username, false);
+            var s = SettingsManager.CurrentSettings;
+            RpcId(1, nameof(RegisterColor), new Color(s.ColorR, s.ColorG, s.ColorB));
+
+            connectionTimer.Stop();
+            GD.Print("[Client] Connected to server, registering name.");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[Client] Error during connection sequence: {e.Message}");
+            OnClientConnectionFailed();
+        }
     }
 
     private async Task WaitForSceneReady()
@@ -318,6 +445,38 @@ public partial class NetworkManager : Node3D
     {
         StatusMessageManager.Instance.ShowMessage("Error: Failed to Connect to Server.", StatusMessageManager.MessageType.Error);
         transitionScreen.PlayAnim("out");
+        
+        // Clean up any remaining multiplayer state
+        CleanupMultiplayerState();
+    }
+
+    private void CleanupMultiplayerState()
+    {
+        try
+        {
+            // Clean up peer if it exists
+            if (Multiplayer.MultiplayerPeer != null)
+            {
+                var peer = Multiplayer.MultiplayerPeer;
+                Multiplayer.MultiplayerPeer = null;
+                peer.Close();
+            }
+
+            // Clean up network data
+            PlayerNames.Clear();
+            PlayerColors.Clear();
+            InGamePlayers.Clear();
+
+            // Remove event handlers
+            Multiplayer.ConnectedToServer -= OnClientConnectedToServer;
+            Multiplayer.ConnectionFailed -= OnClientConnectionFailed;
+
+            GD.Print("[NetworkManager] Multiplayer state cleaned up");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[NetworkManager] Error during multiplayer cleanup: {e.Message}");
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -581,5 +740,11 @@ public partial class NetworkManager : Node3D
     public Player GetPlayerFromID(int peerId)
     {
         return GetNodeOrNull<Player>($"Players/Player_{peerId}");
+    }
+
+    public string GetLocalPlayerName()
+    {
+        int localId = Multiplayer.GetUniqueId();
+        return PlayerNames.TryGetValue(localId, out var name) ? name : "Unknown";
     }
 }

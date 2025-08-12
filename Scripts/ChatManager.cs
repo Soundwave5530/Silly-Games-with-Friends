@@ -72,13 +72,17 @@ public partial class ChatManager : CanvasLayer
         Chatbox.Modulate = new Color(1, 1, 1, 1);
     }
 
-    private void CloseChat()
+    private async void CloseChat()
     {
         ChatInput.ReleaseFocus();
         ChatInput.Text = "";
         chatOpen = false;
         ChatInput.Hide();
-        if (!Multiplayer.IsServer()) Input.MouseMode = Input.MouseModeEnum.Captured;
+
+        await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
+
+        if (!Multiplayer.IsServer()) MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+
         CreateTimerToHide();
     }
 
@@ -214,22 +218,8 @@ public partial class ChatManager : CanvasLayer
         }
         else if (currentState == GameManager.GameState.Voting)
         {
-            GameManager.GameType gameType = subCommand switch
-            {
-                "tag" => GameManager.GameType.Tag,
-                "hide" => GameManager.GameType.HideAndSeek,
-                "murder" => GameManager.GameType.MurderMystery,
-                _ => GameManager.GameType.None
-            };
-
-            if (gameType == GameManager.GameType.None)
-            {
-                DisplaySystemMessage("[color=red]Invalid game type. Use: tag, hide, or murder[/color]");
-                return;
-            }
-
-            GameManager.Instance.SubmitVote((int)gameType);
-            DisplaySystemMessage($"[color=green]Voted for {gameType}![/color]");
+            DisplaySystemMessage("[color=yellow]Please use the voting UI to cast your vote![/color]");
+            return;
         }
         else
         {
@@ -309,7 +299,6 @@ public partial class ChatManager : CanvasLayer
 
     private void HandleTeamCommand(string[] args)
     {
-
         if (args.Length < 2)
         {
             DisplaySystemMessage("[color=green]Usage: /team <create|join|leave|list> ...[/color]");

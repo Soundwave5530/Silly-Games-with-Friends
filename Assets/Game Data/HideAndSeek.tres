@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GameData" load_steps=2 format=3 uid="uid://csep6jd1unl62"]
+
+[ext_resource type="Script" uid="uid://be2cmn7lwlpbq" path="res://Scripts/GameData.cs" id="1_l20ye"]
+
+[resource]
+script = ExtResource("1_l20ye")
+GameName = "Hide & Seek"
+GameType = 2
+metadata/_custom_type_script = "uid://be2cmn7lwlpbq"

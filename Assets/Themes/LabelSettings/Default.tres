@@ -1,0 +1,9 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://brrpihue0cqj4"]
+
+[ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="1_tbc1c"]
+
+[resource]
+font = ExtResource("1_tbc1c")
+font_size = 36
+outline_size = 24
+outline_color = Color(0, 0.247059, 0.435294, 1)

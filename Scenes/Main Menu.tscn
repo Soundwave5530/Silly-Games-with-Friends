@@ -1283,7 +1283,7 @@ offset_bottom = -12.0
 grow_horizontal = 0
 grow_vertical = 0
 theme = ExtResource("4_eotax")
-text = " v 0.2.1  dev3"
+text = " v 0.2.1  dev4"
 horizontal_alignment = 2
 vertical_alignment = 2
 

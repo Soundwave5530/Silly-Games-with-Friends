@@ -127,25 +127,34 @@ public partial class AnimationManager : Node
             hatPivot.Position = new Vector3(0, 0.458f, 0.005f);
         }
 
-        if (player != null && player.IsMultiplayerAuthority())
+        if (player != null)
         {
-            player.SyncAnimType = (int)currentAnim;
-            player.SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;
-            player.SyncHatId = SettingsManager.CurrentSettings.SavedHatID;
-            SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
-            if (currentPreset != PlayerData.CurrentCharacter) SetCharacter(PlayerData.CurrentCharacter);
-            SetHat(CosmeticDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
-        }
-        else if (player != null)
-        {
-            currentAnim = (PlayerAnimTypes)player.SyncAnimType;
-            SetExpression(CosmeticDatabase.Expressions[player.SyncExpressionId]);
-            if (currentPreset == null || currentPreset.Name != player.SyncCharacterId)
-                SetCharacter(CosmeticDatabase.Characters.Find(p => p.Name == player.SyncCharacterId));
-
-            if (player.SyncHatId != "")
+            if (Multiplayer.MultiplayerPeer != null && player.IsMultiplayerAuthority())
             {
-                SetHat(CosmeticDatabase.Hats[player.SyncHatId]);
+                player.SyncAnimType = (int)currentAnim;
+                player.SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;
+                player.SyncHatId = SettingsManager.CurrentSettings.SavedHatID;
+                SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
+                if (currentPreset != PlayerData.CurrentCharacter) SetCharacter(PlayerData.CurrentCharacter);
+                SetHat(CosmeticDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
+            }
+            else
+            {
+                currentAnim = (PlayerAnimTypes)player.SyncAnimType;
+                if (player.SyncExpressionId != null && CosmeticDatabase.Expressions.ContainsKey(player.SyncExpressionId))
+                {
+                    SetExpression(CosmeticDatabase.Expressions[player.SyncExpressionId]);
+                }
+                if (currentPreset == null || currentPreset.Name != player.SyncCharacterId)
+                {
+                    var character = CosmeticDatabase.Characters.Find(p => p.Name == player.SyncCharacterId);
+                    if (character != null) SetCharacter(character);
+                }
+
+                if (!string.IsNullOrEmpty(player.SyncHatId) && CosmeticDatabase.Hats.ContainsKey(player.SyncHatId))
+                {
+                    SetHat(CosmeticDatabase.Hats[player.SyncHatId]);
+                }
             }
         }
         else

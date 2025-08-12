@@ -9,6 +9,7 @@ public partial class GameManager : Node3D
 
     [Export] public PackedScene TagLevelScene;
     [Export] public PackedScene LobbyScene;
+    public PackedScene VotingUIScene;
     
     // Used to track if color changes are coming from the game system
     public bool IsColorChangeFromGame { get; private set; }
@@ -29,12 +30,15 @@ public partial class GameManager : Node3D
         None,
         Tag,
         HideAndSeek,
-        MurderMystery
+        MurderMystery,
+        Climbing,
+        Race
     }
 
     [Signal] public delegate void GameStateChangedEventHandler(GameState newState);
     [Signal] public delegate void GameStartedEventHandler(GameType gameType);
     [Signal] public delegate void GameEndedEventHandler();
+    [Signal] public delegate void VoteSubmittedEventHandler(int playerId, GameType gameType, string playerName, Color playerColor);
 
     private GameState currentState = GameState.Lobby;
     private GameType currentGameType = GameType.None;
@@ -98,6 +102,19 @@ public partial class GameManager : Node3D
         }
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void CleanupVotingUI()
+    {
+        // Find and remove any voting UI instances
+        foreach (var node in GetChildren())
+        {
+            if (node is VotingUI votingUI)
+            {
+                votingUI.QueueFree();
+            }
+        }
+    }
+
     #region Original GameController Methods
     
 
@@ -124,13 +141,23 @@ public partial class GameManager : Node3D
     
     #endregion
 
-    #region Voting System
+# region Voting System
     
-    public void StartVoting()
+    public async void StartVoting()
     {
         if (!Multiplayer.IsServer() || currentState != GameState.Lobby) return;
+
+        await ToSignal(GetTree().CreateTimer(0.1), "timeout");
         
-        currentState = GameState.Voting;
+        // Close settings menu if open and force mouse mode
+        if (NewPauseMenu.IsOpen)
+        {
+            NewPauseMenu.Instance.CloseMenu();
+        }
+        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible, true); // Force visible mode
+
+        UpdateClientGameState(GameState.Voting);
+        Rpc(nameof(UpdateClientGameState), (int)GameState.Voting);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
         playerVotes.Clear();
@@ -142,49 +169,186 @@ public partial class GameManager : Node3D
         NetworkManager.Instance.SendSystemMessage("Game voting started! Vote for your favorite game!");
     }
     
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void SubmitVote(int gameTypeInt)
+    // Called by VotingUI when player clicks to vote
+    public void RegisterVote(GameManager.GameType gameType)
     {
-        if (currentState != GameState.Voting) return;
-        
-        int voterId = Multiplayer.GetRemoteSenderId();
-        if (voterId == 0) voterId = 1; // Server vote
-        
-        GameType gameType = (GameType)gameTypeInt;
-        playerVotes[voterId] = gameType;
-        
-        string playerName = NetworkManager.Instance.PlayerNames.TryGetValue(voterId, out var name) ? name : "Unknown";
-        string gameTypeName = gameType.ToString();
-        
-        Rpc(nameof(AnnounceVote), playerName, gameTypeName);
-        AnnounceVote(playerName, gameTypeName);
+        try
+        {
+            if (currentState != GameState.Voting)
+            {
+                GD.PrintErr("[GameManager] Cannot vote: Not in voting state");
+                return;
+            }
+
+            if (NetworkManager.Instance == null)
+            {
+                GD.PrintErr("[GameManager] Cannot vote: NetworkManager not available");
+                return;
+            }
+
+            if (Multiplayer.MultiplayerPeer == null)
+            {
+                GD.PrintErr("[GameManager] Cannot vote: No multiplayer peer");
+                return;
+            }
+
+            if (!Multiplayer.IsServer())
+            {
+                // Get player ID and validate it
+                int playerId = Multiplayer.GetUniqueId();
+                if (playerId <= 0)
+                {
+                    GD.PrintErr("[GameManager] Cannot vote: Invalid player ID");
+                    return;
+                }
+
+                GD.Print($"[GameManager] Client {playerId} sending vote to server: {gameType}");
+                RpcId(1, nameof(ProcessVote), playerId, (int)gameType);
+            }
+            else
+            {
+                // Server processes vote directly
+                GD.Print($"[GameManager] Server processing direct vote for game type {gameType}");
+                ProcessVote(1, (int)gameType);
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[GameManager] Error registering vote: {e.Message}");
+        }
     }
-    
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ProcessVote(int voterId, int gameTypeInt)
+    {
+        try
+        {
+            // Ensure only the server processes votes
+            if (!Multiplayer.IsServer())
+            {
+                GD.PrintErr("[GameManager] Non-server tried to process vote");
+                return;
+            }
+
+            GD.Print($"[GameManager] Server processing vote from {voterId} for game type {gameTypeInt}");
+            
+            if (currentState != GameState.Voting)
+            {
+                GD.PrintErr("[GameManager] Cannot process vote: Not in voting state");
+                return;
+            }
+
+            GameType gameType = (GameType)gameTypeInt;
+            
+            // Get player information
+            var player = NetworkManager.Instance.GetPlayerFromID(voterId);
+            if (player == null)
+            {
+                GD.PrintErr($"[GameManager] Cannot find player with ID {voterId}");
+                return;
+            }
+
+            string playerName = NetworkManager.Instance.PlayerNames.TryGetValue(voterId, out var name) ? name : "Unknown";
+            Color playerColor = player.playerColor;
+            string expressionId = player.SyncExpressionId;
+            string hatId = player.SyncHatId;
+
+            // Update server's vote tracking
+            playerVotes[voterId] = gameType;
+            
+            // Broadcast to all clients including the original sender
+            Rpc(nameof(BroadcastVote), voterId, gameTypeInt, playerName, 
+                new Color(playerColor.R, playerColor.G, playerColor.B, playerColor.A).ToHtml(), 
+                expressionId, hatId);
+            
+            // Update server's own UI
+            EmitSignal(SignalName.VoteSubmitted, voterId, gameTypeInt, playerName, playerColor);
+            
+            // Announce the vote
+            // NetworkManager.Instance.SendSystemMessage($"{playerName} voted for {gameType}");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[GameManager] Error processing vote: {e.Message}");
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void BroadcastVote(int voterId, int gameTypeInt, string playerName, string colorHtml, string expressionId, string hatId)
+    {
+        try
+        {
+            if (NetworkManager.Instance == null)
+            {
+                GD.PrintErr("[GameManager] Cannot broadcast vote: NetworkManager not available");
+                return;
+            }
+
+            if (currentState != GameState.Voting)
+            {
+                GD.PrintErr("[GameManager] Cannot broadcast vote: Not in voting state");
+                return;
+            }
+
+            GD.Print($"[GameManager] Received vote broadcast for player {playerName}");
+            
+            GameType gameType = (GameType)gameTypeInt;
+            Color playerColor = new(colorHtml);
+            
+            // Update local vote tracking
+            playerVotes[voterId] = gameType;
+            
+            // Update UI through signal
+            EmitSignal(SignalName.VoteSubmitted, voterId, gameTypeInt, playerName, playerColor);
+
+            // Verify the vote was recorded
+            if (!playerVotes.ContainsKey(voterId) || playerVotes[voterId] != gameType)
+            {
+                GD.PrintErr($"[GameManager] Vote for player {voterId} was not properly recorded");
+                return;
+            }
+
+            GD.Print($"[GameManager] Successfully processed vote from {playerName} for {gameType}");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[GameManager] Error processing vote broadcast: {e.Message}");
+        }
+    }
+
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void AnnounceVote(string playerName, string gameType)
     {
+        if (NetworkManager.Instance == null) return;
         NetworkManager.Instance.SendSystemMessage($"{playerName} voted for {gameType}");
-    }
-    
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    }    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void ShowVotingUI(float timeLeft)
     {
-        // This will be called on all clients to show voting UI
-        // You'll implement the UI part separately
-        GD.Print($"[GameManager] Show voting UI - {timeLeft} seconds left");
+        VotingUIScene = GD.Load<PackedScene>("res://Scenes/VotingUI.tscn");
+
+        if (VotingUIScene == null)
+        {
+            GD.PrintErr("[GameManager] VotingUIScene not set!");
+            return;
+        }
+
+        var votingUI = VotingUIScene.Instantiate<VotingUI>();
+        AddChild(votingUI);
+
+        votingUI.StartVoting(timeLeft);
     }
-    
+
     private void OnVotingFinished()
     {
         if (!Multiplayer.IsServer()) return;
-        
+
         // Count votes
         var voteCounts = new Dictionary<GameType, int>();
         foreach (var vote in playerVotes.Values)
         {
             voteCounts[vote] = voteCounts.GetValueOrDefault(vote, 0) + 1;
         }
-        
+
         // Find winner (or random if tie)
         GameType winningGame = GameType.Tag; // Default fallback
         if (voteCounts.Count > 0)
@@ -193,9 +357,15 @@ public partial class GameManager : Node3D
             var topGames = voteCounts.Where(kvp => kvp.Value == maxVotes).Select(kvp => kvp.Key).ToList();
             winningGame = topGames[Math.Abs((int)GD.Randi()) % topGames.Count];
         }
-        
+
+        // Clean up voting UI on all clients
+        Rpc(nameof(CleanupVotingUI));
+        CleanupVotingUI();
+
         NetworkManager.Instance.SendSystemMessage($"{winningGame} wins the vote! Starting game...");
         StartGame(winningGame);
+        
+        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
     }
     
     #endregion
@@ -207,7 +377,8 @@ public partial class GameManager : Node3D
         if (!Multiplayer.IsServer()) return;
         
         currentGameType = gameType;
-        currentState = GameState.Starting;
+        UpdateClientGameState(GameState.Starting);
+        Rpc(nameof(UpdateClientGameState), (int)GameState.Starting);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
         // Store original colors before overriding
@@ -277,9 +448,17 @@ public partial class GameManager : Node3D
             SetAttacker(taggerPlayer.Name);
         }
         
-        currentState = GameState.Playing;
+        UpdateClientGameState(GameState.Playing);
+        Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         EmitSignal(SignalName.GameStarted, (int)currentGameType);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void UpdateClientGameState(GameState newState)
+    {
+        currentState = newState;
+        EmitSignal(SignalName.GameStateChanged, (int)currentState);
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -296,23 +475,23 @@ public partial class GameManager : Node3D
     }
     
     #endregion
-    
+
     #region Tag Game Logic
-    
+
     private void CheckTagDistance()
     {
         if (currentTagger == -1) return;
-        
+
         Player taggerPlayer = NetworkManager.Instance.GetPlayerFromID(currentTagger);
         if (taggerPlayer == null) return;
-        
+
         foreach (int playerId in alivePlayers.ToList())
         {
             if (playerId == currentTagger) continue;
-            
+
             Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
             if (player == null) continue;
-            
+
             float distance = taggerPlayer.GlobalPosition.DistanceTo(player.GlobalPosition);
             if (distance <= TAG_DISTANCE)
             {
@@ -470,7 +649,8 @@ public partial class GameManager : Node3D
     {
         if (!Multiplayer.IsServer()) return;
         
-        currentState = GameState.GameOver;
+        UpdateClientGameState(GameState.GameOver);
+        Rpc(nameof(UpdateClientGameState), (int)GameState.GameOver);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         EmitSignal(SignalName.GameEnded);
         
@@ -488,7 +668,8 @@ public partial class GameManager : Node3D
     
     private void ReturnToLobby()
     {
-        currentState = GameState.Lobby;
+        UpdateClientGameState(GameState.Lobby);
+        Rpc(nameof(UpdateClientGameState), (int)GameState.Lobby);
         currentGameType = GameType.None;
         currentTagger = -1;
         alivePlayers.Clear();

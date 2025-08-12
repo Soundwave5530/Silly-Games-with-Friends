@@ -1,0 +1,60 @@
+[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://c02fb0cifsbt4"]
+
+[ext_resource type="Shader" uid="uid://xsw02sf1sqto" path="res://Assets/Shaders/Water.gdshader" id="1_m08po"]
+[ext_resource type="CompressedTexture2DArray" uid="uid://dpxej2q26jd60" path="res://Assets/Sprites/Water/caustic.png" id="2_vxn14"]
+[ext_resource type="Texture2D" uid="uid://bv5mhb5r10hgn" path="res://Assets/Sprites/Water/foam_albedo.png" id="3_7rtny"]
+[ext_resource type="Texture2D" uid="uid://bu7auhsrkr3pk" path="res://Assets/Sprites/Water/normal_A.png" id="4_wtv1i"]
+[ext_resource type="Texture2D" uid="uid://cqjiuodog5myk" path="res://Assets/Sprites/Water/normal_B.png" id="5_c1dvn"]
+[ext_resource type="Texture2D" uid="uid://dkg3sykn0y87i" path="res://Assets/Sprites/Water/uv_example.png" id="6_tsq15"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_m08po")
+shader_parameter/wave_1 = Vector4(0.3, 4, 0.2, 0.6)
+shader_parameter/wave_2 = Vector4(-0.26, -0.19, 0.01, 0.47)
+shader_parameter/wave_3 = Vector4(-7.67, 5.63, 0.1, 0.38)
+shader_parameter/wave_4 = Vector4(-0.42, -1.63, 0.1, 0.28)
+shader_parameter/wave_5 = Vector4(1.66, 0.07, 0.15, 1.81)
+shader_parameter/wave_6 = Vector4(1.2, 1.14, 0.01, 0.33)
+shader_parameter/wave_7 = Vector4(-1.6, 7.3, 0.11, 0.73)
+shader_parameter/wave_8 = Vector4(-0.42, -1.63, 0.15, 1.52)
+shader_parameter/time_factor = 2.5
+shader_parameter/noise_zoom = 2.0
+shader_parameter/noise_amp = 1.0
+shader_parameter/base_water_color = Color(0.3816, 0.5508, 0.72, 1)
+shader_parameter/fresnel_water_color = Color(0.16560002, 0.47052017, 0.72, 1)
+shader_parameter/deep_water_color = Color(0.0646, 0.18853007, 0.34, 1)
+shader_parameter/shallow_water_color = Color(0.407, 0.5846, 0.74, 1)
+shader_parameter/beers_law = 0.5
+shader_parameter/depth_offset = -1.2
+shader_parameter/near = 7.0
+shader_parameter/far = 10000.0
+shader_parameter/edge_texture_scale = 3.5
+shader_parameter/edge_texture_offset = 1.0
+shader_parameter/edge_texture_speed = 0.1
+shader_parameter/edge_foam_intensity = 2.0
+shader_parameter/edge_fade_start = -3.0
+shader_parameter/edge_fade_end = 6.6
+shader_parameter/peak_height_threshold = 1.0
+shader_parameter/peak_color = Vector3(1, 1, 1)
+shader_parameter/peak_intensity = 1.0
+shader_parameter/foam_texture = ExtResource("3_7rtny")
+shader_parameter/foam_intensity = 1.0
+shader_parameter/foam_scale = 1.0
+shader_parameter/metallic = 0.6
+shader_parameter/roughness = 0.045
+shader_parameter/uv_scale_text_a = 0.1
+shader_parameter/uv_speed_text_a = Vector2(0.42, 0.3)
+shader_parameter/uv_scale_text_b = 0.6
+shader_parameter/uv_speed_text_b = Vector2(0.15, 0.1)
+shader_parameter/normal_strength = 1.0
+shader_parameter/uv_sampler_scale = 0.3
+shader_parameter/blend_factor = 0.28
+shader_parameter/perturbation_strength = 1.0
+shader_parameter/perturbation_time = 0.3
+shader_parameter/normalmap_a = ExtResource("4_wtv1i")
+shader_parameter/normalmap_b = ExtResource("5_c1dvn")
+shader_parameter/uv_sampler = ExtResource("6_tsq15")
+shader_parameter/caustic_sampler = ExtResource("2_vxn14")
+shader_parameter/num_caustic_layers = 0.9499999999970896
+shader_parameter/caustic_distortion_strength = 0.0010000000038417056
