@@ -13,7 +13,7 @@ Chatbox = NodePath("ChatBox")
 wait_time = 6.0
 
 [node name="ChatBox" type="Panel" parent="."]
-anchors_preset = 2
+anchors_preset = -1
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 30.0
@@ -23,6 +23,7 @@ offset_bottom = -30.0
 grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="ChatBox"]
 layout_mode = 1
@@ -42,6 +43,7 @@ layout_mode = 2
 [node name="ChatLog" type="RichTextLabel" parent="ChatBox/MarginContainer/ChatBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 bbcode_enabled = true
 scroll_following = true
 vertical_alignment = 2

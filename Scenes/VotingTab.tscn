@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://bl2ito6x5rrmb"]
+[gd_scene load_steps=11 format=3 uid="uid://bl2ito6x5rrmb"]
 
 [ext_resource type="Script" uid="uid://dkuiihyhhr3pw" path="res://Scripts/VotingTab.cs" id="1_lkibk"]
 [ext_resource type="Resource" uid="uid://d17teatxfu0im" path="res://Assets/Game Data/Tag.tres" id="2_0i3ur"]
 [ext_resource type="StyleBox" uid="uid://geveqpff8abb" path="res://Assets/Themes/StyleBoxes/Panel.tres" id="2_ebdw0"]
 [ext_resource type="FontFile" uid="uid://cwuocisi57k0v" path="res://Assets/Fonts/Poppins/Poppins-Black.ttf" id="3_w22vf"]
+[ext_resource type="Texture2D" uid="uid://duqtrkj811olo" path="res://Assets/Sprites/UI/Games/Tag.png" id="4_cvjf8"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0i3ur"]
 
@@ -81,6 +82,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_w22vf")
 
 [node name="GameIcon" type="TextureRect" parent="BG2"]
+modulate = Color(0.6255971, 0.6255971, 0.6255971, 1)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -92,8 +94,9 @@ offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+texture = ExtResource("4_cvjf8")
 expand_mode = 2
-stretch_mode = 1
+stretch_mode = 6
 
 [node name="Game Name" type="Label" parent="."]
 texture_filter = 1

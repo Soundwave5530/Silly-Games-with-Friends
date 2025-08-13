@@ -87,7 +87,7 @@ public partial class NetworkManager : Node3D
         Player player = PlayerScene.Instantiate<Player>();
         player.Name = $"Player_{id}";
         player.SetMultiplayerAuthority(id);
-        player.GlobalTransform = new Transform3D(Basis.Identity, new Vector3(5 * GD.Randf(), 0, 5 * GD.Randf()));
+        player.GlobalTransform = new Transform3D(Basis.Identity, new Vector3(3 * GD.Randf(), 1, 3 * GD.Randf()));
         player.AddToGroup("players");
 
         // Set initial player properties from cached data

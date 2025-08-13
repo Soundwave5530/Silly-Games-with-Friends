@@ -87,6 +87,9 @@ public partial class BootManager : Node
 
         DisplayServer.WindowSetSize(VideoSettings.SupportedResolutions[us.ResolutionIndex]);
 
+        ProjectSettings.SetSetting("display/window/size/viewport_width", VideoSettings.SupportedResolutions[us.ResolutionIndex].X);
+        ProjectSettings.SetSetting("display/window/size/viewport_height", VideoSettings.SupportedResolutions[us.ResolutionIndex].Y);
+
         DisplayServer.WindowSetVsyncMode(us.VSync ? DisplayServer.VSyncMode.Enabled : DisplayServer.VSyncMode.Disabled);
 
         Input.UseAccumulatedInput = !SettingsManager.CurrentSettings.VSync;

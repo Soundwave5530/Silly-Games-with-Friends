@@ -19,11 +19,6 @@ public partial class Player : CharacterBody3D
     [Export] public string SyncCharacterId = "goober";
     [Export] public string SyncHatId = "none";
 
-    public float RollAcceleration = 10;
-    public float RollFriction = 2f;
-    public float MaxRollSpeed = 40;
-
-
     private Vector3 velocity = Vector3.Zero;
     private Label3D nameLabel;
     private CollisionShape3D collision;
@@ -43,7 +38,8 @@ public partial class Player : CharacterBody3D
     private bool isEmoting = false;
     private float emoteTimer = 0f;
 
-    private Camera3D playerCamera => GetNode<Camera3D>("HeadPivot/PlayerCamera");
+    public Camera3D Camera;
+
     private Marker3D perspective1 => GetNode<Marker3D>("HeadPivot/FirstPerson");
     private Marker3D perspective2 => GetNode<Marker3D>("HeadPivot/SecondPerson");
     private Marker3D perspective3 => GetNode<Marker3D>("HeadPivot/ThirdPerson");
@@ -152,14 +148,16 @@ public partial class Player : CharacterBody3D
             // Initialize camera positions
             targetCameraPosition = perspective1.Position;
             targetCameraRotation = perspective1.Rotation;
-            
+
             // Get node references
             nameLabel = GetNode<Label3D>("NameLabel");
             collision = GetNode<CollisionShape3D>("Collision");
             headPivot = GetNode<Node3D>("HeadPivot");
             playerSprite = GetNode<Sprite3D>("Person");
             interactRay = GetNode<RayCast3D>("HeadPivot/PlayerCamera/InteractRay");
-            
+
+            Camera = GetNode<Camera3D>("HeadPivot/PlayerCamera");
+
             if (!IsInsideTree())
             {
                 GD.PrintErr("[Player] Node not in scene tree during _Ready");
@@ -222,9 +220,9 @@ public partial class Player : CharacterBody3D
             bool isMultiplayerActive = IsMultiplayerValid();
             if (!isMultiplayerActive)
             {
-                if (GetViewport().GetCamera3D() != playerCamera)
+                if (GetViewport().GetCamera3D() != Camera)
                 {
-                    playerCamera.Current = true;
+                    Camera.Current = true;
                 }
                 return;
             }
@@ -246,9 +244,9 @@ public partial class Player : CharacterBody3D
             }
 
             // Set camera if needed
-            if (GetViewport().GetCamera3D() != playerCamera && hasAuthority)
+            if (GetViewport().GetCamera3D() != Camera && hasAuthority)
             {
-                playerCamera.Current = true;
+                Camera.Current = true;
             }
 
             // Process authority-specific logic
@@ -291,17 +289,17 @@ public partial class Player : CharacterBody3D
                     else playerSprite.Show();
                 }
 
-                if (playerCamera.Position.DistanceTo(targetCameraPosition) > 0.01)
+                if (Camera.Position.DistanceTo(targetCameraPosition) > 0.01)
                 {
                     float smoothingSpeed = SettingsManager.CurrentSettings.CameraSmoothing ? 10f : 50f;
-                    playerCamera.Position = playerCamera.Position.Lerp(targetCameraPosition, smoothingSpeed * (float)delta);
-                    playerCamera.Rotation = playerCamera.Rotation.Lerp(targetCameraRotation, smoothingSpeed * (float)delta);
-                    pitch = playerCamera.Rotation.X;
+                    Camera.Position = Camera.Position.Lerp(targetCameraPosition, smoothingSpeed * (float)delta);
+                    Camera.Rotation = Camera.Rotation.Lerp(targetCameraRotation, smoothingSpeed * (float)delta);
+                    pitch = Camera.Rotation.X;
                     if (canRotateCamera) canRotateCamera = false;
                 }
                 else
                 {
-                    playerCamera.Position = targetCameraPosition;
+                    Camera.Position = targetCameraPosition;
                     if (!canRotateCamera) canRotateCamera = true;
                 }
             }
@@ -375,7 +373,7 @@ public partial class Player : CharacterBody3D
             {
                 isSwimming = true;
                 crouching = false;
-                Speed = crouching ? 2.5f : 5f;
+                Speed = crouching ? Speed / 2 : Speed;
                 headPivot.Position = crouching ? Vector3.Zero : Vector3.Up * 0.2f;
             }
 
@@ -573,7 +571,7 @@ public partial class Player : CharacterBody3D
         if (Input.IsActionJustPressed("crouch") && CanCrouch())
         {
             crouching = !crouching;
-            Speed = crouching ? 2.5f : 5f;
+            Speed = crouching ? Speed / 2 : Speed;
             headPivot.Position = crouching ? Vector3.Zero : Vector3.Up * 0.2f;
         }
 
@@ -581,7 +579,7 @@ public partial class Player : CharacterBody3D
         {
             Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
-            var camTransform = playerCamera.GlobalTransform;
+            var camTransform = Camera.GlobalTransform;
             Vector3 forward = Transform.Basis.Z;
             Vector3 right = Transform.Basis.X;
 
@@ -688,7 +686,7 @@ public partial class Player : CharacterBody3D
         }
         else inputDir = Vector2.Zero;
 
-        var camTransform = playerCamera.GlobalTransform;
+        var camTransform = Camera.GlobalTransform;
 
         Vector3 camForward = camTransform.Basis.Z;
         Vector3 camRight = camTransform.Basis.X;

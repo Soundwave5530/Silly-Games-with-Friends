@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://tqlgykdhpan"]
+[gd_scene load_steps=10 format=3 uid="uid://tqlgykdhpan"]
 
 [ext_resource type="Material" uid="uid://c02fb0cifsbt4" path="res://Assets/Materials/Water.tres" id="1_tm1g2"]
 [ext_resource type="Material" uid="uid://cj88d3jy5ktnl" path="res://Assets/Materials/Basic.tres" id="2_a311e"]
+[ext_resource type="PackedScene" uid="uid://blm36ystmlvc4" path="res://Scenes/MovingPlatform.tscn" id="3_a311e"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tm1g2"]
 sky_top_color = Color(0.2, 0.533333, 1, 1)
@@ -24,6 +25,22 @@ material = ExtResource("1_tm1g2")
 size = Vector2(300, 300)
 subdivide_width = 300
 subdivide_depth = 300
+
+[sub_resource type="Curve3D" id="Curve3D_sphrt"]
+closed = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0.932896, -55.1883, 0, 0, 0, 0, 0, 0, -39.07, 0.933, -55.188, 0, 0, 0, 0, 0, 0, -112.54, 0.933, -44.478, 0, 0, 0, 0, 0, 0, -80.4192, 4.31777, 36.41, 0, 0, 0, 0, 0, 0, -112.54, 0.933, 75.492, 0, 0, 0, 0, 0, 0, -66.65, 0.933, 116.822, 0, 0, 0, 0, 0, 0, 47.24, 14.173, 116.822, 0, 0, 0, 0, 0, 0, 47.755, 24.173, 74.212, 0, 0, 0, 0, 0, 0, 47.755, 24.173, 4.772, 0, 0, 0, 0, 0, 0, 47.755, 8.785, -55.068),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 10
+
+[sub_resource type="Curve3D" id="Curve3D_l3iaf"]
+closed = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 48.7169, 0, 94.4816, 0, 0, 0, 0, 0, 0, 74.8396, 24.2306, 94.86),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [node name="Lobby" type="Node3D"]
 
@@ -194,3 +211,20 @@ use_collision = true
 radius = 9.99316
 height = 8.4292
 material = ExtResource("2_a311e")
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_sphrt")
+
+[node name="Path3D2" type="Path3D" parent="."]
+curve = SubResource("Curve3D_l3iaf")
+
+[node name="MovingPlatform" parent="." node_paths=PackedStringArray("Path3D") instance=ExtResource("3_a311e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -55.0426)
+Path3D = NodePath("../Path3D")
+Speed = 10.0
+WaitBetweenLoops = 7.0
+
+[node name="MovingPlatform2" parent="." node_paths=PackedStringArray("Path3D") instance=ExtResource("3_a311e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.7169, 0, 94.86)
+Path3D = NodePath("../Path3D2")
+Speed = 7.0

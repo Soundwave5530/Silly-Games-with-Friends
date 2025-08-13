@@ -173,11 +173,13 @@ public partial class VotingUI : CanvasLayer
             // Register vote through GameManager
             GameManager.Instance.RegisterVote(gameType);
 
+            var selectedTab = GetTabForGameType(gameType);
+
             // Visual feedback only for the voter
-            StatusLabel.Text = $"You voted for {gameType}!";
+            StatusLabel.Text = $"You voted for {selectedTab.data.GameName}!";
             ResetTabColors();
 
-            var selectedTab = GetTabForGameType(gameType);
+            
             if (selectedTab != null)
             {
                 selectedTab.Modulate = new Color(1.2f, 1.2f, 1.2f);

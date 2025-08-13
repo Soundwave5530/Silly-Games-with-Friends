@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://rw4wvxnnl3va"]
+
+[ext_resource type="Script" uid="uid://cf48r7wr3s7h4" path="res://Scripts/SpeedBoost.cs" id="1_7rx01"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8ccii"]
+lightmap_size_hint = Vector2i(17, 9)
+radial_segments = 4
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ccii"]
+albedo_color = Color(1, 0, 0, 1)
+rim_enabled = true
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_8ccii"]
+radius = 1.3344892
+
+[node name="Speed Boost Item" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_7rx01")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_8ccii")
+surface_material_override/0 = SubResource("StandardMaterial3D_8ccii")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_8ccii")
+debug_color = Color(0.396, 0.44, 0, 0.41960785)

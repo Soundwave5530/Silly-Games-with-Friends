@@ -35,16 +35,22 @@ public partial class ChatManager : CanvasLayer
 
     public override void _Process(double delta)
     {
-        if (chatOpen) return;
-        if (Input.IsActionJustPressed("open_chat") && !NewPauseMenu.IsOpen)
+        if (Input.IsActionJustPressed("open_chat") && !NewPauseMenu.IsOpen && !chatOpen)
         {
             OpenChat();
         }
-        else if (Input.IsActionJustPressed("commands"))
+        else if (Input.IsActionJustPressed("commands") && !chatOpen)
         {
             OpenChat();
             ChatInput.Text += "/";
             ChatInput.CaretColumn = 1;
+        }
+        else if (Input.IsActionJustPressed("escape") && chatOpen)
+        {
+            if (chatOpen)
+            {
+                CloseChat();
+            }
         }
 
         if (hidingChatSeq)
@@ -75,13 +81,14 @@ public partial class ChatManager : CanvasLayer
     private async void CloseChat()
     {
         ChatInput.ReleaseFocus();
+        
         ChatInput.Text = "";
         chatOpen = false;
         ChatInput.Hide();
 
         await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
 
-        if (!Multiplayer.IsServer()) MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+        if (Multiplayer.MultiplayerPeer != null && !Multiplayer.IsServer() && !(GameManager.Instance.GetCurrentState() == GameManager.GameState.Voting)) MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
 
         CreateTimerToHide();
     }

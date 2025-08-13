@@ -59,13 +59,15 @@ public partial class GameManager : Node3D
     private Dictionary<int, Color> originalPlayerColors = new();
     private bool colorsOverridden = false;
 
+    private Node WorldNode;
+
     public override void _Ready()
     {
         Instance = this;
-        
+
         // Original GameController logic
         EmitSignal(SignalName.GameSceneLoaded);
-        
+
         // Only enable host camera for dedicated servers
         var hostCamera = GetNode<Camera3D>("HostCamera");
         if (NetworkManager.Instance.IsDedicatedServer)
@@ -77,20 +79,27 @@ public partial class GameManager : Node3D
         {
             hostCamera.Current = false;
         }
-        
+
         // Setup timers
         votingTimer = new Timer { WaitTime = VOTING_TIME, OneShot = true };
         AddChild(votingTimer);
         votingTimer.Timeout += OnVotingFinished;
-        
+
         gameTimer = new Timer { WaitTime = TAG_GAME_DURATION, OneShot = true };
         AddChild(gameTimer);
         gameTimer.Timeout += OnGameTimeUp;
-        
+
         // Connect to network events
         if (NetworkManager.Instance != null)
         {
             Multiplayer.PeerDisconnected += OnPlayerDisconnected;
+        }
+
+        WorldNode = GetNode<Node>("World");
+
+        if (currentState == GameState.Lobby)
+        {
+            LoadLobby();
         }
     }
 
@@ -398,6 +407,7 @@ public partial class GameManager : Node3D
         // Load tag level
         Rpc(nameof(LoadGameLevel), (int)GameType.Tag);
         LoadGameLevel((int)GameType.Tag);
+        NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf());
         
         // Wait for level to load, then start
         GetTree().CreateTimer(2f).Timeout += () =>
@@ -418,8 +428,10 @@ public partial class GameManager : Node3D
         switch (gameType)
         {
             case GameType.Tag:
-                GetTree().ChangeSceneToPacked(TagLevelScene);
-                NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(5 * GD.Randf(), 0, 5 * GD.Randf());
+                WorldNode.QueueFreeChildren();
+                GD.Print("[GameManager] Loading Tag level...");
+                WorldNode.AddChild(TagLevelScene.Instantiate());
+                NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf());
                 break;
             // Add other levels here
         }
@@ -561,7 +573,7 @@ public partial class GameManager : Node3D
         
         foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
         {
-            Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.White;
+            Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.Blue;
             
             Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
             if (player != null)
@@ -582,7 +594,7 @@ public partial class GameManager : Node3D
         
         foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
         {
-            Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.White;
+            Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.Blue;
             
             Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
             if (player != null)
@@ -684,7 +696,9 @@ public partial class GameManager : Node3D
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void LoadLobby()
     {
-        GetTree().ChangeSceneToPacked(LobbyScene);
+        WorldNode.QueueFreeChildren();
+        GD.Print("[GameManager] Loading Lobby...");
+        WorldNode.AddChild(LobbyScene.Instantiate());
     }
     
     #endregion

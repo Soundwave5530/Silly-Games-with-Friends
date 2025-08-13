@@ -40,11 +40,11 @@ public partial class AnimationManager : Node
 
     private int frameIndex = 0;
     private float frameTime = 0f;
-    private float frameDelay = 0.15f;
+    private float frameDelay => 1/player.Speed;
 
     private int faceFrameIndex = 0;
     private float faceFrameTime = 0f;
-    private float faceFrameDelay = 0.2f;
+    private float faceFrameDelay => 1/player.Speed;
 
     private bool isUsingEmote = false;
     private float emoteDuration = 5f;

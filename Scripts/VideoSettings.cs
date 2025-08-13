@@ -26,6 +26,7 @@ public partial class VideoSettings : Control
         new(1366, 768),
         new(1280, 720),
         new(1024, 576),
+        new(800, 600)
     };
 
     public override void _Ready()
@@ -134,6 +135,9 @@ public partial class VideoSettings : Control
     
     void ApplyResolution(Vector2I res)
     {
+        ProjectSettings.SetSetting("display/window/size/viewport_width", res.X);
+        ProjectSettings.SetSetting("display/window/size/viewport_height", res.Y);
+
         DisplayServer.WindowSetSize(res);
     }
 }

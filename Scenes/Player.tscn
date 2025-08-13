@@ -31,6 +31,9 @@ properties/4/replication_mode = 2
 properties/5/path = NodePath(".:SyncHatId")
 properties/5/spawn = true
 properties/5/replication_mode = 2
+properties/6/path = NodePath(".:Speed")
+properties/6/spawn = true
+properties/6/replication_mode = 2
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
@@ -80,10 +83,6 @@ transform = Transform3D(0.999959, -0.004004, -0.00811101, 0.00492211, 0.993174, 
 [node name="ThirdPerson" type="Marker3D" parent="HeadPivot"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.294542, -2.43071)
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_kyqiw")
-visibility_update_mode = 1
-
 [node name="Person" type="Sprite3D" parent="."]
 transform = Transform3D(-0.99986, 0, 8.74106e-08, 0, 0.999995, 0, -8.74106e-08, 0, -0.99986, 0, 0, 0)
 shaded = true
@@ -114,3 +113,7 @@ texture = ExtResource("8_yoq75")
 
 [node name="CarrySocket" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19029, 0)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_kyqiw")
+visibility_update_mode = 1

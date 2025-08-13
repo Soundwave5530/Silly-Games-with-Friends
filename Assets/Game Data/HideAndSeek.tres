@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="GameData" load_steps=2 format=3 uid="uid://csep6jd1unl62"]
+[gd_resource type="Resource" script_class="GameData" load_steps=3 format=3 uid="uid://csep6jd1unl62"]
 
 [ext_resource type="Script" uid="uid://be2cmn7lwlpbq" path="res://Scripts/GameData.cs" id="1_l20ye"]
+[ext_resource type="Texture2D" uid="uid://duqtrkj811olo" path="res://Assets/Sprites/UI/Games/Tag.png" id="1_rr2yc"]
 
 [resource]
 script = ExtResource("1_l20ye")
 GameName = "Hide & Seek"
+Icon = ExtResource("1_rr2yc")
 GameType = 2
 metadata/_custom_type_script = "uid://be2cmn7lwlpbq"
