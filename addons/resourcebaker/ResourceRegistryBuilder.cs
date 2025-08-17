@@ -1,26 +1,27 @@
-/*
+
 using Godot;
 using System;
 using Godot.Collections;
 using System.Collections.Generic;
 
-
+#if TOOLS
 [Tool]
 [GlobalClass]
-public partial class CosmeticRegistryBuilder : EditorPlugin
+public partial class ResourceRegistryBuilder : EditorPlugin
 {
 	public override void _Ready()
 	{
-		string registryPath = "res://Assets/CosmeticRegistry.tres";
-		var registry = ResourceLoader.Load<CosmeticRegistry>(registryPath) ?? new CosmeticRegistry();
+		string registryPath = "res://Assets/ResourceRegistry.tres";
+		var registry = ResourceLoader.Load<ResourceRegistry>(registryPath) ?? new ResourceRegistry();
 
 		registry.Expressions = LoadResources<FacialExpression>("res://Assets/Expressions/");
 		registry.Hats = LoadFilteredCosmetics("res://Assets/Cosmetics/Hats/", Cosmetic.CosmeticType.Hat);
-		registry.Accessories = LoadFilteredCosmetics("res://Assets/Cosmetics/Accessories/", Cosmetic.CosmeticType.Body); // or a new enum type if needed
+		registry.Accessories = LoadFilteredCosmetics("res://Assets/Cosmetics/Accessories/", Cosmetic.CosmeticType.Body);
 		registry.Characters = LoadResources<CharacterTypePreset>("res://Assets/Characters/");
+		registry.Games = LoadResources<GameData>("res://Assets/Game Data/");
 
 		ResourceSaver.Save(registry, registryPath);
-		GD.Print("✅ Cosmetic registry rebuilt.");
+		GD.Print("[ResourceRegistryPlugin] Resource registry rebuilt.");
 	}
 
 	private Godot.Collections.Array LoadResources<T>(string folderPath) where T : Resource
@@ -79,4 +80,4 @@ public partial class CosmeticRegistryBuilder : EditorPlugin
 		return (Godot.Collections.Array)filtered;
 	}
 }
-*/
+#endif

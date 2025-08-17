@@ -8,4 +8,5 @@ script = ExtResource("1_l20ye")
 GameName = "Hide & Seek"
 Icon = ExtResource("1_rr2yc")
 GameType = 2
+GameTime = 300
 metadata/_custom_type_script = "uid://be2cmn7lwlpbq"

@@ -58,7 +58,7 @@ public partial class VotingUI : CanvasLayer
         StatusLabel.Text = "Vote for your favorite game!";
 
         // Initialize tabs with random game data
-        var gameOptions = GameDataProvider.Instance.GetRandomGameOptions(3);
+        var gameOptions = GameDataProvider.Instance.GetRandomGames(3);
         float spacing = 10; // Spacing between tabs
         float currentY = 0;
 

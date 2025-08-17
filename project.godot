@@ -31,6 +31,7 @@ GameDataProvider="*res://Scripts/GameDataProvider.cs"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/size/extend_to_title=true
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
 
@@ -40,7 +41,7 @@ project/assembly_name="Silly Blocks"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/animationbake/plugin.cfg", "res://addons/resourcebaker/plugin.cfg")
 
 [global_group]
 

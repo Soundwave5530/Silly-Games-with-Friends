@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://coeyyvm207xgt"]
+
+[ext_resource type="Script" uid="uid://ck61jhec1n70o" path="res://Scripts/TaggerStun.cs" id="1_wf36t"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wf36t"]
+lightmap_size_hint = Vector2i(14, 21)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ccii"]
+albedo_color = Color(0.76487386, 0.16476214, 0.9999998, 1)
+rim_enabled = true
+stencil_flags = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_8ccii"]
+radius = 1.3344892
+
+[node name="Stun Tagger Item" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_wf36t")
+availableColor = Color(0.76487386, 0.16476214, 0.9999998, 1)
+cooldownColor = Color(0.9295973, 0, 0.27685848, 1)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5878057, 0, 0, 0, 0.5878057, 0, 0, 0, 0.5878057, 0, 0, 0)
+mesh = SubResource("BoxMesh_wf36t")
+surface_material_override/0 = SubResource("StandardMaterial3D_8ccii")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_8ccii")
+debug_color = Color(0.762, 0.16000003, 1, 0.5294118)

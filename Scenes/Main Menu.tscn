@@ -965,7 +965,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_udm2q")
 metadata/_edit_use_anchors_ = true
 
-[node name="NewMenuUI" type="Control" parent="." node_paths=PackedStringArray("playButton", "settingsButton", "customizeButton", "exitButton", "creditsButton", "hostAsPlayerButton", "hostAsDedicatedServerButton", "joinButton", "backButton", "addServerButton", "refreshServerButton", "deleteAllServersButton", "backfromServerButton", "settingsGeneralButton", "settingsVideoButton", "settingsAudioButton", "settingsControlsButton", "settingsBackButton", "customizationBackButton")]
+[node name="NewMenuUI" type="Control" parent="." node_paths=PackedStringArray("playButton", "settingsButton", "customizeButton", "exitButton", "creditsButton", "hostAsPlayerButton", "hostAsDedicatedServerButton", "joinButton", "backButton", "addServerButton", "refreshServerButton", "deleteAllServersButton", "backfromServerButton", "settingsGeneralButton", "settingsVideoButton", "settingsAudioButton", "settingsControlsButton", "settingsBackButton", "customizationBackButton", "versionLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -993,6 +993,7 @@ settingsAudioButton = NodePath("../Settings/ButtonContainer/AudioB")
 settingsControlsButton = NodePath("../Settings/ButtonContainer/KeybindsB")
 settingsBackButton = NodePath("../Settings/ButtonContainer/BackB")
 customizationBackButton = NodePath("../Customization Menu/Panel2/Back")
+versionLabel = NodePath("Version")
 metadata/_edit_use_anchors_ = true
 
 [node name="Title" type="Label" parent="NewMenuUI"]
@@ -1283,7 +1284,7 @@ offset_bottom = -12.0
 grow_horizontal = 0
 grow_vertical = 0
 theme = ExtResource("4_eotax")
-text = " v 0.2.1  dev4"
+text = "VERSION ERROR"
 horizontal_alignment = 2
 vertical_alignment = 2
 

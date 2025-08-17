@@ -34,18 +34,18 @@ public partial class CustomizeSelection : VBoxContainer
         switch (selectionType)
         {
             case SelectionType.Face:
-                facialExpressions = new(CosmeticDatabase.Expressions.Values.ToArray());
-                currentIndex = Math.Max(0, facialExpressions.IndexOf(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]));
+                facialExpressions = new(ResourceDatabase.Expressions.Values.ToArray());
+                currentIndex = Math.Max(0, facialExpressions.IndexOf(ResourceDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]));
                 break;
             case SelectionType.Character:
-                characterPresets = new(CosmeticDatabase.Characters.ToArray());
+                characterPresets = new(ResourceDatabase.Characters.ToArray());
                 break;
             case SelectionType.Hat:
-                hats = new(CosmeticDatabase.Hats.Values.ToArray());
-                currentIndex = Math.Max(0, hats.IndexOf(CosmeticDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]));
+                hats = new(ResourceDatabase.Hats.Values.ToArray());
+                currentIndex = Math.Max(0, hats.IndexOf(ResourceDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]));
                 break;
             case SelectionType.Accessory:
-                accessories = new(CosmeticDatabase.Accessories.ToArray());
+                accessories = new(ResourceDatabase.Accessories.ToArray());
                 break;
         }
 

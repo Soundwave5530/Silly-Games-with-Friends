@@ -9,6 +9,7 @@ public partial class GameManager : Node3D
 
     [Export] public PackedScene TagLevelScene;
     [Export] public PackedScene LobbyScene;
+    [Export] public PackedScene CountdownUIScene; // Add this export
     public PackedScene VotingUIScene;
     
     // Used to track if color changes are coming from the game system
@@ -21,6 +22,7 @@ public partial class GameManager : Node3D
         Lobby,
         Voting,
         Starting,
+        Countdown,  // Add new countdown state
         Playing,
         GameOver
     }
@@ -52,8 +54,26 @@ public partial class GameManager : Node3D
     private int currentTagger = -1;
     private HashSet<int> alivePlayers = new();
     private Timer gameTimer;
+    private float gameTimeRemaining = 0f;
     private const float TAG_GAME_DURATION = 180f; // 3 minutes
-    private const float TAG_DISTANCE = 3f;
+    private const float HIDE_AND_SEEK_DURATION = 300f; // 5 minutes
+    private const float MURDER_MYSTERY_DURATION = 420f; // 7 minutes
+    private const float TAG_DISTANCE = 2f;
+    
+    // Tagging delays and cooldowns
+    private const float TAG_COOLDOWN = 1f; // 1 second between tags
+    private const float NEW_TAGGER_STUN_DURATION = 3f; // 3 seconds stun for newly tagged player
+    private float lastTagTime = 0f;
+    private Dictionary<int, float> playerTagProtection = new(); // Players who can't be tagged yet
+    
+    // Murder Mystery roles
+    private int currentMurderer = -1;
+    private int currentSheriff = -1;
+    private HashSet<int> innocentPlayers = new();
+    
+    // Hide and Seek roles
+    private HashSet<int> seekers = new();
+    private HashSet<int> hiders = new();
     
     // Color override system
     private Dictionary<int, Color> originalPlayerColors = new();
@@ -65,12 +85,16 @@ public partial class GameManager : Node3D
     {
         Instance = this;
 
-        // Original GameController logic
+        // Load CountdownUI scene if not set in editor
+        if (CountdownUIScene == null)
+        {
+            CountdownUIScene = GD.Load<PackedScene>("res://Scenes/CountdownUI.tscn");
+        }
+
         EmitSignal(SignalName.GameSceneLoaded);
 
-        // Only enable host camera for dedicated servers
         var hostCamera = GetNode<Camera3D>("HostCamera");
-        if (NetworkManager.Instance.IsDedicatedServer)
+        if (NetworkManager.Instance?.IsDedicatedServer == true)
         {
             MultiplayerSpawner worldSpawner = GetNode<MultiplayerSpawner>("WorldSpawner");
             hostCamera.Current = true;
@@ -80,18 +104,17 @@ public partial class GameManager : Node3D
             hostCamera.Current = false;
         }
 
-        // Setup timers
         votingTimer = new Timer { WaitTime = VOTING_TIME, OneShot = true };
         AddChild(votingTimer);
         votingTimer.Timeout += OnVotingFinished;
 
-        gameTimer = new Timer { WaitTime = TAG_GAME_DURATION, OneShot = true };
+        gameTimer = new Timer { WaitTime = TAG_GAME_DURATION, OneShot = false };
         AddChild(gameTimer);
         gameTimer.Timeout += OnGameTimeUp;
 
-        // Connect to network events
         if (NetworkManager.Instance != null)
         {
+            Multiplayer.PeerConnected += OnPlayerConnected;
             Multiplayer.PeerDisconnected += OnPlayerDisconnected;
         }
 
@@ -109,6 +132,108 @@ public partial class GameManager : Node3D
         {
             CheckTagDistance();
         }
+
+        if (currentState == GameState.Playing && gameTimeRemaining > 0)
+        {
+            gameTimeRemaining -= (float)delta;
+
+            if ((int)gameTimeRemaining % 5 == 0)
+            {
+                if (IsMultiplayerActive())
+                {
+                    Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
+                }
+            }
+
+            if (gameTimeRemaining <= 0)
+            {
+                gameTimeRemaining = 0;
+                OnGameTimeUp();
+            }
+        }
+        
+        // Update tag protection timers
+        UpdateTagProtection((float)delta);
+        
+        // Only try to connect game signals if multiplayer is active
+        if (IsMultiplayerActive())
+        {
+            PlayerHUD.Instance?.ConnectGameSignals();
+        }
+    }
+
+    // Helper method to safely check if multiplayer is active
+    private bool IsMultiplayerActive()
+    {
+        try
+        {
+            return Multiplayer?.MultiplayerPeer != null && 
+                   Multiplayer.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // Helper method to safely get unique ID
+    private int GetSafeUniqueId()
+    {
+        try
+        {
+            if (IsMultiplayerActive())
+            {
+                return Multiplayer.GetUniqueId();
+            }
+            else
+            {
+                return 1; // Default for single player
+            }
+        }
+        catch
+        {
+            return 1; // Fallback
+        }
+    }
+
+    // Helper method to safely check if server
+    private bool IsSafeServer()
+    {
+        try
+        {
+            if (IsMultiplayerActive())
+            {
+                return Multiplayer.IsServer();
+            }
+            else
+            {
+                return true; // In single player, we're always the "server"
+            }
+        }
+        catch
+        {
+            return true; // Fallback
+        }
+    }
+
+    private void UpdateTagProtection(float delta)
+    {
+        var keysToRemove = new List<int>();
+        
+        foreach (var kvp in playerTagProtection.ToList())
+        {
+            playerTagProtection[kvp.Key] -= delta;
+            if (playerTagProtection[kvp.Key] <= 0)
+            {
+                keysToRemove.Add(kvp.Key);
+            }
+        }
+        
+        foreach (var key in keysToRemove)
+        {
+            playerTagProtection.Remove(key);
+            GD.Print($"[GameManager] Player {key} is no longer protected from tagging");
+        }
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -124,19 +249,170 @@ public partial class GameManager : Node3D
         }
     }
 
-    #region Original GameController Methods
+    #region New Player Syncing
     
-
-    public void AssignAttacker()
+    private void OnPlayerConnected(long peerId)
     {
-        if (!Multiplayer.IsServer()) return;
-
-        var players = GetTree().GetNodesInGroup("Players");
-        if (players.Count == 0) return;
+        if (!IsSafeServer()) return;
         
-        var attacker = players[Math.Abs((int)GD.Randi()) % players.Count];
-        Rpc(nameof(SetAttacker), attacker.Name);
+        GD.Print($"[GameManager] Player {peerId} connected, syncing game state...");
+        
+        // Wait a moment for the player to be fully connected
+        GetTree().CreateTimer(1f).Timeout += () => {
+            // Check if player is still connected before syncing
+            if (IsPlayerStillConnected((int)peerId))
+            {
+                SyncNewPlayer((int)peerId);
+            }
+            else
+            {
+                GD.Print($"[GameManager] Player {peerId} disconnected before sync could complete");
+            }
+        };
     }
+    
+    private void SyncNewPlayer(int peerId)
+    {
+        if (!IsSafeServer()) return;
+        
+        if (!IsPlayerStillConnected(peerId))
+        {
+            GD.Print($"[GameManager] Cannot sync player {peerId} - no longer connected");
+            return;
+        }
+        
+        try
+        {
+            if (IsMultiplayerActive())
+            {
+                RpcId(peerId, nameof(ReceiveGameStateSync), (int)currentState, (int)currentGameType, 
+                    gameTimeRemaining, currentTagger, currentMurderer, currentSheriff);
+                
+                switch (currentGameType)
+                {
+                    case GameType.Tag:
+                        break;
+                    case GameType.HideAndSeek:
+                        RpcId(peerId, nameof(SyncHideAndSeekRoles), seekers.ToArray(), hiders.ToArray());
+                        break;
+                    case GameType.MurderMystery:
+                        RpcId(peerId, nameof(SyncMurderMysteryRoles), currentMurderer, currentSheriff, innocentPlayers.ToArray());
+                        break;
+                }
+            }
+            
+            GD.Print($"[GameManager] Successfully synced game state with player {peerId}");
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[GameManager] Error syncing player {peerId}: {e.Message}");
+        }
+    }
+
+    private bool IsPlayerStillConnected(int peerId)
+    {
+        try
+        {
+            // Check if the peer still exists in the multiplayer session
+            if (!IsMultiplayerActive()) return false;
+            
+            // Get list of connected peers
+            var connectedPeers = Multiplayer.GetPeers();
+            
+            // Check if our peer is in the list
+            bool isConnected = connectedPeers.Contains(peerId);
+            
+            // Also check if NetworkManager knows about this player
+            bool isInNetworkManager = NetworkManager.Instance?.PlayerNames.ContainsKey(peerId) == true;
+            
+            return isConnected && isInNetworkManager;
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"[GameManager] Error checking if player {peerId} is connected: {e.Message}");
+            return false;
+        }
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void ReceiveGameStateSync(int stateInt, int gameTypeInt, float timeRemaining, 
+                                   int tagger, int murderer, int sheriff)
+    {
+        currentState = (GameState)stateInt;
+        currentGameType = (GameType)gameTypeInt;
+        gameTimeRemaining = timeRemaining;
+        currentTagger = tagger;
+        currentMurderer = murderer;
+        currentSheriff = sheriff;
+        
+        // Update HUD if it exists
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.SyncGameState(currentState == GameState.Playing, role, timeRemaining);
+        }
+        
+        GD.Print($"[GameManager] Received game state sync: {currentState}, {currentGameType}, {timeRemaining}s");
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void SyncHideAndSeekRoles(int[] seekerIds, int[] hiderIds)
+    {
+        seekers = new HashSet<int>(seekerIds);
+        hiders = new HashSet<int>(hiderIds);
+        
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void SyncMurderMysteryRoles(int murderer, int sheriff, int[] innocents)
+    {
+        currentMurderer = murderer;
+        currentSheriff = sheriff;
+        innocentPlayers = new HashSet<int>(innocents);
+        
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void SyncGameTimeRemaining(float timeRemaining)
+    {
+        gameTimeRemaining = timeRemaining;
+        
+        if (PlayerHUD.Instance != null)
+        {
+            PlayerHUD.Instance.UpdateGameTimeRemaining(timeRemaining);
+        }
+    }
+    
+    private string GetPlayerRole(int playerId)
+    {
+        switch (currentGameType)
+        {
+            case GameType.Tag:
+                return IsPlayerTagger(playerId) ? "IT" : "Runner";
+            case GameType.HideAndSeek:
+                return IsPlayerSeeker(playerId) ? "Seeker" : "Hider";
+            case GameType.MurderMystery:
+                if (IsPlayerMurderer(playerId)) return "Murderer";
+                if (IsPlayerSheriff(playerId)) return "Sheriff";
+                return "Innocent";
+            default:
+                return "";
+        }
+    }
+    
+    #endregion
+
+    #region Original Methods
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void SetAttacker(string name)
@@ -150,11 +426,11 @@ public partial class GameManager : Node3D
     
     #endregion
 
-# region Voting System
+    #region Voting System
     
     public async void StartVoting()
     {
-        if (!Multiplayer.IsServer() || currentState != GameState.Lobby) return;
+        if (!IsSafeServer() || currentState != GameState.Lobby) return;
 
         await ToSignal(GetTree().CreateTimer(0.1), "timeout");
         
@@ -166,16 +442,28 @@ public partial class GameManager : Node3D
         MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible, true); // Force visible mode
 
         UpdateClientGameState(GameState.Voting);
-        Rpc(nameof(UpdateClientGameState), (int)GameState.Voting);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Voting);
+        }
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
         playerVotes.Clear();
         votingTimer.Start();
         
-        Rpc(nameof(ShowVotingUI), VOTING_TIME);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ShowVotingUI), VOTING_TIME);
+        }
         ShowVotingUI(VOTING_TIME);
         
-        NetworkManager.Instance.SendSystemMessage("Game voting started! Vote for your favorite game!");
+        NetworkManager.Instance?.SendSystemMessage("Game voting started! Vote for your favorite game!");
+    }
+
+    public void EndVotingEarly()
+    {
+        votingTimer.Stop();
+        OnVotingFinished();
     }
     
     // Called by VotingUI when player clicks to vote
@@ -195,16 +483,16 @@ public partial class GameManager : Node3D
                 return;
             }
 
-            if (Multiplayer.MultiplayerPeer == null)
+            if (!IsMultiplayerActive())
             {
                 GD.PrintErr("[GameManager] Cannot vote: No multiplayer peer");
                 return;
             }
 
-            if (!Multiplayer.IsServer())
+            if (!IsSafeServer())
             {
                 // Get player ID and validate it
-                int playerId = Multiplayer.GetUniqueId();
+                int playerId = GetSafeUniqueId();
                 if (playerId <= 0)
                 {
                     GD.PrintErr("[GameManager] Cannot vote: Invalid player ID");
@@ -233,7 +521,7 @@ public partial class GameManager : Node3D
         try
         {
             // Ensure only the server processes votes
-            if (!Multiplayer.IsServer())
+            if (!IsSafeServer())
             {
                 GD.PrintErr("[GameManager] Non-server tried to process vote");
                 return;
@@ -266,9 +554,12 @@ public partial class GameManager : Node3D
             playerVotes[voterId] = gameType;
             
             // Broadcast to all clients including the original sender
-            Rpc(nameof(BroadcastVote), voterId, gameTypeInt, playerName, 
-                new Color(playerColor.R, playerColor.G, playerColor.B, playerColor.A).ToHtml(), 
-                expressionId, hatId);
+            if (IsMultiplayerActive())
+            {
+                Rpc(nameof(BroadcastVote), voterId, gameTypeInt, playerName, 
+                    new Color(playerColor.R, playerColor.G, playerColor.B, playerColor.A).ToHtml(), 
+                    expressionId, hatId);
+            }
             
             // Update server's own UI
             EmitSignal(SignalName.VoteSubmitted, voterId, gameTypeInt, playerName, playerColor);
@@ -330,7 +621,9 @@ public partial class GameManager : Node3D
     {
         if (NetworkManager.Instance == null) return;
         NetworkManager.Instance.SendSystemMessage($"{playerName} voted for {gameType}");
-    }    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void ShowVotingUI(float timeLeft)
     {
         VotingUIScene = GD.Load<PackedScene>("res://Scenes/VotingUI.tscn");
@@ -349,7 +642,7 @@ public partial class GameManager : Node3D
 
     private void OnVotingFinished()
     {
-        if (!Multiplayer.IsServer()) return;
+        if (!IsSafeServer()) return;
 
         // Count votes
         var voteCounts = new Dictionary<GameType, int>();
@@ -368,10 +661,13 @@ public partial class GameManager : Node3D
         }
 
         // Clean up voting UI on all clients
-        Rpc(nameof(CleanupVotingUI));
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(CleanupVotingUI));
+        }
         CleanupVotingUI();
 
-        NetworkManager.Instance.SendSystemMessage($"{winningGame} wins the vote! Starting game...");
+        NetworkManager.Instance?.SendSystemMessage($"{winningGame} wins the vote! Starting game...");
         StartGame(winningGame);
         
         MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
@@ -383,20 +679,40 @@ public partial class GameManager : Node3D
     
     public void StartGame(GameType gameType)
     {
-        if (!Multiplayer.IsServer()) return;
+        if (!IsSafeServer()) return;
         
         currentGameType = gameType;
         UpdateClientGameState(GameState.Starting);
-        Rpc(nameof(UpdateClientGameState), (int)GameState.Starting);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Starting);
+        }
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
         // Store original colors before overriding
         StoreOriginalColors();
         
+        // Reset tag protection and cooldowns
+        playerTagProtection.Clear();
+        lastTagTime = 0f;
+        
+        // Set game duration based on type
         switch (gameType)
         {
             case GameType.Tag:
+                gameTimeRemaining = TAG_GAME_DURATION;
+                gameTimer.WaitTime = TAG_GAME_DURATION;
                 StartTagGame();
+                break;
+            case GameType.HideAndSeek:
+                gameTimeRemaining = HIDE_AND_SEEK_DURATION;
+                gameTimer.WaitTime = HIDE_AND_SEEK_DURATION;
+                StartHideAndSeekGame();
+                break;
+            case GameType.MurderMystery:
+                gameTimeRemaining = MURDER_MYSTERY_DURATION;
+                gameTimer.WaitTime = MURDER_MYSTERY_DURATION;
+                StartMurderMysteryGame();
                 break;
             // Add other game types here
         }
@@ -405,19 +721,166 @@ public partial class GameManager : Node3D
     private void StartTagGame()
     {
         // Load tag level
-        Rpc(nameof(LoadGameLevel), (int)GameType.Tag);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(LoadGameLevel), (int)GameType.Tag);
+        }
         LoadGameLevel((int)GameType.Tag);
-        NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf());
+        NetworkManager.Instance?.GetLocalPlayer()?.SetGlobalPosition(new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf()));
         
-        // Wait for level to load, then start
+        // Wait for level to load, then start countdown
         GetTree().CreateTimer(2f).Timeout += () =>
         {
-            if (Multiplayer.IsServer())
+            if (IsSafeServer())
             {
-                SelectRandomTagger();
-                StartTagGameplay();
+                StartGameCountdown();
             }
         };
+    }
+    
+    private void StartHideAndSeekGame()
+    {
+        // Load appropriate level for hide and seek
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(LoadGameLevel), (int)GameType.HideAndSeek);
+        }
+        LoadGameLevel((int)GameType.HideAndSeek);
+        
+        // Assign roles
+        var playerIds = NetworkManager.Instance.PlayerNames.Keys.ToList();
+        int seekerCount = Math.Max(1, playerIds.Count / 4); // 1 seeker per 4 players, minimum 1
+        
+        seekers.Clear();
+        hiders.Clear();
+        
+        // Randomly select seekers
+        for (int i = 0; i < seekerCount && i < playerIds.Count; i++)
+        {
+            int randomIndex = Math.Abs((int)GD.Randi()) % playerIds.Count;
+            int seekerId = playerIds[randomIndex];
+            seekers.Add(seekerId);
+            playerIds.RemoveAt(randomIndex);
+        }
+        
+        // Remaining players are hiders
+        foreach (int playerId in playerIds)
+        {
+            hiders.Add(playerId);
+        }
+        
+        GetTree().CreateTimer(2f).Timeout += () =>
+        {
+            if (IsSafeServer())
+            {
+                StartGameCountdown();
+            }
+        };
+    }
+    
+    private void StartMurderMysteryGame()
+    {
+        // Load appropriate level for murder mystery
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(LoadGameLevel), (int)GameType.MurderMystery);
+        }
+        LoadGameLevel((int)GameType.MurderMystery);
+        
+        // Assign roles
+        var playerIds = NetworkManager.Instance.PlayerNames.Keys.ToList();
+        if (playerIds.Count < 3)
+        {
+            NetworkManager.Instance?.SendSystemMessage("Need at least 3 players for Murder Mystery!");
+            ReturnToLobby();
+            return;
+        }
+        
+        // Randomly assign murderer and sheriff
+        currentMurderer = playerIds[Math.Abs((int)GD.Randi()) % playerIds.Count];
+        playerIds.Remove(currentMurderer);
+        
+        currentSheriff = playerIds[Math.Abs((int)GD.Randi()) % playerIds.Count];
+        playerIds.Remove(currentSheriff);
+        
+        // Remaining players are innocent
+        innocentPlayers = new HashSet<int>(playerIds);
+        
+        GetTree().CreateTimer(2f).Timeout += () =>
+        {
+            if (IsSafeServer())
+            {
+                StartGameCountdown();
+            }
+        };
+    }
+
+    // NEW: Start countdown for all players
+    private void StartGameCountdown()
+    {
+        if (!IsSafeServer()) return;
+
+        // Change to countdown state
+        UpdateClientGameState(GameState.Countdown);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Countdown);
+        }
+        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+
+        // Show countdown on all clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ShowCountdownUI));
+        }
+        ShowCountdownUI();
+
+        GD.Print("[GameManager] Starting game countdown...");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void ShowCountdownUI()
+    {
+        if (CountdownUIScene == null)
+        {
+            GD.PrintErr("[GameManager] CountdownUIScene not set!");
+            return;
+        }
+
+        var countdownUI = CountdownUIScene.Instantiate<CountdownUI>();
+        GetTree().Root.AddChild(countdownUI); // Add to root so it appears over everything
+        
+        // Start countdown with callback
+        countdownUI.StartCountdown(() => OnCountdownComplete());
+        
+        // Also connect to the signal as backup
+        countdownUI.CountdownFinished += OnCountdownComplete;
+        
+        GD.Print("[GameManager] Countdown UI shown");
+    }
+
+    private void OnCountdownComplete()
+    {
+        GD.Print("[GameManager] Countdown complete, starting gameplay!");
+        
+        if (IsSafeServer())
+        {
+            // Server initiates the actual game start
+            switch (currentGameType)
+            {
+                case GameType.Tag:
+                    SelectRandomTagger();
+                    StartTagGameplay();
+                    break;
+                case GameType.HideAndSeek:
+                    StartHideAndSeekGameplay();
+                    break;
+                case GameType.MurderMystery:
+                    StartMurderMysteryGameplay();
+                    break;
+                // Add other game types here
+            }
+        }
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -431,7 +894,14 @@ public partial class GameManager : Node3D
                 WorldNode.QueueFreeChildren();
                 GD.Print("[GameManager] Loading Tag level...");
                 WorldNode.AddChild(TagLevelScene.Instantiate());
-                NetworkManager.Instance.GetLocalPlayer().GlobalPosition = new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf());
+                NetworkManager.Instance?.GetLocalPlayer()?.SetGlobalPosition(new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf()));
+                break;
+            case GameType.MurderMystery:
+                WorldNode.QueueFreeChildren();
+                GD.Print("[GameManager] Loading Murder Mystery level...");
+                // Use the same level for now, but you can create a specific MurderMystery level
+                WorldNode.AddChild(TagLevelScene.Instantiate());
+                NetworkManager.Instance?.GetLocalPlayer()?.SetGlobalPosition(new Vector3(2 * GD.Randf(), 1, 2 * GD.Randf()));
                 break;
             // Add other levels here
         }
@@ -449,7 +919,10 @@ public partial class GameManager : Node3D
         OverrideColors();
         
         string taggerName = NetworkManager.Instance.PlayerNames[currentTagger];
-        Rpc(nameof(AnnounceTagger), currentTagger, taggerName);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(AnnounceTagger), currentTagger, taggerName);
+        }
         AnnounceTagger(currentTagger, taggerName);
         
         // Also use the old SetAttacker system for compatibility
@@ -457,14 +930,27 @@ public partial class GameManager : Node3D
         var taggerPlayer = players.FirstOrDefault(p => p.Name.ToString().Contains($"Player_{currentTagger}"));
         if (taggerPlayer != null)
         {
-            Rpc(nameof(SetAttacker), taggerPlayer.Name);
+            if (IsMultiplayerActive())
+            {
+                Rpc(nameof(SetAttacker), taggerPlayer.Name);
+            }
             SetAttacker(taggerPlayer.Name);
         }
         
         UpdateClientGameState(GameState.Playing);
-        Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
+        }
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         EmitSignal(SignalName.GameStarted, (int)currentGameType);
+        
+        // Notify HUD to update roles
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateAllPlayerRoles));
+        }
+        UpdateAllPlayerRoles();
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -472,19 +958,99 @@ public partial class GameManager : Node3D
     {
         currentState = newState;
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        
+        // Update PlayerHUD when state changes
+        if (PlayerHUD.Instance != null && currentState == GameState.Playing)
+        {
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void UpdateAllPlayerRoles()
+    {
+        if (PlayerHUD.Instance != null)
+        {
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     public void AnnounceTagger(int taggerId, string taggerName)
     {
         currentTagger = taggerId;
-        NetworkManager.Instance.SendSystemMessage($"{taggerName} is IT! Run!");
+        NetworkManager.Instance?.SendSystemMessage($"{taggerName} is IT! Run!");
     }
     
     private void StartTagGameplay()
     {
         gameTimer.Start();
-        NetworkManager.Instance.SendSystemMessage($"Tag game started! {TAG_GAME_DURATION} seconds to play!");
+        NetworkManager.Instance?.SendSystemMessage($"Tag game started! {(int)gameTimeRemaining} seconds to play!");
+        
+        // Sync time with all clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
+        }
+    }
+    
+    private void StartHideAndSeekGameplay()
+    {
+        UpdateClientGameState(GameState.Playing);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
+        }
+        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        EmitSignal(SignalName.GameStarted, (int)currentGameType);
+        
+        // Apply color overrides for seekers/hiders
+        OverrideColorsHideAndSeek();
+        
+        // Announce roles
+        string seekerNames = string.Join(", ", seekers.Select(id => 
+            NetworkManager.Instance.PlayerNames.TryGetValue(id, out var name) ? name : "Unknown"));
+        
+        NetworkManager.Instance?.SendSystemMessage($"Hide and Seek started! Seekers: {seekerNames}");
+        
+        gameTimer.Start();
+        
+        // Sync time with all clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
+            Rpc(nameof(UpdateAllPlayerRoles));
+        }
+        UpdateAllPlayerRoles();
+    }
+    
+    private void StartMurderMysteryGameplay()
+    {
+        UpdateClientGameState(GameState.Playing);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
+        }
+        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        EmitSignal(SignalName.GameStarted, (int)currentGameType);
+        
+        // Apply color overrides for murder mystery
+        OverrideColorsMurderMystery();
+        
+        string murdererName = NetworkManager.Instance.PlayerNames.TryGetValue(currentMurderer, out var mName) ? mName : "Unknown";
+        string sheriffName = NetworkManager.Instance.PlayerNames.TryGetValue(currentSheriff, out var sName) ? sName : "Unknown";
+        
+        NetworkManager.Instance?.SendSystemMessage($"Murder Mystery started! Find the murderer before time runs out!");
+        
+        gameTimer.Start();
+        
+        // Sync time with all clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
+            Rpc(nameof(UpdateAllPlayerRoles));
+        }
+        UpdateAllPlayerRoles();
     }
     
     #endregion
@@ -495,12 +1061,25 @@ public partial class GameManager : Node3D
     {
         if (currentTagger == -1) return;
 
+        // Check if we're in cooldown period
+        float currentTime = (float)Time.GetUnixTimeFromSystem();
+        if (currentTime - lastTagTime < TAG_COOLDOWN)
+        {
+            return; // Still in cooldown, can't tag yet
+        }
+
         Player taggerPlayer = NetworkManager.Instance.GetPlayerFromID(currentTagger);
         if (taggerPlayer == null) return;
 
         foreach (int playerId in alivePlayers.ToList())
         {
             if (playerId == currentTagger) continue;
+
+            // Skip players who are protected from tagging
+            if (playerTagProtection.ContainsKey(playerId))
+            {
+                continue;
+            }
 
             Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
             if (player == null) continue;
@@ -514,29 +1093,72 @@ public partial class GameManager : Node3D
         }
     }
     
+    private const string TAGGER_SPEED_ID = "tagger_speed";
+    private const string NEW_TAGGER_STUN_ID = "new_tagger_stun";
+    private const float TAGGER_SPEED_MULTIPLIER = 1.3f;
+    
     private void TagPlayer(int newTaggerId)
     {
-        if (!Multiplayer.IsServer()) return;
-        
+        if (!IsSafeServer()) return;
+
         int oldTagger = currentTagger;
         currentTagger = newTaggerId;
         
+        // Set tag cooldown
+        lastTagTime = (float)Time.GetUnixTimeFromSystem();
+
+        // Add tag protection for the new tagger (they can't be tagged back immediately)
+        playerTagProtection[newTaggerId] = NEW_TAGGER_STUN_DURATION;
+        
+        GD.Print($"[GameManager] Player {newTaggerId} is now IT and protected for {NEW_TAGGER_STUN_DURATION} seconds");
+
         // Update colors immediately
         OverrideColors();
-        
-        string oldTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(oldTagger, out var name1) ? name1 : "Unknown";
-        string newTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(newTaggerId, out var name2) ? name2 : "Unknown";
-        
-        // Use both new and old systems
-        var players = GetTree().GetNodesInGroup("Players");
-        var newTaggerPlayer = players.FirstOrDefault(p => p.Name.ToString().Contains($"Player_{newTaggerId}"));
+
+        // Handle speed modifiers for old tagger
+        if (oldTagger != -1)
+        {
+            Player oldTaggerPlayer = NetworkManager.Instance.GetPlayerFromID(oldTagger);
+            if (oldTaggerPlayer != null)
+            {
+                // Remove tagger speed boost
+                if (oldTaggerPlayer.HasSpeedModifier(TAGGER_SPEED_ID))
+                    oldTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
+            }
+        }
+
+        // Handle speed modifiers for new tagger
+        Player newTaggerPlayer = NetworkManager.Instance.GetPlayerFromID(newTaggerId);
         if (newTaggerPlayer != null)
         {
-            Rpc(nameof(SetAttacker), newTaggerPlayer.Name);
-            SetAttacker(newTaggerPlayer.Name);
+            // Add speed boost for being the tagger
+            newTaggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
+            
+            // Add temporary stun (no movement) for being newly tagged
+            newTaggerPlayer.AddSpeedModifier(NEW_TAGGER_STUN_ID, 0f, 0f, NEW_TAGGER_STUN_DURATION, false);
+            
+            GD.Print($"[GameManager] Applied stun to new tagger for {NEW_TAGGER_STUN_DURATION} seconds");
         }
-        
-        Rpc(nameof(AnnounceTagChange), oldTagger, currentTagger, oldTaggerName, newTaggerName);
+
+        string oldTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(oldTagger, out var name1) ? name1 : "Unknown";
+        string newTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(newTaggerId, out var name2) ? name2 : "Unknown";
+
+        // Old SetAttacker system for compatibility
+        var players = GetTree().GetNodesInGroup("Players");
+        var newTaggerNode = players.FirstOrDefault(p => p.Name.ToString().Contains($"Player_{newTaggerId}"));
+        if (newTaggerNode != null)
+        {
+            if (IsMultiplayerActive())
+            {
+                Rpc(nameof(SetAttacker), newTaggerNode.Name);
+            }
+            SetAttacker(newTaggerNode.Name);
+        }
+
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(AnnounceTagChange), oldTagger, currentTagger, oldTaggerName, newTaggerName);
+        }
         AnnounceTagChange(oldTagger, currentTagger, oldTaggerName, newTaggerName);
     }
     
@@ -544,11 +1166,17 @@ public partial class GameManager : Node3D
     public void AnnounceTagChange(int oldTagger, int newTagger, string oldTaggerName, string newTaggerName)
     {
         currentTagger = newTagger;
-        NetworkManager.Instance.SendSystemMessage($"{newTaggerName} is now IT!");
+        NetworkManager.Instance?.SendSystemMessage($"{newTaggerName} is now IT! They're stunned for {NEW_TAGGER_STUN_DURATION} seconds!");
         
         // Apply color changes on all clients
         RestoreOriginalColors();
         OverrideColors();
+        
+        // Update HUD roles
+        if (PlayerHUD.Instance != null)
+        {
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
     }
     
     #endregion
@@ -582,7 +1210,62 @@ public partial class GameManager : Node3D
             }
         }
         
-        Rpc(nameof(ApplyColorOverrides), currentTagger);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ApplyColorOverrides), currentTagger);
+        }
+        IsColorChangeFromGame = false;
+    }
+    
+    private void OverrideColorsHideAndSeek()
+    {
+        colorsOverridden = true;
+        IsColorChangeFromGame = true;
+        
+        foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
+        {
+            Color newColor = seekers.Contains(playerId) ? Colors.Red : Colors.Green;
+            
+            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
+            if (player != null)
+            {
+                player.SetPlayerColor(newColor);
+            }
+        }
+        
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ApplyColorOverridesHideAndSeek), seekers.ToArray());
+        }
+        IsColorChangeFromGame = false;
+    }
+    
+    private void OverrideColorsMurderMystery()
+    {
+        colorsOverridden = true;
+        IsColorChangeFromGame = true;
+        
+        foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
+        {
+            Color newColor;
+            if (playerId == currentMurderer)
+                newColor = Colors.Red;
+            else if (playerId == currentSheriff)
+                newColor = Colors.Blue;
+            else
+                newColor = Colors.Yellow;
+            
+            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
+            if (player != null)
+            {
+                player.SetPlayerColor(newColor);
+            }
+        }
+        
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ApplyColorOverridesMurderMystery), currentMurderer, currentSheriff);
+        }
         IsColorChangeFromGame = false;
     }
     
@@ -595,6 +1278,53 @@ public partial class GameManager : Node3D
         foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
         {
             Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.Blue;
+            
+            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
+            if (player != null)
+            {
+                player.SetPlayerColor(newColor);
+            }
+        }
+        
+        IsColorChangeFromGame = false;
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void ApplyColorOverridesHideAndSeek(int[] seekerIds)
+    {
+        seekers = new HashSet<int>(seekerIds);
+        IsColorChangeFromGame = true;
+        
+        foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
+        {
+            Color newColor = seekers.Contains(playerId) ? Colors.Red : Colors.Green;
+            
+            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
+            if (player != null)
+            {
+                player.SetPlayerColor(newColor);
+            }
+        }
+        
+        IsColorChangeFromGame = false;
+    }
+    
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void ApplyColorOverridesMurderMystery(int murderer, int sheriff)
+    {
+        currentMurderer = murderer;
+        currentSheriff = sheriff;
+        IsColorChangeFromGame = true;
+        
+        foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
+        {
+            Color newColor;
+            if (playerId == currentMurderer)
+                newColor = Colors.Red;
+            else if (playerId == currentSheriff)
+                newColor = Colors.Blue;
+            else
+                newColor = Colors.Yellow;
             
             Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
             if (player != null)
@@ -621,7 +1351,10 @@ public partial class GameManager : Node3D
             }
         }
         
-        Rpc(nameof(ApplyOriginalColors));
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(ApplyOriginalColors));
+        }
         colorsOverridden = false;
         IsColorChangeFromGame = false;
     }
@@ -650,27 +1383,61 @@ public partial class GameManager : Node3D
     
     private void OnGameTimeUp()
     {
-        if (!Multiplayer.IsServer()) return;
+        if (!IsSafeServer()) return;
         
-        string taggerName = NetworkManager.Instance.PlayerNames.TryGetValue(currentTagger, out var name) ? name : "The tagger";
-        NetworkManager.Instance.SendSystemMessage($"Time's up! {taggerName} stays IT!");
+        switch (currentGameType)
+        {
+            case GameType.Tag:
+                string taggerName = NetworkManager.Instance.PlayerNames.TryGetValue(currentTagger, out var name) ? name : "The tagger";
+                NetworkManager.Instance?.SendSystemMessage($"Time's up! {taggerName} stays IT!");
+                break;
+            case GameType.HideAndSeek:
+                NetworkManager.Instance?.SendSystemMessage("Time's up! Seekers win!");
+                break;
+            case GameType.MurderMystery:
+                string murdererName = NetworkManager.Instance.PlayerNames.TryGetValue(currentMurderer, out var mName) ? mName : "The murderer";
+                NetworkManager.Instance?.SendSystemMessage($"Time's up! {murdererName} (the murderer) wins!");
+                break;
+        }
         
         EndGame();
     }
     
     public void EndGame()
     {
-        if (!Multiplayer.IsServer()) return;
+        if (!IsSafeServer()) return;
         
         UpdateClientGameState(GameState.GameOver);
-        Rpc(nameof(UpdateClientGameState), (int)GameState.GameOver);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.GameOver);
+        }
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         EmitSignal(SignalName.GameEnded);
         
         gameTimer.Stop();
+        gameTimeRemaining = 0f;
         
         // Restore original colors
         RestoreOriginalColors();
+        
+        // Clear game-specific data
+        currentTagger = -1;
+        currentMurderer = -1;
+        currentSheriff = -1;
+        seekers.Clear();
+        hiders.Clear();
+        innocentPlayers.Clear();
+        alivePlayers.Clear();
+        playerTagProtection.Clear();
+        lastTagTime = 0f;
+        
+        // Update HUD
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateAllPlayerRoles));
+        }
+        UpdateAllPlayerRoles();
         
         // Show game over screen briefly, then return to lobby
         GetTree().CreateTimer(3f).Timeout += () =>
@@ -682,15 +1449,36 @@ public partial class GameManager : Node3D
     private void ReturnToLobby()
     {
         UpdateClientGameState(GameState.Lobby);
-        Rpc(nameof(UpdateClientGameState), (int)GameState.Lobby);
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateClientGameState), (int)GameState.Lobby);
+        }
         currentGameType = GameType.None;
         currentTagger = -1;
+        currentMurderer = -1;
+        currentSheriff = -1;
+        seekers.Clear();
+        hiders.Clear();
+        innocentPlayers.Clear();
         alivePlayers.Clear();
+        playerTagProtection.Clear();
+        lastTagTime = 0f;
+        gameTimeRemaining = 0f;
         
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
-        Rpc(nameof(LoadLobby));
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(LoadLobby));
+        }
         LoadLobby();
+        
+        // Update HUD
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(UpdateAllPlayerRoles));
+        }
+        UpdateAllPlayerRoles();
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
@@ -707,33 +1495,62 @@ public partial class GameManager : Node3D
     
     private void OnPlayerDisconnected(long peerId)
     {
-        if (currentState == GameState.Playing && currentTagger == peerId)
+        if (currentState == GameState.Playing)
         {
-            // If tagger disconnects, pick a new random tagger
-            var remainingPlayers = alivePlayers.Where(id => id != peerId).ToList();
-            if (remainingPlayers.Count > 0)
+            if (currentGameType == GameType.Tag && currentTagger == peerId)
             {
-                int newTagger = remainingPlayers[Math.Abs((int)GD.Randi()) % remainingPlayers.Count];
-                TagPlayer(newTagger);
+                // If tagger disconnects, pick a new random tagger
+                var remainingPlayers = alivePlayers.Where(id => id != peerId).ToList();
+                if (remainingPlayers.Count > 0)
+                {
+                    int newTagger = remainingPlayers[Math.Abs((int)GD.Randi()) % remainingPlayers.Count];
+                    TagPlayer(newTagger);
+                }
+                else
+                {
+                    EndGame(); // No players left
+                }
             }
-            else
+            else if (currentGameType == GameType.MurderMystery)
             {
-                EndGame(); // No players left
+                if (currentMurderer == peerId || currentSheriff == peerId)
+                {
+                    // End game if key players disconnect
+                    NetworkManager.Instance?.SendSystemMessage("A key player disconnected. Game ended.");
+                    EndGame();
+                }
             }
         }
         
+        // Clean up player from all game data
         alivePlayers.Remove((int)peerId);
+        seekers.Remove((int)peerId);
+        hiders.Remove((int)peerId);
+        innocentPlayers.Remove((int)peerId);
         playerVotes.Remove((int)peerId);
+        playerTagProtection.Remove((int)peerId);
     }
-    
+
     #endregion
-    
+
     #region Public API
     
+    // Main Methods
     public GameState GetCurrentState() => currentState;
     public GameType GetCurrentGameType() => currentGameType;
     public int GetCurrentTagger() => currentTagger;
-    public bool IsPlayerTagger(int playerId) => currentTagger == playerId;
+    public bool IsPlayerTagger(int peerId) => currentTagger == peerId;
+    
+    // Hide and Seek methods
+    public bool IsPlayerSeeker(int playerId) => seekers.Contains(playerId);
+    public bool IsPlayerHider(int playerId) => hiders.Contains(playerId);
+    
+    // Murder Mystery methods
+    public bool IsPlayerMurderer(int playerId) => currentMurderer == playerId;
+    public bool IsPlayerSheriff(int playerId) => currentSheriff == playerId;
+    public bool IsPlayerInnocent(int playerId) => innocentPlayers.Contains(playerId);
+    
+    public float GetGameTimeRemaining() => gameTimeRemaining;
     
     #endregion
 }

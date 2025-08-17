@@ -45,7 +45,7 @@ public partial class BootManager : Node
         GD.Print("[BootManager] Applying Window Title: " + titles[idx]);
 
 
-        CosmeticDatabase.LoadAll();
+        ResourceDatabase.LoadAll();
         GD.Print("[BootManager] Cosmetic Database loaded");
 
         GD.Print("[BootManager] Loading Settings");
@@ -57,7 +57,7 @@ public partial class BootManager : Node
         GD.Print("[BootManager] Applying Keybinds from Settings");
         ApplySavedKeybinds();
 
-        PlayerData.CurrentCharacter = CosmeticDatabase.Characters.First();
+        PlayerData.CurrentCharacter = ResourceDatabase.Characters.First();
 
         if (SettingsManager.CurrentSettings.SavedHatID == "")
         {

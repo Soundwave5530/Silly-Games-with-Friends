@@ -89,13 +89,14 @@ public partial class DebugUi : CanvasLayer
                 var peer = Multiplayer.MultiplayerPeer;
                 int myId = peer.GetUniqueId();
                 bool isServer = NetworkManager.Instance?.IsServer ?? false;
-                
+
                 infoLabel.Text += $"Role: {(isServer ? (NetworkManager.Instance.IsDedicatedServer ? "Dedicated Server" : "Player Host") : "Client")}\n";
                 infoLabel.Text += $"Cheats Enabled: False\n";
                 infoLabel.Text += $"Peer ID: {myId}\n";
                 infoLabel.Text += $"Player Count: {NetworkManager.Instance.PlayerNames.Count}\n";
                 infoLabel.Text += $"Max Players: {NetworkManager.MAXPLAYERS}\n";
                 infoLabel.Text += $"Connected Players: {string.Join(", ", NetworkManager.Instance.PlayerNames.Values)}\n";
+                infoLabel.Text += $"Is Dedicated Server Game: {NetworkManager.Instance.IsDedicatedServer}\n";
             }
 
 

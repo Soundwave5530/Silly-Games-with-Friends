@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b0ff78ck5ltw4"]
+[gd_scene load_steps=9 format=3 uid="uid://b0ff78ck5ltw4"]
 
 [ext_resource type="Script" uid="uid://boudcw5fse6cv" path="res://Scripts/GameManager.cs" id="1_bf53h"]
 [ext_resource type="PackedScene" uid="uid://tqlgykdhpan" path="res://Scenes/Maps/Lobby.tscn" id="2_7lihs"]
 [ext_resource type="PackedScene" uid="uid://2ddypgjx166b" path="res://Scenes/Chat.tscn" id="2_gl6un"]
 [ext_resource type="PackedScene" uid="uid://cxnh5cvl2dg2u" path="res://Scenes/PauseMenu.tscn" id="3_j5yw3"]
+[ext_resource type="PackedScene" uid="uid://7ktgdntfjs2m" path="res://Scenes/CountdownUI.tscn" id="4_2irst"]
 [ext_resource type="PackedScene" uid="uid://bbxh2wjanoc60" path="res://Scenes/VotingUI.tscn" id="6_fgofq"]
 [ext_resource type="PackedScene" uid="uid://bjeuuru2f4ugk" path="res://Scenes/Maps/Tag.tscn" id="7_fgofq"]
 [ext_resource type="PackedScene" uid="uid://c3sl28rhguygn" path="res://Scenes/HUD.tscn" id="10_71axn"]
@@ -12,6 +13,7 @@
 script = ExtResource("1_bf53h")
 TagLevelScene = ExtResource("7_fgofq")
 LobbyScene = ExtResource("2_7lihs")
+CountdownUIScene = ExtResource("4_2irst")
 
 [node name="WorldSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../World")

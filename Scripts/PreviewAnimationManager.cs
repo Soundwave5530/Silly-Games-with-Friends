@@ -33,8 +33,8 @@ public partial class PreviewAnimationManager : Node
 
     public override void _Ready()
     {
-        currentPreset = CosmeticDatabase.Characters.First();
-        SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
+        currentPreset = ResourceDatabase.Characters.First();
+        SetExpression(ResourceDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
     }
 
     public override void _Process(double delta)
@@ -79,9 +79,9 @@ public partial class PreviewAnimationManager : Node
         }
 
 
-        SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
+        SetExpression(ResourceDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
         if (currentPreset != PlayerData.CurrentCharacter) SetCharacter(PlayerData.CurrentCharacter);
-        SetHat(CosmeticDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
+        SetHat(ResourceDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
 
 
         rotation += (float)delta;

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c3sl28rhguygn"]
+[gd_scene load_steps=9 format=3 uid="uid://c3sl28rhguygn"]
 
 [ext_resource type="Script" uid="uid://b0ovyemibsm0b" path="res://Scripts/PlayerHUD.cs" id="1_c3eba"]
 [ext_resource type="Texture2D" uid="uid://dlcwvkqgd7lmw" path="res://Assets/Sprites/UI/icon_noface.png" id="2_g8s2e"]
@@ -19,13 +19,21 @@ font_size = 56
 outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 
-[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("playerFace", "playerHead", "playerHat", "playerName", "InteractionPrompt")]
+[sub_resource type="LabelSettings" id="LabelSettings_g8s2e"]
+font = ExtResource("3_t385i")
+font_size = 41
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[node name="HUD" type="CanvasLayer" node_paths=PackedStringArray("playerFace", "playerHead", "playerHat", "playerName", "InteractionPrompt", "GameRoleLabel", "GameTimeRemainingLabel")]
 script = ExtResource("1_c3eba")
 playerFace = NodePath("Head/Face")
 playerHead = NodePath("Head")
 playerHat = NodePath("Head/Hat")
 playerName = NodePath("Head/Name")
 InteractionPrompt = NodePath("ColorRect/Interaction Prompt")
+GameRoleLabel = NodePath("Head/Name/Game Role")
+GameTimeRemainingLabel = NodePath("Time Remaining")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = -1
@@ -84,6 +92,22 @@ text = "[ Player Name ]"
 label_settings = SubResource("LabelSettings_yoq75")
 vertical_alignment = 1
 
+[node name="Game Role" type="Label" parent="Head/Name"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.582
+anchor_bottom = 1.0
+offset_left = 37.56743
+offset_top = 100.5089
+offset_right = 64.04965
+offset_bottom = 39.50891
+grow_horizontal = 2
+grow_vertical = 2
+text = "Not Playing Game"
+label_settings = SubResource("LabelSettings_g8s2e")
+vertical_alignment = 1
+
 [node name="Hat" type="TextureRect" parent="Head"]
 layout_mode = 1
 anchors_preset = -1
@@ -111,3 +135,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("5_c3eba")
+
+[node name="Time Remaining" type="Label" parent="."]
+visible = false
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -512.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = 111.0
+grow_horizontal = 0
+text = "3:00 Remaining"
+label_settings = SubResource("LabelSettings_yoq75")
+horizontal_alignment = 1
+vertical_alignment = 1

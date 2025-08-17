@@ -2,20 +2,21 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public static class CosmeticDatabase
+public static class ResourceDatabase
 {
     public static Dictionary<string, FacialExpression> Expressions = new();
     public static Dictionary<string, Cosmetic> Hats = new();
     public static List<Cosmetic> Accessories = new();
     public static List<CharacterTypePreset> Characters = new();
+    public static Dictionary<GameManager.GameType, GameData> Games = new();
 
     public static void LoadAll()
     {
-        var registry = ResourceLoader.Load<CosmeticRegistry>("res://Assets/CosmeticRegistry.tres");
+        var registry = ResourceLoader.Load<ResourceRegistry>("res://Assets/ResourceRegistry.tres");
 
         if (registry == null)
         {
-            GD.PrintErr("❌ Failed to load CosmeticRegistry.tres");
+            GD.PrintErr("❌ Failed to load ResourceRegistry.tres");
             return;
         }
 
@@ -51,10 +52,19 @@ public static class CosmeticDatabase
                 Characters.Add(character);
         }
 
-        GD.Print($"✅ Expressions loaded: {Expressions.Count}");
-        GD.Print($"✅ Hats loaded: {Hats.Count}");
-        GD.Print($"✅ Accessories loaded: {Accessories.Count}");
-        GD.Print($"✅ Characters loaded: {Characters.Count}");
+        Games.Clear();
+        foreach (var item in registry.Games)
+        {
+            var expr = item.As<GameData>();
+            if (expr != null)
+                Games[expr.GameType] = expr;
+        }
+
+        GD.Print($"[CosmeticDatabase] Expressions  loaded: {Expressions.Count}");
+        GD.Print($"[CosmeticDatabase] Hats         loaded: {Hats.Count}");
+        GD.Print($"[CosmeticDatabase] Accessories  loaded: {Accessories.Count}");
+        GD.Print($"[CosmeticDatabase] Characters   loaded: {Characters.Count}");
+        GD.Print($"[CosmeticDatabase] Games        loaded: {Games.Count}");
     }
 
     public static bool TryGetExpression(string id, out FacialExpression expression)

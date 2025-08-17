@@ -55,8 +55,8 @@ public partial class AnimationManager : Node
 
     public override void _Ready()
     {
-        currentPreset = CosmeticDatabase.Characters.First();
-        SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
+        currentPreset = ResourceDatabase.Characters.First();
+        SetExpression(ResourceDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
     }
 
     public override void _Process(double delta)
@@ -80,7 +80,7 @@ public partial class AnimationManager : Node
             emoteTimer -= (float)delta;
             if (emoteTimer <= 0f)
             {
-                SetExpression(CosmeticDatabase.Expressions[player.SyncExpressionId]);
+                SetExpression(ResourceDatabase.Expressions[player.SyncExpressionId]);
                 isUsingEmote = false;
             }
         }
@@ -134,26 +134,26 @@ public partial class AnimationManager : Node
                 player.SyncAnimType = (int)currentAnim;
                 player.SyncExpressionId = SettingsManager.CurrentSettings.SavedExpressionID;
                 player.SyncHatId = SettingsManager.CurrentSettings.SavedHatID;
-                SetExpression(CosmeticDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
+                SetExpression(ResourceDatabase.Expressions[SettingsManager.CurrentSettings.SavedExpressionID]);
                 if (currentPreset != PlayerData.CurrentCharacter) SetCharacter(PlayerData.CurrentCharacter);
-                SetHat(CosmeticDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
+                SetHat(ResourceDatabase.Hats[SettingsManager.CurrentSettings.SavedHatID]);
             }
             else
             {
                 currentAnim = (PlayerAnimTypes)player.SyncAnimType;
-                if (player.SyncExpressionId != null && CosmeticDatabase.Expressions.ContainsKey(player.SyncExpressionId))
+                if (player.SyncExpressionId != null && ResourceDatabase.Expressions.ContainsKey(player.SyncExpressionId))
                 {
-                    SetExpression(CosmeticDatabase.Expressions[player.SyncExpressionId]);
+                    SetExpression(ResourceDatabase.Expressions[player.SyncExpressionId]);
                 }
                 if (currentPreset == null || currentPreset.Name != player.SyncCharacterId)
                 {
-                    var character = CosmeticDatabase.Characters.Find(p => p.Name == player.SyncCharacterId);
+                    var character = ResourceDatabase.Characters.Find(p => p.Name == player.SyncCharacterId);
                     if (character != null) SetCharacter(character);
                 }
 
-                if (!string.IsNullOrEmpty(player.SyncHatId) && CosmeticDatabase.Hats.ContainsKey(player.SyncHatId))
+                if (!string.IsNullOrEmpty(player.SyncHatId) && ResourceDatabase.Hats.ContainsKey(player.SyncHatId))
                 {
-                    SetHat(CosmeticDatabase.Hats[player.SyncHatId]);
+                    SetHat(ResourceDatabase.Hats[player.SyncHatId]);
                 }
             }
         }

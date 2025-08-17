@@ -1,9 +1,12 @@
 using Godot;
 using System;
+using Godot.Collections;
+using System.Linq;
 
 [GlobalClass]
 public partial class Player : CharacterBody3D
 {
+    #region Player Initialization
     [ExportSubgroup("Settings")]
     [Export] public float Speed = 5f;
     [Export] public float JumpForce = 8f;
@@ -72,26 +75,22 @@ public partial class Player : CharacterBody3D
 
     public void SetPlayerColor(Color color)
     {
-        // Don't allow color changes during tag game unless it's from the GameManager
-        if (GameManager.Instance != null && 
-            GameManager.Instance.GetCurrentGameType() == GameManager.GameType.Tag && 
-            GameManager.Instance.GetCurrentState() == GameManager.GameState.Playing && 
+        if (GameManager.Instance != null &&
+            GameManager.Instance.GetCurrentGameType() == GameManager.GameType.Tag &&
+            GameManager.Instance.GetCurrentState() == GameManager.GameState.Playing &&
             !GameManager.Instance.IsColorChangeFromGame)
         {
             return;
         }
 
-        // Store the color even if nodes aren't ready yet
         playerColor = color;
 
-        // Wait until _Ready has initialized our nodes
         if (!ArePlayerNodesReady())
             return;
 
-        // Apply color to visual elements
         if (playerSprite != null)
             playerSprite.Modulate = color;
-            
+
         if (nameLabel != null)
             nameLabel.Modulate = color;
 
@@ -119,7 +118,7 @@ public partial class Player : CharacterBody3D
         {
             if (!IsInsideTree())
                 return false;
-                
+
             if (Multiplayer == null)
                 return false;
 
@@ -135,7 +134,9 @@ public partial class Player : CharacterBody3D
             return false;
         }
     }
+    #endregion
 
+    #region Ready and Process Methods
     public override void _Ready()
     {
         try
@@ -157,6 +158,7 @@ public partial class Player : CharacterBody3D
             interactRay = GetNode<RayCast3D>("HeadPivot/PlayerCamera/InteractRay");
 
             Camera = GetNode<Camera3D>("HeadPivot/PlayerCamera");
+            baseSpeed = Speed;
 
             if (!IsInsideTree())
             {
@@ -189,7 +191,7 @@ public partial class Player : CharacterBody3D
                 {
                     playerSprite.Hide();
                 }
-                
+
                 // Configure local player settings
                 MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
                 nameLabel.Visible = false;
@@ -213,7 +215,7 @@ public partial class Player : CharacterBody3D
     public override void _Process(double delta)
     {
         if (!IsInsideTree()) return;
-        
+
         try
         {
             // Check multiplayer state and handle single player
@@ -313,6 +315,8 @@ public partial class Player : CharacterBody3D
     public override void _PhysicsProcess(double delta)
     {
         if (!IsInsideTree()) return;
+
+        UpdateSpeedModifiers();
 
         try
         {
@@ -433,6 +437,10 @@ public partial class Player : CharacterBody3D
         }
     }
 
+    #endregion
+
+    #region Input Handling
+
     private void HandleInputAndMenuLogic()
     {
         if (!IsInsideTree()) return;
@@ -444,16 +452,10 @@ public partial class Player : CharacterBody3D
                 if (!NewPauseMenu.IsOpen)
                 {
                     NewPauseMenu.Instance.OpenMenu();
-                    MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
                 }
                 else
                 {
                     NewPauseMenu.Instance.CloseMenu();
-                    // Only capture mouse if we're still in a valid multiplayer session
-                    if (Multiplayer.MultiplayerPeer != null && IsMultiplayerAuthority())
-                    {
-                        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-                    }
                 }
             }
         }
@@ -514,9 +516,9 @@ public partial class Player : CharacterBody3D
             }
 
             // Skip input if any of these conditions are true
-            if (NewPauseMenu.IsOpen || 
-                ChatManager.chatOpen || 
-                !canRotateCamera || 
+            if (NewPauseMenu.IsOpen ||
+                ChatManager.chatOpen ||
+                !canRotateCamera ||
                 GameManager.Instance == null ||
                 GameManager.Instance.GetCurrentState() == GameManager.GameState.Voting)
             {
@@ -565,6 +567,9 @@ public partial class Player : CharacterBody3D
         }
     }
 
+    #endregion
+
+    #region HandleMovement
 
     private void HandleMovement(double delta)
     {
@@ -611,6 +616,7 @@ public partial class Player : CharacterBody3D
         }
         else if (IsOnCeiling())
         {
+            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
             velocity.Y = -Gravity * (float)delta;
         }
         else
@@ -664,6 +670,8 @@ public partial class Player : CharacterBody3D
         SyncGlobalPosition = GlobalPosition;
     }
 
+    #endregion
+
     private void HandleParticles(double delta)
     {
         bool nowOnFloor = IsOnFloor();
@@ -676,6 +684,8 @@ public partial class Player : CharacterBody3D
 
         wasOnFloor = nowOnFloor;
     }
+
+    #region HandleSwimming
 
     private void HandleSwimming(double delta)
     {
@@ -725,6 +735,8 @@ public partial class Player : CharacterBody3D
             animationManager.PlayAnim(AnimationManager.PlayerAnimTypes.SwimIdle);
         }
     }
+
+    #endregion
 
     public void PlayEmote(AnimationManager.PlayerAnimTypes emoteAnim, float duration = 2f)
     {
@@ -792,9 +804,118 @@ public partial class Player : CharacterBody3D
         }
     }
     */
-    
+
+    #region Speed Management
+
     public void SetPlayerSpeed(float newSpeed)
     {
         Speed = newSpeed;
     }
+
+    private Dictionary<string, SpeedModifier> activeSpeedModifiers = new();
+    private float baseSpeed = 5f;
+
+    private void UpdateSpeedModifiers()
+    {
+        var expiredKeys = activeSpeedModifiers.Where(kvp => kvp.Value.IsExpired).Select(kvp => kvp.Key).ToList();
+        foreach (var key in expiredKeys)
+        {
+            RemoveSpeedModifier(key);
+        }
+
+        CalculateCurrentSpeed();
+    }
+
+    private void CalculateCurrentSpeed()
+    {
+        float totalMultiplier = 1f;
+        float totalFlatBonus = 0f;
+
+        foreach (var modifier in activeSpeedModifiers.Values)
+        {
+            totalMultiplier *= modifier.Multiplier;
+            totalFlatBonus += modifier.FlatBonus;
+        }
+
+        float newSpeed = (baseSpeed * totalMultiplier) + totalFlatBonus;
+
+        if (Math.Abs(Speed - newSpeed) > 0.001f)
+        {
+            Speed = newSpeed;
+            // GD.Print($"[Player] Speed updated to: {newSpeed} (base: {baseSpeed}, multiplier: {totalMultiplier}, flat: {totalFlatBonus})");
+        }
+    }
+
+    public void AddSpeedModifier(string id, float multiplier = 1f, float flatBonus = 0f, float duration = 0f, bool isPermanent = false)
+    {
+        var modifier = new SpeedModifier(multiplier, flatBonus, duration, isPermanent);
+        activeSpeedModifiers[id] = modifier;
+
+        GD.Print($"[Player] Added speed modifier '{id}': {multiplier}x multiplier, {flatBonus} flat bonus, {duration}s duration");
+        CalculateCurrentSpeed();
+    }
+
+    public void RemoveSpeedModifier(string id)
+    {
+        if (activeSpeedModifiers.Remove(id))
+        {
+            GD.Print($"[Player] Removed speed modifier '{id}'");
+            CalculateCurrentSpeed();
+        }
+    }
+
+    public bool HasSpeedModifier(string id)
+    {
+        return activeSpeedModifiers.ContainsKey(id);
+    }
+
+    public float GetSpeedModifierTimeRemaining(string id)
+    {
+        return activeSpeedModifiers.TryGetValue(id, out var modifier) ? modifier.TimeRemaining : 0f;
+    }
+
+    public void SetBaseSpeed(float newBaseSpeed)
+    {
+        baseSpeed = newBaseSpeed;
+        CalculateCurrentSpeed();
+        GD.Print($"[Player] Base speed updated to: {baseSpeed}");
+    }
+
+    public float GetCurrentEffectiveSpeed()
+    {
+        float totalMultiplier = 1f;
+        float totalFlatBonus = 0f;
+
+        foreach (var modifier in activeSpeedModifiers.Values)
+        {
+            totalMultiplier *= modifier.Multiplier;
+            totalFlatBonus += modifier.FlatBonus;
+        }
+
+        return (baseSpeed * totalMultiplier) + totalFlatBonus;
+    }
+
+    public float GetBaseSpeed()
+    {
+        return baseSpeed;
+    }
+
+    public void UpdateSpeed(float newSpeed)
+    {
+        SetBaseSpeed(newSpeed);
+    }
+
+    public Dictionary<string, SpeedModifier> GetActiveSpeedModifiers()
+    {
+        return new Dictionary<string, SpeedModifier>(activeSpeedModifiers);
+    }
+
+    public void ClearAllSpeedModifiers()
+    {
+        activeSpeedModifiers.Clear();
+        CalculateCurrentSpeed();
+        GD.Print("[Player] Cleared all speed modifiers");
+    }
+    
+    #endregion
 }

@@ -77,15 +77,6 @@ public partial class NewPauseMenu : Control
         animationPlayer.Play("Close");
         CustomizationMenu.Visible = false;
         IsOpen = false;
-        if (GameManager.Instance?.GetCurrentState() == GameManager.GameState.Voting)
-        {
-            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
-        }
-        else
-        {
-            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
-        }
-        
 
         ReleaseFocus();
         resumeButton.ReleaseFocus();
@@ -99,6 +90,16 @@ public partial class NewPauseMenu : Control
         settingsBackButton.ReleaseFocus();
         customizeBackButton.ReleaseFocus();
         settingsContainer.QueueFreeChildren();
+
+        if (GameManager.Instance?.GetCurrentState() == GameManager.GameState.Voting)
+        {
+            GD.Print("Closing pause menu during voting, setting mouse to visible.");
+            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+        }
+        else
+        {
+            MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+        }
     }
 
 

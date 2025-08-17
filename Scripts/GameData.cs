@@ -6,7 +6,8 @@ using System;
 public partial class GameData : Resource
 {
     [Export] public string GameName;
-    [Export] public int MinimumPlayers = 2;
+    [Export] public byte MinimumPlayers = 2;
     [Export] public Texture2D Icon;
     [Export] public GameManager.GameType GameType;
+    [Export] public ushort GameTime;
 }

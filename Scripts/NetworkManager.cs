@@ -26,7 +26,7 @@ public partial class NetworkManager : Node3D
 
     public const int PORT = 7777;
     public const int MAXPLAYERS = 15;
-    public const string GAMEVERSION = "v0.2.1 dev4";
+    public const string GAMEVERSION = "v0.2.1 dev5";
 
     public TransitionScreen transitionScreen = null;
 
@@ -35,7 +35,7 @@ public partial class NetworkManager : Node3D
         //ResourceDebugger.ListAllFiles();
 
         Instance = this;
-        
+
         // Clear any stale network state
         PlayerNames.Clear();
         PlayerColors.Clear();
@@ -96,7 +96,7 @@ public partial class NetworkManager : Node3D
             player.SetDisplayName(playerName);
             GD.Print($"[NetworkManager] Set name on spawn: {playerName}");
         }
-        
+
         // Apply color if we already have it
         if (PlayerColors.TryGetValue(id, out var playerColor))
         {
@@ -105,7 +105,7 @@ public partial class NetworkManager : Node3D
         }
 
         // Schedule the ready check for the next frame to ensure the node is in the scene tree
-        GetTree().CreateTimer(0).Timeout += () => 
+        GetTree().CreateTimer(0).Timeout += () =>
         {
             if (player.IsInsideTree())
             {
@@ -127,7 +127,7 @@ public partial class NetworkManager : Node3D
         peer.CreateServer(PORT, maxClients: MAXPLAYERS);
         Multiplayer.MultiplayerPeer = peer;
         IsDedicatedServer = isDedicated;
-        
+
         GD.Print($"[NetworkManager] {(isDedicated ? "Dedicated" : "Player-hosted")} server started on port {PORT}");
 
         // If this is a player-host, register them immediately
@@ -168,7 +168,7 @@ public partial class NetworkManager : Node3D
 
         var peer = new ENetMultiplayerPeer();
         var result = peer.CreateClient(ip, PORT);
-        
+
         // Ensure the peer was created successfully
         if (result != Error.Ok)
         {
@@ -194,21 +194,21 @@ public partial class NetworkManager : Node3D
         if (!IsServer) return;
 
         GD.Print($"[NetworkManager] Peer connected: {id}");
-        
+
         // Safety check - ensure we have a valid multiplayer peer
         if (Multiplayer.MultiplayerPeer == null)
         {
             GD.PrintErr($"[NetworkManager] Peer {id} connected but multiplayer peer is null!");
             return;
         }
-        
+
         // If we're a player host, send our info to the new client
         if (IsPlayerHost)
         {
             // Ensure we have valid host info before sending
             if (PlayerNames.ContainsKey(1) && PlayerColors.ContainsKey(1))
             {
-                try 
+                try
                 {
                     RpcId((int)id, nameof(AnnounceName), 1, PlayerNames[1]);
                     RpcId((int)id, nameof(AnnounceColor), 1, PlayerColors[1]);
@@ -445,7 +445,7 @@ public partial class NetworkManager : Node3D
     {
         StatusMessageManager.Instance.ShowMessage("Error: Failed to Connect to Server.", StatusMessageManager.MessageType.Error);
         transitionScreen.PlayAnim("out");
-        
+
         // Clean up any remaining multiplayer state
         CleanupMultiplayerState();
     }
@@ -537,7 +537,7 @@ public partial class NetworkManager : Node3D
         if (!IsServer) return;
 
         int peerId = Multiplayer.GetRemoteSenderId();
-        
+
         // Validate peer ID
         if (peerId <= 0)
         {
@@ -629,7 +629,7 @@ public partial class NetworkManager : Node3D
     {
         var timer = 0f;
         Player player = null;
-        
+
         while (timer < timeoutSeconds)
         {
             player = GetNodeOrNull<Player>($"Players/Player_{peerId}");
@@ -638,7 +638,7 @@ public partial class NetworkManager : Node3D
                 GD.Print($"[NetworkManager] Found Player_{peerId} after {timer:F1}s");
                 return;
             }
-            
+
             await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
             timer += (float)GetProcessDeltaTime();
         }

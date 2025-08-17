@@ -38,6 +38,8 @@ public partial class MenuUI : Control
     [Export] private MenuButton settingsBackButton;
     [ExportSubgroup("Customization")]
     [Export] private MenuButton customizationBackButton;
+    [ExportSubgroup("Extras")]
+    [Export] private Label versionLabel;
 
     private Control imageContainer;
     private TextureRect currentBGTexture;
@@ -75,6 +77,9 @@ public partial class MenuUI : Control
 
     public override void _Ready()
     {
+
+        versionLabel.Text = NetworkManager.GAMEVERSION;
+        
         hostImage = GD.Load<Texture2D>("res://Assets/Sprites/Menus/Play Host.png");
         joinImage = GD.Load<Texture2D>("res://Assets/Sprites/Menus/Play Play.png");
 

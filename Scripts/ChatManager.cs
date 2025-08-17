@@ -72,7 +72,7 @@ public partial class ChatManager : CanvasLayer
         ChatInput.Show();
         ChatInput.GrabFocus();
         chatOpen = true;
-        Input.MouseMode = Input.MouseModeEnum.Visible;
+        MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
         hidingChatSeq = false;
         hidingAmount = 1;
         Chatbox.Modulate = new Color(1, 1, 1, 1);
@@ -86,9 +86,19 @@ public partial class ChatManager : CanvasLayer
         chatOpen = false;
         ChatInput.Hide();
 
-        await ToSignal(GetTree().CreateTimer(0.1f), "timeout");
+        await ToSignal(GetTree().CreateTimer(0.05f), "timeout");
 
-        if (Multiplayer.MultiplayerPeer != null && !Multiplayer.IsServer() && !(GameManager.Instance.GetCurrentState() == GameManager.GameState.Voting)) MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+        if (Multiplayer.MultiplayerPeer != null && !NetworkManager.Instance.IsDedicatedServer)
+        {
+            if (GameManager.Instance.GetCurrentState() != GameManager.GameState.Voting)
+            {
+                MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Captured);
+            }
+            else
+            {
+                MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible);
+            }
+        }
 
         CreateTimerToHide();
     }
@@ -196,7 +206,7 @@ public partial class ChatManager : CanvasLayer
             }
             else if (currentState == GameManager.GameState.Voting)
             {
-                DisplaySystemMessage("[color=green]Usage: /vote <tag|hide|murder> - Vote for a game[/color]");
+                DisplaySystemMessage("[color=green]Usage: /vote end - End vote early[/color]");
             }
             else
             {
@@ -223,14 +233,23 @@ public partial class ChatManager : CanvasLayer
 
             GameManager.Instance.StartVoting();
         }
-        else if (currentState == GameManager.GameState.Voting)
+        else if (subCommand == "end")
         {
-            DisplaySystemMessage("[color=yellow]Please use the voting UI to cast your vote![/color]");
+            if (!Multiplayer.IsServer())
+            {
+                DisplaySystemMessage("[color=red]Only the server can cancel voting early[/color]");
+            }
+
+            if (currentState == GameManager.GameState.Voting)
+            {
+                GameManager.Instance.EndVotingEarly();
+            }
+
             return;
         }
         else
         {
-            DisplaySystemMessage("[color=yellow]No voting session active. Server can use '/vote start'[/color]");
+            DisplaySystemMessage("[color=red]Invalid arguments[/color]");
         }
     }
 

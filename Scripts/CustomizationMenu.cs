@@ -73,7 +73,7 @@ public partial class CustomizationMenu : Control
 
         currentPreset = characterSelector.CurrentCharacter;
         currentFace = faceSelector.CurrentFace;
-        currentHat = CosmeticDatabase.Hats[s.SavedHatID];
+        currentHat = ResourceDatabase.Hats[s.SavedHatID];
 
         VisibilityChanged += () =>
         {

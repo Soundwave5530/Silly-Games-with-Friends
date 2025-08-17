@@ -39,7 +39,7 @@ public partial class PlayerSticker : TextureRect
         Head.SelfModulate = color;
         
         // Get cosmetics from database
-        if (CosmeticDatabase.TryGetExpression(expressionId, out face))
+        if (ResourceDatabase.TryGetExpression(expressionId, out face))
         {
             if (face == null || face.FrontExpression == null || face.FrontExpression.Count == 0)
             {
@@ -58,7 +58,7 @@ public partial class PlayerSticker : TextureRect
 
         hat = null;
         Hat.Visible = false;
-        if (hatId != "none" && CosmeticDatabase.Hats.TryGetValue(hatId, out hat) && hat.FrontSprites.Count > 0)
+        if (hatId != "none" && ResourceDatabase.Hats.TryGetValue(hatId, out hat) && hat.FrontSprites.Count > 0)
         {
             Hat.Visible = true;
             Hat.Texture = hat.FrontSprites[0];

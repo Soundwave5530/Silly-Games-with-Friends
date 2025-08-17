@@ -1,10 +1,11 @@
-/*
+
 using Godot;
 using System;
 using System.IO;
 using Godot.Collections;
 using System.Collections.Generic;
 
+#if TOOLS
 [Tool]
 [GlobalClass]
 public partial class AnimationPresetBaker : EditorPlugin
@@ -276,4 +277,4 @@ public partial class AnimationPresetBaker : EditorPlugin
         
     }
 }
-*/
+#endif

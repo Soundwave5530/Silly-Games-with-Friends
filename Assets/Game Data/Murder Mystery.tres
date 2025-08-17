@@ -9,4 +9,5 @@ GameName = "Murder Mystery"
 MinimumPlayers = 4
 Icon = ExtResource("1_8ws00")
 GameType = 3
+GameTime = 420
 metadata/_custom_type_script = "uid://be2cmn7lwlpbq"

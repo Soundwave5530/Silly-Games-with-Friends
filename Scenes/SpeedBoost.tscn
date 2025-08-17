@@ -8,8 +8,9 @@ radial_segments = 4
 rings = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8ccii"]
-albedo_color = Color(1, 0, 0, 1)
+albedo_color = Color(1, 0.7166667, 0, 1)
 rim_enabled = true
+stencil_flags = 2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_8ccii"]
 radius = 1.3344892
