@@ -145,6 +145,9 @@ public partial class Player : CharacterBody3D
             playerColor = new Color(SettingsManager.CurrentSettings.ColorR,
                                   SettingsManager.CurrentSettings.ColorG,
                                   SettingsManager.CurrentSettings.ColorB);
+                                  
+            // Initialize camera ray for collision detection
+            Camera = GetNode<Camera3D>("HeadPivot/PlayerCamera");
 
             // Initialize camera positions
             targetCameraPosition = perspective1.Position;
@@ -268,29 +271,32 @@ public partial class Player : CharacterBody3D
                 // Handle Changing perspective
                 if (Input.IsActionJustPressed("change_perspective") && !ChatManager.chatOpen && !NewPauseMenu.IsOpen)
                 {
-                    float currentPitch = pitch; // Store current pitch
+                    float savedPitch = Camera.Rotation.X; // Store current pitch
                     perspectiveMode = (perspectiveMode + 1) % 3;
-
+                    
                     switch (perspectiveMode)
                     {
-                        case 0:
+                        case 0: // First Person
                             targetCameraPosition = perspective1.Position;
-                            targetCameraRotation = perspective1.Rotation;
+                            targetCameraRotation = new Vector3(savedPitch, perspective1.Rotation.Y, perspective1.Rotation.Z);
                             break;
-                        case 1:
+                        case 1: // Second Person
                             targetCameraPosition = perspective2.Position;
-                            targetCameraRotation = perspective2.Rotation;
+                            targetCameraRotation = new Vector3(savedPitch, perspective2.Rotation.Y, perspective2.Rotation.Z);
                             break;
-                        case 2:
+                        case 2: // Third Person
                             targetCameraPosition = perspective3.Position;
-                            targetCameraRotation = perspective3.Rotation;
+                            targetCameraRotation = new Vector3(savedPitch, perspective3.Rotation.Y, perspective3.Rotation.Z);
                             break;
                     }
-
-                    if (perspectiveMode == 0) playerSprite.Hide();
-                    else playerSprite.Show();
+                    
+                    if (perspectiveMode == 0) 
+                        playerSprite.Hide();
+                    else 
+                        playerSprite.Show();
                 }
 
+                // Update camera position and rotation
                 if (Camera.Position.DistanceTo(targetCameraPosition) > 0.01)
                 {
                     float smoothingSpeed = SettingsManager.CurrentSettings.CameraSmoothing ? 10f : 50f;
@@ -422,7 +428,7 @@ public partial class Player : CharacterBody3D
                 return;
             }
 
-            if (isSwimming)
+            if (isSwimming && GameManager.Instance != null && GameManager.Instance.GetCurrentState() == GameManager.GameState.Lobby)
             {
                 HandleSwimming(delta);
             }
@@ -447,7 +453,7 @@ public partial class Player : CharacterBody3D
 
         try
         {
-            if (Input.IsActionJustPressed("escape") && !ChatManager.chatOpen && !NewPauseMenu.customizationOpen)
+            if (Input.IsActionJustPressed("escape") && !ChatManager.chatOpen && !NewPauseMenu.customizationOpen && !KeybindSettings.bindingInProgress)
             {
                 if (!NewPauseMenu.IsOpen)
                 {
@@ -584,11 +590,18 @@ public partial class Player : CharacterBody3D
         {
             Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
+            // Get camera-based movement direction
             var camTransform = Camera.GlobalTransform;
-            Vector3 forward = Transform.Basis.Z;
-            Vector3 right = Transform.Basis.X;
+            Vector3 camForward = camTransform.Basis.Z;
+            Vector3 camRight = camTransform.Basis.X;
+            
+            // Project vectors onto horizontal plane
+            camForward.Y = 0;
+            camRight.Y = 0;
+            camForward = camForward.Normalized();
+            camRight = camRight.Normalized();
 
-            Vector3 direction = (forward * inputDir.Y + right * inputDir.X).Normalized();
+            Vector3 direction = ((camForward * inputDir.Y + camRight * inputDir.X)*(perspectiveMode == 2?-1:1)).Normalized();
 
             velocity.X = direction.X * Speed;
             velocity.Z = direction.Z * Speed;
@@ -598,6 +611,9 @@ public partial class Player : CharacterBody3D
             velocity.X = 0;
             velocity.Z = 0;
         }
+
+        // Apply external forces first
+        UpdateExternalForce(delta);
 
         if (IsOnFloor())
         {
@@ -611,8 +627,10 @@ public partial class Player : CharacterBody3D
                 Speed = 5f;
                 headPivot.Position = Vector3.Up * 0.2f;
             }
-
-            else velocity.Y = 0;
+            else if (forceDuration <= 0) // Only zero Y velocity if no external force
+            {
+                velocity.Y = 0;
+            }
         }
         else if (IsOnCeiling())
         {
@@ -698,17 +716,14 @@ public partial class Player : CharacterBody3D
 
         var camTransform = Camera.GlobalTransform;
 
-        Vector3 camForward = camTransform.Basis.Z;
+        Vector3 camForward = -camTransform.Basis.Z;
         Vector3 camRight = camTransform.Basis.X;
         Vector3 camUp = Vector3.Up;
 
         camForward = camForward.Normalized();
         camRight = camRight.Normalized();
 
-        Vector3 direction = (camForward * inputDir.Y + camRight * inputDir.X);
-
-        if (perspectiveMode == 2)
-            direction *= -1;
+        Vector3 direction = (camForward * inputDir.Y + camRight * inputDir.X).Normalized();
 
 
         if (Input.IsActionPressed("jump"))
@@ -915,6 +930,30 @@ public partial class Player : CharacterBody3D
         activeSpeedModifiers.Clear();
         CalculateCurrentSpeed();
         GD.Print("[Player] Cleared all speed modifiers");
+    }
+
+    private Vector3 externalForce = Vector3.Zero;
+    private float forceDuration = 0f;
+
+    public void ApplyExternalForce(Vector3 force, float duration = 0.5f)
+    {
+        externalForce = force;
+        forceDuration = duration;
+        GD.Print($"[Player] Applied external force: {force}, duration: {duration}s");
+    }
+    
+    private void UpdateExternalForce(double delta)
+    {
+        if (forceDuration > 0)
+        {
+            velocity += externalForce;
+            forceDuration -= (float)delta;
+            if (forceDuration <= 0)
+            {
+                externalForce = Vector3.Zero;
+                forceDuration = 0f;
+            }
+        }
     }
     
     #endregion

@@ -24,6 +24,7 @@ public partial class Keybind : Control
     private void OnBindPressed()
     {
         BindButton.buttonLabel.Text = "Awaiting Key...";
+        KeybindSettings.bindingInProgress = true;
         onRebindRequested?.Invoke(ActionName);
     }
 

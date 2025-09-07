@@ -11,8 +11,9 @@ public partial class GameManager : Node3D
     [Export] public PackedScene LobbyScene;
     [Export] public PackedScene CountdownUIScene; // Add this export
     public PackedScene VotingUIScene;
-    
+
     // Used to track if color changes are coming from the game system
+
     public bool IsColorChangeFromGame { get; private set; }
     
     [Signal] public delegate void GameSceneLoadedEventHandler();
@@ -61,10 +62,11 @@ public partial class GameManager : Node3D
     private const float TAG_DISTANCE = 2f;
     
     // Tagging delays and cooldowns
-    private const float TAG_COOLDOWN = 1f; // 1 second between tags
+    private const float TAG_COOLDOWN = 0.5f; // 0.5 second between tags to prevent accidental double-tags
     private const float NEW_TAGGER_STUN_DURATION = 3f; // 3 seconds stun for newly tagged player
-    private float lastTagTime = 0f;
-    private Dictionary<int, float> playerTagProtection = new(); // Players who can't be tagged yet
+    private double lastTagTime = 0.0;
+    private Dictionary<int, float> playerTagProtection = new(); // Players who are stunned/protected
+    private bool debugTags = true; // Set to true to enable tag debugging
     
     // Murder Mystery roles
     private int currentMurderer = -1;
@@ -213,26 +215,6 @@ public partial class GameManager : Node3D
         catch
         {
             return true; // Fallback
-        }
-    }
-
-    private void UpdateTagProtection(float delta)
-    {
-        var keysToRemove = new List<int>();
-        
-        foreach (var kvp in playerTagProtection.ToList())
-        {
-            playerTagProtection[kvp.Key] -= delta;
-            if (playerTagProtection[kvp.Key] <= 0)
-            {
-                keysToRemove.Add(kvp.Key);
-            }
-        }
-        
-        foreach (var key in keysToRemove)
-        {
-            playerTagProtection.Remove(key);
-            GD.Print($"[GameManager] Player {key} is no longer protected from tagging");
         }
     }
 
@@ -441,10 +423,10 @@ public partial class GameManager : Node3D
         }
         MouseManager.Instance?.UpdateMouseType(Input.MouseModeEnum.Visible, true); // Force visible mode
 
-        UpdateClientGameState(GameState.Voting);
+        UpdateGameState(GameState.Voting, currentGameType);
         if (IsMultiplayerActive())
         {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Voting);
+            Rpc(nameof(UpdateClientState), (int)GameState.Voting, (int)currentGameType, currentTagger);
         }
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
@@ -682,11 +664,7 @@ public partial class GameManager : Node3D
         if (!IsSafeServer()) return;
         
         currentGameType = gameType;
-        UpdateClientGameState(GameState.Starting);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Starting);
-        }
+        UpdateGameState(GameState.Starting, gameType);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
         // Store original colors before overriding
@@ -821,11 +799,7 @@ public partial class GameManager : Node3D
         if (!IsSafeServer()) return;
 
         // Change to countdown state
-        UpdateClientGameState(GameState.Countdown);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Countdown);
-        }
+        UpdateGameState(GameState.Countdown, currentGameType);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
 
         // Show countdown on all clients
@@ -906,46 +880,42 @@ public partial class GameManager : Node3D
             // Add other levels here
         }
     }
-    
-    private void SelectRandomTagger()
+
+    private void StartTagGameplay()
     {
-        var playerIds = NetworkManager.Instance.PlayerNames.Keys.ToList();
-        if (playerIds.Count == 0) return;
-        
-        currentTagger = playerIds[Math.Abs((int)GD.Randi()) % playerIds.Count];
-        alivePlayers = new HashSet<int>(playerIds);
-        
-        // Apply color overrides
-        OverrideColors();
-        
-        string taggerName = NetworkManager.Instance.PlayerNames[currentTagger];
+        gameTimer.Start();
+        NetworkManager.Instance?.SendSystemMessage($"Tag game started! {(int)gameTimeRemaining} seconds to play!");
+        // Sync state with all clients
+        UpdateGameState(GameState.Playing, currentGameType, currentTagger);
         if (IsMultiplayerActive())
         {
-            Rpc(nameof(AnnounceTagger), currentTagger, taggerName);
+            Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
         }
-        AnnounceTagger(currentTagger, taggerName);
+    }
+    
+    // Server-side method to update and sync game state
+    private void UpdateGameState(GameState newState, GameType gameType = GameType.None, int tagger = -1)
+    {
+        // Update server state
+        currentState = newState;
+        if (gameType != GameType.None) currentGameType = gameType;
+        if (tagger != -1) currentTagger = tagger;
         
-        // Also use the old SetAttacker system for compatibility
-        var players = GetTree().GetNodesInGroup("Players");
-        var taggerPlayer = players.FirstOrDefault(p => p.Name.ToString().Contains($"Player_{currentTagger}"));
-        if (taggerPlayer != null)
-        {
-            if (IsMultiplayerActive())
-            {
-                Rpc(nameof(SetAttacker), taggerPlayer.Name);
-            }
-            SetAttacker(taggerPlayer.Name);
-        }
-        
-        UpdateClientGameState(GameState.Playing);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
-        }
+        // Signal the state change locally
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
-        EmitSignal(SignalName.GameStarted, (int)currentGameType);
         
-        // Notify HUD to update roles
+        if (IsMultiplayerActive())
+        {
+            // Tell all clients about the new state
+            Rpc(nameof(UpdateClientState), (int)currentState, (int)currentGameType, currentTagger);
+        }
+        else
+        {
+            // Update local state for single player
+            UpdateClientState((int)currentState, (int)currentGameType, currentTagger);
+        }
+
+        // Update roles
         if (IsMultiplayerActive())
         {
             Rpc(nameof(UpdateAllPlayerRoles));
@@ -954,54 +924,46 @@ public partial class GameManager : Node3D
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void UpdateClientGameState(GameState newState)
+    public void UpdateClientState(int state, int gameType, int tagger)
     {
-        currentState = newState;
+        currentState = (GameState)state;
+        currentGameType = (GameType)gameType;
+        currentTagger = tagger;
+
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         
-        // Update PlayerHUD when state changes
-        if (PlayerHUD.Instance != null && currentState == GameState.Playing)
-        {
-            PlayerHUD.Instance.UpdatePlayerRole();
-        }
-    }
-    
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void UpdateAllPlayerRoles()
-    {
         if (PlayerHUD.Instance != null)
         {
             PlayerHUD.Instance.UpdatePlayerRole();
+            if (currentState == GameState.Playing)
+            {
+                string role = GetPlayerRole(GetSafeUniqueId());
+                PlayerHUD.Instance.SyncGameState(true, role, gameTimeRemaining);
+            }
         }
     }
     
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void AnnounceTagger(int taggerId, string taggerName)
+    public void SyncGameState(int state, int gameType, int tagger)
     {
-        currentTagger = taggerId;
-        NetworkManager.Instance?.SendSystemMessage($"{taggerName} is IT! Run!");
-    }
-    
-    private void StartTagGameplay()
-    {
-        gameTimer.Start();
-        NetworkManager.Instance?.SendSystemMessage($"Tag game started! {(int)gameTimeRemaining} seconds to play!");
-        
-        // Sync time with all clients
-        if (IsMultiplayerActive())
+        currentState = (GameState)state;
+        currentGameType = (GameType)gameType;
+        currentTagger = tagger;
+
+        if (PlayerHUD.Instance != null)
         {
-            Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
+            PlayerHUD.Instance.UpdatePlayerRole();
+            if (currentState == GameState.Playing)
+            {
+                string role = GetPlayerRole(GetSafeUniqueId());
+                PlayerHUD.Instance.SyncGameState(true, role, gameTimeRemaining);
+            }
         }
     }
     
     private void StartHideAndSeekGameplay()
     {
-        UpdateClientGameState(GameState.Playing);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
-        }
-        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        UpdateGameState(GameState.Playing);
         EmitSignal(SignalName.GameStarted, (int)currentGameType);
         
         // Apply color overrides for seekers/hiders
@@ -1019,19 +981,12 @@ public partial class GameManager : Node3D
         if (IsMultiplayerActive())
         {
             Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
-            Rpc(nameof(UpdateAllPlayerRoles));
         }
-        UpdateAllPlayerRoles();
     }
     
     private void StartMurderMysteryGameplay()
     {
-        UpdateClientGameState(GameState.Playing);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Playing);
-        }
-        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        UpdateGameState(GameState.Playing);
         EmitSignal(SignalName.GameStarted, (int)currentGameType);
         
         // Apply color overrides for murder mystery
@@ -1048,48 +1003,402 @@ public partial class GameManager : Node3D
         if (IsMultiplayerActive())
         {
             Rpc(nameof(SyncGameTimeRemaining), gameTimeRemaining);
-            Rpc(nameof(UpdateAllPlayerRoles));
         }
-        UpdateAllPlayerRoles();
     }
     
     #endregion
 
     #region Tag Game Logic
 
+    // Replace the CheckTagDistance method and related tag handling methods with these fixed versions:
+
     private void CheckTagDistance()
     {
-        if (currentTagger == -1) return;
-
-        // Check if we're in cooldown period
-        float currentTime = (float)Time.GetUnixTimeFromSystem();
-        if (currentTime - lastTagTime < TAG_COOLDOWN)
+        // Only the server should perform tag checks
+        if (!IsSafeServer() || currentTagger == -1)
         {
-            return; // Still in cooldown, can't tag yet
+            if (debugTags) GD.Print($"[TagDebug] Tag check skipped - Not server or no tagger. Server: {IsSafeServer()}, Tagger: {currentTagger}");
+            return;
         }
 
-        Player taggerPlayer = NetworkManager.Instance.GetPlayerFromID(currentTagger);
-        if (taggerPlayer == null) return;
+        // Check if we're in cooldown period
+        double currentTime = Time.GetTicksMsec() / 1000.0; // Convert to seconds
+        double timeSinceLastTag = currentTime - lastTagTime;
+
+        if (timeSinceLastTag < TAG_COOLDOWN)
+        {
+            if (debugTags) GD.Print($"[TagDebug] Tag cooldown active - Time since last tag: {timeSinceLastTag:F2}s < {TAG_COOLDOWN}s");
+            return;
+        }
+
+        Player taggerPlayer = NetworkManager.Instance?.GetPlayerFromID(currentTagger);
+        if (taggerPlayer == null)
+        {
+            if (debugTags) GD.Print($"[TagDebug] Tagger player not found - ID: {currentTagger}");
+            return;
+        }
+
+        // If the tagger is stunned (just got tagged), they cannot tag others
+        if (playerTagProtection.ContainsKey(currentTagger))
+        {
+            if (debugTags) GD.Print($"[TagDebug] Tagger is stunned - Time remaining: {playerTagProtection[currentTagger]:F2}s");
+            return;
+        }
+
+        if (debugTags) GD.Print($"[TagDebug] Checking for tag - Tagger: {currentTagger}, Alive players: {string.Join(", ", alivePlayers)}");
 
         foreach (int playerId in alivePlayers.ToList())
         {
-            if (playerId == currentTagger) continue;
-
-            // Skip players who are protected from tagging
-            if (playerTagProtection.ContainsKey(playerId))
+            // Skip if trying to tag self or target is already stunned
+            if (playerId == currentTagger)
             {
+                if (debugTags) GD.Print($"[TagDebug] Skipping self-tag check for player {playerId}");
                 continue;
             }
 
-            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
-            if (player == null) continue;
+            if (playerTagProtection.ContainsKey(playerId))
+            {
+                if (debugTags) GD.Print($"[TagDebug] Player {playerId} is protected for {playerTagProtection[playerId]:F2}s");
+                continue;
+            }
 
-            float distance = taggerPlayer.GlobalPosition.DistanceTo(player.GlobalPosition);
+            Player targetPlayer = NetworkManager.Instance?.GetPlayerFromID(playerId);
+            if (targetPlayer == null)
+            {
+                if (debugTags) GD.Print($"[TagDebug] Target player {playerId} not found");
+                continue;
+            }
+
+            float distance = taggerPlayer.GlobalPosition.DistanceTo(targetPlayer.GlobalPosition);
+            if (debugTags) GD.Print($"[TagDebug] Distance to player {playerId}: {distance:F2} units");
+
             if (distance <= TAG_DISTANCE)
             {
-                TagPlayer(playerId);
+                if (debugTags) GD.Print($"[TagDebug] Tag successful! Distance: {distance:F2} <= {TAG_DISTANCE}");
+                
+                // Update tag timing immediately to prevent rapid re-tags
+                lastTagTime = currentTime;
+
+                // Server handles the authoritative tag change
+                HandlePlayerTagServer(playerId);
+
+                // Notify all clients of the new tagger and current time remaining
+                if (IsMultiplayerActive())
+                {
+                    Rpc(nameof(SyncTagState), currentTagger, gameTimeRemaining);
+                }
+
                 return; // Only tag one player at a time
             }
+        }
+    }
+
+    // Server-only authoritative tag handler. Not exposed as an RPC.
+    private void HandlePlayerTagServer(int newTaggerId)
+    {
+        if (debugTags) GD.Print($"[TagDebug] Server handling tag: {currentTagger} -> {newTaggerId}");
+
+        // Store the old tagger before updating
+        int oldTagger = currentTagger;
+        currentTagger = newTaggerId;
+
+        // Notify all clients of the tag change first
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncTagStateAndModifiers), oldTagger, newTaggerId, gameTimeRemaining);
+        }
+        else
+        {
+            // In single player, apply directly
+            ApplyTagStateAndModifiers(oldTagger, newTaggerId);
+        }
+
+        // Update HUD for all players
+        UpdateAllPlayerRoles();
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void SyncTagStateAndModifiers(int oldTaggerId, int newTaggerId, float timeRemaining)
+    {
+        if (debugTags) GD.Print($"[TagDebug] Received tag state sync: {oldTaggerId} -> {newTaggerId}");
+        
+        currentTagger = newTaggerId;
+        gameTimeRemaining = timeRemaining;
+        
+        ApplyTagStateAndModifiers(oldTaggerId, newTaggerId);
+        
+        // Update colors and HUD
+        ApplyTagColors();
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.SyncGameState(currentState == GameState.Playing, role, timeRemaining);
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+    }
+
+    private void ApplyTagStateAndModifiers(int oldTaggerId, int newTaggerId)
+    {
+        // Remove all speed modifiers from old tagger
+        if (oldTaggerId != -1 && oldTaggerId != newTaggerId)
+        {
+            if (debugTags) GD.Print($"[TagDebug] Cleaning up old tagger {oldTaggerId}");
+            
+            Player oldTaggerPlayer = NetworkManager.Instance?.GetPlayerFromID(oldTaggerId);
+            if (oldTaggerPlayer != null)
+            {
+                bool hadSpeedBoost = oldTaggerPlayer.HasSpeedModifier(TAGGER_SPEED_ID);
+                bool hadStun = oldTaggerPlayer.HasSpeedModifier(NEW_TAGGER_STUN_ID);
+                
+                oldTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
+                oldTaggerPlayer.RemoveSpeedModifier(NEW_TAGGER_STUN_ID);
+                
+                if (debugTags) GD.Print($"[TagDebug] Removed modifiers from old tagger {oldTaggerId} - Had speed boost: {hadSpeedBoost}, Had stun: {hadStun}");
+            }
+            
+            // Clear any existing protection on the old tagger
+            bool hadProtection = playerTagProtection.Remove(oldTaggerId);
+            if (debugTags) GD.Print($"[TagDebug] Removed protection from old tagger {oldTaggerId} - Had protection: {hadProtection}");
+        }
+
+        // Handle new tagger effects
+        if (debugTags) GD.Print($"[TagDebug] Setting up new tagger {newTaggerId}");
+        
+        Player newTaggerPlayer = NetworkManager.Instance?.GetPlayerFromID(newTaggerId);
+        if (newTaggerPlayer != null)
+        {
+            // Clear any existing modifiers first
+            bool hadSpeedBoost = newTaggerPlayer.HasSpeedModifier(TAGGER_SPEED_ID);
+            bool hadStun = newTaggerPlayer.HasSpeedModifier(NEW_TAGGER_STUN_ID);
+            
+            newTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
+            newTaggerPlayer.RemoveSpeedModifier(NEW_TAGGER_STUN_ID);
+            
+            if (debugTags) GD.Print($"[TagDebug] Cleared existing modifiers from new tagger - Had speed boost: {hadSpeedBoost}, Had stun: {hadStun}");
+
+            // First apply the stun effect (makes them unable to move)
+            newTaggerPlayer.AddSpeedModifier(NEW_TAGGER_STUN_ID, 0f, 0f, NEW_TAGGER_STUN_DURATION, false);
+            if (debugTags) GD.Print($"[TagDebug] Applied stun to new tagger {newTaggerId}");
+
+            // Then apply the permanent tagger speed buff (will take effect after stun)
+            newTaggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
+            if (debugTags) GD.Print($"[TagDebug] Applied speed boost to new tagger {newTaggerId} (will activate after stun)");
+
+            // Add protection for the stun duration
+            playerTagProtection[newTaggerId] = NEW_TAGGER_STUN_DURATION;
+            if (debugTags) GD.Print($"[TagDebug] Added protection for new tagger {newTaggerId} for {NEW_TAGGER_STUN_DURATION}s");
+        }
+        else
+        {
+            if (debugTags) GD.Print($"[TagDebug] ERROR: Could not find new tagger player {newTaggerId}");
+        }
+
+        // Announce the tag if we have NetworkManager
+        if (NetworkManager.Instance != null)
+        {
+            string oldTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(oldTaggerId, out var oname) ? oname : "Someone";
+            string newTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(newTaggerId, out var nname) ? nname : "Someone";
+            NetworkManager.Instance.SendSystemMessage($"{oldTaggerName} tagged {newTaggerName}! {newTaggerName} is now IT!");
+        }
+
+        // Update colors for everyone (visual)
+        ApplyTagColors();
+
+        // Update HUD for all players
+        UpdateAllPlayerRoles();
+
+        // Server broadcasts authoritative tag state to clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncTagState), currentTagger, gameTimeRemaining);
+        }
+    }
+
+    // New method to apply tag colors more reliably
+    private void ApplyTagColors()
+    {
+        IsColorChangeFromGame = true;
+        
+        foreach (int playerId in NetworkManager.Instance.PlayerNames.Keys)
+        {
+            Color newColor = (playerId == currentTagger) ? Colors.Red : Colors.Blue;
+            
+            Player player = NetworkManager.Instance.GetPlayerFromID(playerId);
+            if (player != null)
+            {
+                player.SetPlayerColor(newColor);
+            }
+        }
+        
+        IsColorChangeFromGame = false;
+    }
+
+    // New method to sync tag state
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void SyncTagState(int taggerId, float timeRemaining)
+    {
+        if (debugTags) GD.Print($"[TagDebug] Syncing tag state to all clients - New Tagger: {taggerId}");
+        
+        // Store old tagger for modifier cleanup
+        int oldTagger = currentTagger;
+        currentTagger = taggerId;
+        gameTimeRemaining = timeRemaining;
+        
+        // Apply speed modifiers on all clients
+        ApplySpeedModifiersToPlayers(oldTagger, taggerId);
+        
+        // Apply colors
+        ApplyTagColors();
+        
+        // Update HUD
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.SyncGameState(currentState == GameState.Playing, role, timeRemaining);
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+        
+        if (debugTags) GD.Print($"[TagDebug] Tag state sync complete");
+    }
+
+    private void ApplySpeedModifiersToPlayers(int oldTaggerId, int newTaggerId)
+    {
+        if (debugTags) GD.Print($"[TagDebug] Applying speed modifiers - Old: {oldTaggerId}, New: {newTaggerId}");
+
+        // Remove modifiers from old tagger
+        if (oldTaggerId != -1 && oldTaggerId != newTaggerId)
+        {
+            Player oldTaggerPlayer = NetworkManager.Instance?.GetPlayerFromID(oldTaggerId);
+            if (oldTaggerPlayer != null)
+            {
+                oldTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
+                oldTaggerPlayer.RemoveSpeedModifier(NEW_TAGGER_STUN_ID);
+                if (debugTags) GD.Print($"[TagDebug] Removed speed modifiers from old tagger {oldTaggerId}");
+            }
+        }
+
+        // Apply modifiers to new tagger
+        Player newTaggerPlayer = NetworkManager.Instance?.GetPlayerFromID(newTaggerId);
+        if (newTaggerPlayer != null)
+        {
+            // Clear existing modifiers
+            newTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
+            newTaggerPlayer.RemoveSpeedModifier(NEW_TAGGER_STUN_ID);
+
+            // Apply stun first
+            newTaggerPlayer.AddSpeedModifier(NEW_TAGGER_STUN_ID, 0f, 0f, NEW_TAGGER_STUN_DURATION, false);
+            if (debugTags) GD.Print($"[TagDebug] Applied stun to new tagger {newTaggerId}");
+
+            // Apply speed boost (will take effect after stun)
+            newTaggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
+            if (debugTags) GD.Print($"[TagDebug] Applied speed boost to new tagger {newTaggerId}");
+
+            // Add protection
+            playerTagProtection[newTaggerId] = NEW_TAGGER_STUN_DURATION;
+            if (debugTags) GD.Print($"[TagDebug] Added protection for new tagger {newTaggerId}");
+        }
+    }
+
+    // Enhanced SelectRandomTagger method
+    private void SelectRandomTagger()
+    {
+        var playerIds = NetworkManager.Instance.PlayerNames.Keys.ToList();
+        if (playerIds.Count == 0) return;
+        
+        currentTagger = playerIds[Math.Abs((int)GD.Randi()) % playerIds.Count];
+        alivePlayers = new HashSet<int>(playerIds);
+        
+        // Clear all protections at game start
+        playerTagProtection.Clear();
+        lastTagTime = 0f;
+        
+        GD.Print($"[GameManager] Selected tagger: {currentTagger}");
+        
+        // Apply initial colors
+        StoreOriginalColors();
+        ApplyTagColors();
+        
+        string taggerName = NetworkManager.Instance.PlayerNames[currentTagger];
+        NetworkManager.Instance?.SendSystemMessage($"{taggerName} is IT! Run!");
+        
+        // Apply speed buff to tagger
+        Player taggerPlayer = NetworkManager.Instance.GetPlayerFromID(currentTagger);
+        if (taggerPlayer != null)
+        {
+            taggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
+            GD.Print($"[GameManager] Applied initial speed buff to tagger {currentTagger}");
+        }
+        
+        UpdateGameState(GameState.Playing);
+        EmitSignal(SignalName.GameStateChanged, (int)currentState);
+        EmitSignal(SignalName.GameStarted, (int)currentGameType);
+        
+        // Sync initial state to all clients
+        if (IsMultiplayerActive())
+        {
+            Rpc(nameof(SyncTagState), currentTagger, gameTimeRemaining);
+        }
+    }
+
+    // Updated UpdateTagProtection method with better logging and stun handling
+    private void UpdateTagProtection(float delta)
+    {
+        if (debugTags) GD.Print($"[TagDebug] Updating tag protection - Current protections: {string.Join(", ", playerTagProtection.Select(kvp => $"{kvp.Key}:{kvp.Value:F2}s"))}");
+        
+        var keysToRemove = new List<int>();
+        
+        foreach (var kvp in playerTagProtection.ToList())
+        {
+            float oldValue = playerTagProtection[kvp.Key];
+            playerTagProtection[kvp.Key] -= delta;
+            
+            if (debugTags) GD.Print($"[TagDebug] Updated protection for player {kvp.Key}: {oldValue:F2}s -> {playerTagProtection[kvp.Key]:F2}s");
+            
+            // Check if protection/stun has expired
+            if (playerTagProtection[kvp.Key] <= 0)
+            {
+                keysToRemove.Add(kvp.Key);
+                
+                // If this was the tagger's stun wearing off, make sure they get their speed boost
+                if (kvp.Key == currentTagger)
+                {
+                    if (debugTags) GD.Print($"[TagDebug] Tagger {kvp.Key} stun expired - Applying speed boost");
+                    
+                    Player taggerPlayer = NetworkManager.Instance?.GetPlayerFromID(kvp.Key);
+                    if (taggerPlayer != null)
+                    {
+                        // Remove stun effect
+                        taggerPlayer.RemoveSpeedModifier(NEW_TAGGER_STUN_ID);
+                        if (debugTags) GD.Print($"[TagDebug] Removed stun effect from tagger {kvp.Key}");
+                        
+                        // Make sure they have their speed boost
+                        if (!taggerPlayer.HasSpeedModifier(TAGGER_SPEED_ID))
+                        {
+                            taggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
+                            if (debugTags) GD.Print($"[TagDebug] Applied speed boost to tagger {kvp.Key}");
+                        }
+                        else
+                        {
+                            if (debugTags) GD.Print($"[TagDebug] Tagger {kvp.Key} already has speed boost");
+                        }
+                    }
+                    else
+                    {
+                        if (debugTags) GD.Print($"[TagDebug] Could not find tagger player {kvp.Key} to apply speed boost");
+                    }
+                }
+            }
+        }
+        
+        foreach (var key in keysToRemove)
+        {
+            playerTagProtection.Remove(key);
+            if (debugTags) GD.Print($"[TagDebug] Removed protection for player {key}");
+        }
+
+        if (debugTags && playerTagProtection.Count > 0)
+        {
+            GD.Print($"[TagDebug] Protection status after update: {string.Join(", ", playerTagProtection.Select(kvp => $"{kvp.Key}:{kvp.Value:F2}s"))}");
         }
     }
     
@@ -1097,87 +1406,7 @@ public partial class GameManager : Node3D
     private const string NEW_TAGGER_STUN_ID = "new_tagger_stun";
     private const float TAGGER_SPEED_MULTIPLIER = 1.3f;
     
-    private void TagPlayer(int newTaggerId)
-    {
-        if (!IsSafeServer()) return;
 
-        int oldTagger = currentTagger;
-        currentTagger = newTaggerId;
-        
-        // Set tag cooldown
-        lastTagTime = (float)Time.GetUnixTimeFromSystem();
-
-        // Add tag protection for the new tagger (they can't be tagged back immediately)
-        playerTagProtection[newTaggerId] = NEW_TAGGER_STUN_DURATION;
-        
-        GD.Print($"[GameManager] Player {newTaggerId} is now IT and protected for {NEW_TAGGER_STUN_DURATION} seconds");
-
-        // Update colors immediately
-        OverrideColors();
-
-        // Handle speed modifiers for old tagger
-        if (oldTagger != -1)
-        {
-            Player oldTaggerPlayer = NetworkManager.Instance.GetPlayerFromID(oldTagger);
-            if (oldTaggerPlayer != null)
-            {
-                // Remove tagger speed boost
-                if (oldTaggerPlayer.HasSpeedModifier(TAGGER_SPEED_ID))
-                    oldTaggerPlayer.RemoveSpeedModifier(TAGGER_SPEED_ID);
-            }
-        }
-
-        // Handle speed modifiers for new tagger
-        Player newTaggerPlayer = NetworkManager.Instance.GetPlayerFromID(newTaggerId);
-        if (newTaggerPlayer != null)
-        {
-            // Add speed boost for being the tagger
-            newTaggerPlayer.AddSpeedModifier(TAGGER_SPEED_ID, TAGGER_SPEED_MULTIPLIER, 0f, 0f, true);
-            
-            // Add temporary stun (no movement) for being newly tagged
-            newTaggerPlayer.AddSpeedModifier(NEW_TAGGER_STUN_ID, 0f, 0f, NEW_TAGGER_STUN_DURATION, false);
-            
-            GD.Print($"[GameManager] Applied stun to new tagger for {NEW_TAGGER_STUN_DURATION} seconds");
-        }
-
-        string oldTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(oldTagger, out var name1) ? name1 : "Unknown";
-        string newTaggerName = NetworkManager.Instance.PlayerNames.TryGetValue(newTaggerId, out var name2) ? name2 : "Unknown";
-
-        // Old SetAttacker system for compatibility
-        var players = GetTree().GetNodesInGroup("Players");
-        var newTaggerNode = players.FirstOrDefault(p => p.Name.ToString().Contains($"Player_{newTaggerId}"));
-        if (newTaggerNode != null)
-        {
-            if (IsMultiplayerActive())
-            {
-                Rpc(nameof(SetAttacker), newTaggerNode.Name);
-            }
-            SetAttacker(newTaggerNode.Name);
-        }
-
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(AnnounceTagChange), oldTagger, currentTagger, oldTaggerName, newTaggerName);
-        }
-        AnnounceTagChange(oldTagger, currentTagger, oldTaggerName, newTaggerName);
-    }
-    
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void AnnounceTagChange(int oldTagger, int newTagger, string oldTaggerName, string newTaggerName)
-    {
-        currentTagger = newTagger;
-        NetworkManager.Instance?.SendSystemMessage($"{newTaggerName} is now IT! They're stunned for {NEW_TAGGER_STUN_DURATION} seconds!");
-        
-        // Apply color changes on all clients
-        RestoreOriginalColors();
-        OverrideColors();
-        
-        // Update HUD roles
-        if (PlayerHUD.Instance != null)
-        {
-            PlayerHUD.Instance.UpdatePlayerRole();
-        }
-    }
     
     #endregion
     
@@ -1407,11 +1636,7 @@ public partial class GameManager : Node3D
     {
         if (!IsSafeServer()) return;
         
-        UpdateClientGameState(GameState.GameOver);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.GameOver);
-        }
+        UpdateGameState(GameState.GameOver, currentGameType);
         EmitSignal(SignalName.GameStateChanged, (int)currentState);
         EmitSignal(SignalName.GameEnded);
         
@@ -1435,9 +1660,8 @@ public partial class GameManager : Node3D
         // Update HUD
         if (IsMultiplayerActive())
         {
-            Rpc(nameof(UpdateAllPlayerRoles));
+            // Role updates are handled by UpdateGameState
         }
-        UpdateAllPlayerRoles();
         
         // Show game over screen briefly, then return to lobby
         GetTree().CreateTimer(3f).Timeout += () =>
@@ -1448,11 +1672,7 @@ public partial class GameManager : Node3D
     
     private void ReturnToLobby()
     {
-        UpdateClientGameState(GameState.Lobby);
-        if (IsMultiplayerActive())
-        {
-            Rpc(nameof(UpdateClientGameState), (int)GameState.Lobby);
-        }
+        UpdateGameState(GameState.Lobby, GameType.None);
         currentGameType = GameType.None;
         currentTagger = -1;
         currentMurderer = -1;
@@ -1504,7 +1724,12 @@ public partial class GameManager : Node3D
                 if (remainingPlayers.Count > 0)
                 {
                     int newTagger = remainingPlayers[Math.Abs((int)GD.Randi()) % remainingPlayers.Count];
-                    TagPlayer(newTagger);
+                    // Server initiates the tag handling
+                    if (IsSafeServer())
+                    {
+                        HandlePlayerTagServer(newTagger);
+                        if (IsMultiplayerActive()) Rpc(nameof(SyncTagState), currentTagger, gameTimeRemaining);
+                    }
                 }
                 else
                 {
@@ -1551,6 +1776,18 @@ public partial class GameManager : Node3D
     public bool IsPlayerInnocent(int playerId) => innocentPlayers.Contains(playerId);
     
     public float GetGameTimeRemaining() => gameTimeRemaining;
+
+    // Update roles for all players after a game state change
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void UpdateAllPlayerRoles()
+    {
+        if (PlayerHUD.Instance != null)
+        {
+            string role = GetPlayerRole(GetSafeUniqueId());
+            PlayerHUD.Instance.SyncGameState(currentState == GameState.Playing, role, gameTimeRemaining);
+            PlayerHUD.Instance.UpdatePlayerRole();
+        }
+    }
     
     #endregion
 }

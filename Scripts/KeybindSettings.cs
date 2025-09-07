@@ -1,11 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public partial class KeybindSettings : Control
 {
     [Export] public VBoxContainer BindListContainer;
     private string actionWaitingForRebind = null;
+    public static bool bindingInProgress = false;
 
     public override void _Ready()
     {
@@ -88,7 +90,6 @@ public partial class KeybindSettings : Control
         return "Unknown";
     }
 
-
     public override void _Input(InputEvent @event)
     {
         if (actionWaitingForRebind == null)
@@ -131,6 +132,7 @@ public partial class KeybindSettings : Control
 
             GD.Print($"Bound '{actionWaitingForRebind}' to {GetInputName(newKeyEvent)}");
             actionWaitingForRebind = null;
+            bindingInProgress = false;
             PopulateKeybinds();
             GetViewport().SetInputAsHandled();
             return;

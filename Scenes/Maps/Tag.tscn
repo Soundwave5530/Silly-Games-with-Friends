@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://bjeuuru2f4ugk"]
+[gd_scene load_steps=11 format=3 uid="uid://bjeuuru2f4ugk"]
 
 [ext_resource type="Material" uid="uid://chsc1kh6b71ox" path="res://Assets/Materials/Red.tres" id="1_7ga02"]
+[ext_resource type="PackedScene" uid="uid://cojsry1gkiyny" path="res://Scenes/GameZone.tscn" id="1_kpqss"]
 [ext_resource type="Material" uid="uid://cj88d3jy5ktnl" path="res://Assets/Materials/Basic.tres" id="2_n8xtk"]
 [ext_resource type="Material" uid="uid://bjpr3ufwnjwk2" path="res://Assets/Materials/Blue.tres" id="3_n8xtk"]
 [ext_resource type="Material" uid="uid://532unqtotwsy" path="res://Assets/Materials/Green.tres" id="4_wp73i"]
@@ -24,6 +25,13 @@ sdfgi_use_occlusion = true
 glow_enabled = true
 
 [node name="Tag" type="Node3D"]
+
+[node name="GameZone" parent="." instance=ExtResource("1_kpqss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6200867, 13.032286, 0)
+collision_layer = 0
+collision_mask = 2
+GameZoneSize = Vector3(103.05, 37.22, 95.935)
+ResetPosition = Vector3(0, 2, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_gmdsi")

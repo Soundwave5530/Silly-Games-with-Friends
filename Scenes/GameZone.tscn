@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cojsry1gkiyny"]
+
+[ext_resource type="Script" uid="uid://d305hck7fgjd" path="res://Scripts/GameZone.cs" id="1_f8ju2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f8ju2"]
+
+[node name="GameZone" type="Area3D"]
+script = ExtResource("1_f8ju2")
+
+[node name="ZoneCShape" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_f8ju2")
+debug_color = Color(1, 0, 0, 1)

@@ -869,6 +869,7 @@ color = Color(0.329412, 0.67451, 1, 1)
 metadata/_edit_use_anchors_ = true
 
 [node name="Gradient" type="TextureRect" parent="ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -890,7 +891,6 @@ frame_progress = 0.841989
 [node name="Made With" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0)
 texture_filter = 1
-anchors_preset = -1
 offset_left = 296.0
 offset_top = 350.0
 offset_right = 1163.0
@@ -907,6 +907,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="ImageContainer" type="Control" parent="."]
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 1928.52
@@ -949,7 +950,7 @@ stretch_mode = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="BG2" type="Panel" parent="."]
-anchors_preset = -1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -1290,7 +1291,7 @@ vertical_alignment = 2
 
 [node name="ServerListBG" type="Panel" parent="."]
 visible = false
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -1920.0
@@ -1469,7 +1470,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_3hb06")
 
 [node name="Settings" type="Panel" parent="."]
 visible = false
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -1920.0

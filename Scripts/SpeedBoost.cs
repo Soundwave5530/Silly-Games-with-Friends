@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Linq;
+using Godot.Collections;
 
 public partial class SpeedBoost : Area3D
 {
